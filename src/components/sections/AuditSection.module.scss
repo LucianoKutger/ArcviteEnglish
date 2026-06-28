@@ -1,0 +1,196 @@
+@use "../../styles/variables" as *;
+
+/* Basis-Styles */
+.footer {
+  position: relative;
+  z-index: 10;
+  padding: $spacing-4xl 0;
+  border-top: 1px solid $white-10;
+  background-color: $background;
+}
+
+.container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+}
+
+.auditCard {
+  border-radius: $radius-lg;
+  background-color: $background;
+  border: 1px solid $white-10;
+  padding: $spacing-xl;
+  max-width: 48rem;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-3xl;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: $spacing-3xl;
+  position: relative;
+  z-index: 10;
+}
+
+.title {
+  font-size: $font-size-lg;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: $headlines;
+  margin-bottom: $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.titleBold {
+  font-weight: 700;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+  position: relative;
+  z-index: 10;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.inputGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-2xl;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.goalsSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.goalsLabel {
+  font-size: $font-size-xs;
+  color: $white-40;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.goalsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.goalButton {
+  padding: $spacing-xs $spacing-md;
+  font-size: $font-size-sm;
+  border-radius: $radius-full;
+  border: 1px solid;
+  transition: all $transition-base;
+  cursor: pointer;
+
+  &.active {
+    background-color: $cyan;
+    border-color: $cyan;
+    color: $black;
+    font-weight: 500;
+    box-shadow: $shadow-glow;
+  }
+
+  &.inactive {
+    background-color: transparent;
+    border-color: $white-10;
+    color: $white-60;
+
+    &:hover {
+      border-color: $cyan-40;
+      box-shadow: $shadow-glow-cyan;
+      color: $text;
+    }
+  }
+}
+
+.submitButton {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  background: linear-gradient(to bottom right, $cyan-50, transparent);
+  color: $headlines;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: $spacing-md 0;
+  border-radius: $radius-full;
+  margin-top: $spacing-xl;
+  border: 1px solid $cyan-50;
+  cursor: pointer;
+  transition: border-color $transition-base;
+
+  /* Invisible hover gradient overlaid */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, $cyan-70, transparent);
+    opacity: 0;
+    transition: opacity $transition-base; 
+    z-index: 0;
+  }
+
+  &:hover {
+    border-color: $cyan-70;
+
+    &::before {
+      opacity: 1;
+    }
+
+    .sendIcon {
+      transform: translate(0.25rem, -0.25rem);
+    }
+  }
+}
+
+.submitButtonContent {
+  position: relative;
+  z-index: 1; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+}
+
+.sendIcon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform $transition-base;
+}
+
+.disclaimer {
+  text-align: center;
+  font-size: $font-size-xxs;
+  color: $white-30;
+  margin-top: $spacing-lg;
+  font-weight: 300;
+  font-style: italic;
+  max-width: 32rem;
+  margin: $spacing-lg auto 0;
+  line-height: 1.625;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-xs;
+  }
+}

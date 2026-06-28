@@ -1,0 +1,192 @@
+@use "../../styles/variables" as *;
+
+/* Der Wrapper sorgt dafür, dass das Grid-Layout absolut starr bleibt */
+.cardWrapper {
+  position: relative;
+  height: 420px; 
+  border-radius: 90px;
+}
+
+.card {
+  position: absolute; /* Holt die Card aus dem normalen Grid-Berechnungsfluss */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Entspricht geschlossen genau den 420px des Wrappers */
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid $white-10;
+  background-color: $background;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+}
+
+.card:hover {
+  border-color: $cyan-30;
+  box-shadow: 0 0 30px $cyan-10;
+}
+
+.cardOpen {
+  border-color: $cyan-40;
+  background-color: $background;
+}
+
+/* --- Ab hier bleibt dein Styling der inneren Elemente identisch --- */
+.cardGradientOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, $cyan-10, transparent);
+  pointer-events: none;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 200px; 
+  overflow: hidden;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fallbackPattern {
+  width: 100%;
+  height: 100%;
+  background-color: $background;
+  opacity: 0.4;
+}
+
+.fallbackCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fallbackLabel {
+  color: $white-30;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.imageBottomGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, $background, transparent);
+}
+
+.contentWrapper {
+  padding: 1.5rem;
+  position: relative;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: $headlines;
+}
+
+.chevronWrapper {
+  color: $text;
+}
+
+.chevronIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.focusSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.categoryRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.categoryLine {
+  width: 24px;
+  height: 1px;
+  background-color: $cyan;
+}
+
+.categoryText {
+  font-size: 0.75rem;
+  color: $cyan;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.focusTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $headlines;
+}
+
+.focusDesc {
+  font-size: 0.875rem;
+  color: $white-60;
+  line-height: 1.5;
+}
+
+.detailsContainer {
+  overflow: hidden;
+}
+
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid $cyan-05;
+  padding-top: 1.5rem;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: $white-80;
+}
+
+.detailBullet {
+  width: 4px;
+  height: 4px;
+  background-color: $cyan;
+  border-radius: 50%;
+}
+
+/* --- Wide Card Handling --- */
+@media (min-width: 1024px) {
+  .cardWide {
+    grid-column: 1 / -1; 
+    width: 80%;         
+    justify-self: center; 
+    height: auto; /* Wide-Card braucht keine feste Höhe */
+    margin-top: 200px; /* Konstanter, sauberer Abstand zur Grid-Zeile darüber */
+
+    .card {
+      position: relative; /* Wide-Card bleibt im normalen Fluss, da sie nicht overlayen muss */
+      height: auto;
+      min-height: 420px;
+    }
+  }
+}

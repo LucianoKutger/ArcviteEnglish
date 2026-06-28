@@ -1,0 +1,129 @@
+@use "../../styles/variables" as *;
+
+.section {
+  position: relative;
+  z-index: 10;
+  padding: $spacing-6xl $spacing-lg;
+  border-top: $border-width-base solid $cyan-05;
+  background-color: $background;
+
+  .backgroundWrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+
+    .glowEffect {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: $layout-glow-size;
+      background-color: $cyan-05;
+      filter: blur($blur-3xl);
+      border-radius: $radius-full;
+      mix-blend-mode: screen;
+      opacity: 0.4;
+    }
+  }
+
+  .container {
+    max-width: $layout-max-width-quote;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    padding: $spacing-6xl $spacing-lg;
+
+    .heading {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-semibold;
+      letter-spacing: $letter-spacing-tight;
+      margin-bottom: $spacing-xl;
+      color: $cyan;
+
+      @media (min-width: $breakpoint-md) {
+        font-size: $font-size-4xl;
+      }
+    }
+
+    .textContent {
+      font-size: $font-size-md;
+      color: $text;
+      font-weight: $font-weight-light;
+      line-height: $line-height-relaxed;
+      margin-bottom: $spacing-xxl;
+
+      @media (min-width: $breakpoint-md) {
+        font-size: $font-size-ml;
+      }
+
+      > p + p {
+        margin-top: $spacing-lg;
+      }
+
+      .pText {
+        color: $text;
+      }
+
+      .strongText {
+        color: $cyan;
+        font-weight: $font-weight-medium;
+      }
+    }
+
+    .featuresGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: $spacing-xl;
+      text-align: left;
+      margin-top: $spacing-3xl;
+      border-top: $border-width-base solid $cyan-05;
+      padding-top: $spacing-xxl;
+
+      @media (min-width: $breakpoint-md) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .featureItem {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        align-items: center;
+        text-align: center;
+
+        .iconWrapper {
+          width: $spacing-2xl;
+          height: $spacing-2xl;
+          border-radius: $radius-full;
+          background-color: $cyan-05;
+          border: $border-width-base solid $white-10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .featureIcon {
+            width: $spacing-ml;
+            height: $spacing-ml;
+            color: $cyan;
+          }
+        }
+
+        .featureTitle {
+          font-size: $font-size-md;
+          font-weight: $font-weight-medium;
+          color: $headlines;
+          margin: 0;
+        }
+
+        .featureDesc {
+          font-size: $font-size-sm;
+          color: $text;
+          margin: 0;
+        }
+      }
+    }
+  }
+}

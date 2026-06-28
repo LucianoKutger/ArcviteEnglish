@@ -1,0 +1,42 @@
+@use '/src/styles/variables' as *;
+
+
+.landingPageWrapper {
+  min-height: 100vh;
+  background-color: $background;
+  color: $headlines;
+  font-family: $mainFont;
+  overflow-x: hidden;
+  position: relative;
+  text-align: left; 
+  box-sizing: border-box;
+}
+
+.landingPageWrapper * {
+  box-sizing: border-box;
+}
+
+.landingPageWrapper ::selection {
+  background-color: $white-30;
+}
+
+.lpNoiseContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.lpNoiseOverlay {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  opacity: 0.2;
+  filter: brightness(100%) contrast(150%);
+}
+
+.contentArea {
+  position: relative;
+  z-index: 1; 
+  width: 100%;
+}

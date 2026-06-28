@@ -1,0 +1,24 @@
+.logoContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-top: 0.5rem; 
+  padding-bottom: 0.5rem;
+  cursor: pointer;
+  width: 170px;
+  
+}
+
+
+/* Hover-Effekt: Wenn der Container gehovert wird, wird das SVG deutlicher */
+.logoContainer:hover .arcSvg {
+  opacity: 1;
+}
+
+
+
+@media (min-width: 768px) {
+  .brandText {
+    font-size: 1.25rem; /* md:text-xl */
+  }
+}

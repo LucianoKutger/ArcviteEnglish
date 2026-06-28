@@ -1,0 +1,130 @@
+/* BiometricsSection.module.css */
+
+/* --- Sektions-Layout --- */
+.biometricsSection {
+  position: relative;
+  z-index: 10;
+  padding-top: 8rem; 
+  padding-bottom: 5rem; 
+  width: 100%; 
+  background-color: #000;
+}
+
+.biometricsContainer {
+  width: 100%;
+  max-width: 80rem; /* Das hält deine Inhalte zusammen */
+  margin: 0 auto;   /* Das zentriert den Inhalt in der Mitte */
+  padding-left: 1.5rem;  /* Etwas Abstand zum Rand für Handys */
+  padding-right: 1.5rem;
+}
+
+.biometricsHeader {
+  margin-bottom: 5rem; /* mb-20 */
+}
+
+/* --- Typografie --- */
+.biometricsTitle {
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem;
+  font-weight: 600; /* font-semibold */
+  letter-spacing: -0.025em; /* tracking-tight */
+  margin-bottom: 1.5rem; /* mb-6 */
+}
+
+@media (min-width: 768px) {
+  .biometricsTitle {
+    font-size: 3rem; /* md:text-5xl */
+    line-height: 1;
+  }
+}
+
+.biometricsDescription {
+  color: rgba(255, 255, 255, 0.6); /* text-white/60 */
+  font-size: 1.125rem; /* text-lg */
+  line-height: 1.75rem;
+  max-width: 42rem; /* max-w-2xl */
+}
+
+/* --- Komponenten --- */
+.bentoCardCustom {
+  width: 100%;
+  background-color: #0E0E0E !important; /* !bg-[#0E0E0E] */
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Tabs --- */
+.tabsContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* gap-2 */
+  margin-bottom: 2rem; /* mb-8 */
+  background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+  padding: 0.25rem; /* p-1 */
+  border-radius: 0.5rem; /* rounded-lg */
+  width: fit-content;
+}
+
+.tabButton {
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  border-radius: 0.375rem; /* rounded-md */
+  font-size: 0.75rem; /* text-xs */
+  line-height: 1rem;
+  font-weight: 500; /* font-medium */
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.tabButtonActive {
+  background-color: #E5D9B6;
+  color: #000;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
+  transform: scale(1.05); /* scale-105 */
+}
+
+.tabButtonInactive {
+  color: rgba(255, 255, 255, 0.5); /* text-white/50 */
+  background: transparent;
+}
+
+.tabButtonInactive:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05); /* hover:bg-white/5 */
+}
+
+/* --- Dashboard Inner --- */
+.dashboardPanel {
+  position: relative;
+  width: 100%;
+  background-color: #050505;
+  border-radius: 0.75rem; /* rounded-xl */
+  border: 1px solid rgba(255, 255, 255, 0.05); /* border-white/5 */
+  padding: 1.5rem; /* p-6 */
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .dashboardPanel {
+    padding: 2rem; /* md:p-8 */
+  }
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* grid-cols-1 */
+  gap: 1rem; /* gap-4 */
+  width: 100%;
+}
+
+.dashboardOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 100% 40px;
+}

@@ -1,0 +1,202 @@
+@use "../../styles/variables" as *;
+
+.biometricContainer {
+  width: 100%;
+  background-color: #0F0F0F;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: visible;
+  transition: border-color 0.3s ease;
+}
+
+.biometricContainer:hover {
+  border-color: rgba(229, 217, 182, 0.2);
+}
+
+.glowOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.02), transparent);
+  opacity: 0;
+  border-radius: 1rem;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.biometricContainer:hover .glowOverlay {
+  opacity: 1;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 20;
+}
+
+.labelText {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.025em;
+}
+
+/* Tooltip Logic */
+.infoWrapper {
+  position: relative;
+  margin-left: 0.5rem;
+}
+
+.infoIcon {
+  width: 1rem;
+  height: 1rem;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: help;
+  transition: color 0.2s ease;
+}
+
+.infoIcon:hover {
+  color: #E5D9B6;
+}
+
+.tooltipBox {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 0.5rem;
+  width: 16rem;
+  padding: 1rem;
+  background-color: #1A1A1A;
+  border: 1px solid rgba(229, 217, 182, 0.2);
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.infoWrapper:hover .tooltipBox {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltipTag {
+  display: block;
+  color: #E5D9B6;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 10px;
+}
+
+.tooltipContent {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.625;
+  font-weight: 300;
+}
+
+.tooltipArrow {
+  position: absolute;
+  bottom: -6px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  background-color: #1A1A1A;
+  border-right: 1px solid rgba(229, 217, 182, 0.2);
+  border-bottom: 1px solid rgba(229, 217, 182, 0.2);
+  transform: rotate(45deg);
+}
+
+/* Track & Segments */
+.trackBar {
+  position: relative;
+  height: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  z-index: 10;
+  background-color: #1A1A1A;
+  border-radius: 9999px;
+  overflow: hidden;
+  display: flex;
+  transform-origin: left;
+}
+
+.trackSegment {
+  height: 100%;
+  position: relative;
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.suboptimal { background-color: rgba(127, 29, 29, 0.4); }
+.basis { background-color: rgba(255, 255, 255, 0.05); }
+.optimum { background-color: #E5D9B6; }
+
+.optimumPulse {
+  position: absolute;
+  inset: 0;
+  background-color: #E5D9B6;
+  box-shadow: 0 0 15px rgba(229, 217, 182, 0.4);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+.trackInnerShadow {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 20;
+  border-radius: 9999px;
+}
+
+/* Labels */
+.topLabelsRow, .bottomLabelsRow {
+  width: 100%;
+  display: flex;
+}
+
+.labelCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.topLabel {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.isOptimum { color: #E5D9B6; font-weight: 700; }
+.isSuboptimal { color: rgba(249, 115, 22, 0.6); }
+
+.bottomVal {
+  font-family: monospace;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+}
+
+.textOptimum { 
+  color: #E5D9B6; 
+  font-size: 0.875rem;
+}
+
+.unitText {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.3);
+}

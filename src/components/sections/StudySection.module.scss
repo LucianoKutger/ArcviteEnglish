@@ -1,0 +1,104 @@
+@use "../../styles/variables" as *;
+
+.studyContainer {
+  position: relative;
+  width: 100%; 
+  min-height: $layout-min-height-screen;
+  background-color: $background;
+  border-top: solid $border-width-base $cyan-20;
+  
+  /* overflow-x: hidden;
+      overflow-y: visible; */
+  
+  
+}
+
+/* Layout & Typography */
+.studysSection {
+  position: relative;
+  z-index: 10;
+  padding: 6rem 1rem 3rem 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .studysSection {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* View Section Handling */
+.viewSection {
+  display: none;
+  opacity: 0;
+  transition: opacity $transition-slow;
+
+  &.active {
+    display: block;
+    opacity: 1;
+  }
+}
+
+.studysHeader {
+  margin-bottom: $spacing-3xl;
+  text-align: center;
+}
+
+.studysTitle {
+  max-width: $layout-max-width-title;
+  margin: 0 auto;
+  color: $text;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-heading;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+/* Cards Container */
+.cardsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+  z-index: 10;
+  margin: 0 auto;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+  }
+}
+
+/* Dividers */
+.cardDivider {
+  display: none;
+
+  @media (min-width: $breakpoint-md) {
+    display: block;
+    flex-shrink: 0;
+    width: 1px;
+    margin: 0 $spacing-xs;
+    background: linear-gradient(to bottom, transparent, $cyan-40, transparent);
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    margin: 0 $spacing-md;
+  }
+}
+
+/* Mobile Divider Fallback */
+.cardDividerMobile {
+  width: 100%;
+  height: 1px;
+  margin: $spacing-lg 0;
+  background: linear-gradient(to right, transparent, $cyan-40, transparent);
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}

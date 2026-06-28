@@ -1,0 +1,170 @@
+@use "../../styles/variables" as *;
+/* SolutionCard.module.css */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom right, $cyan-10, transparent);
+  border: 1px solid $white-05;
+  border-radius: 1.5rem; 
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 $cyan-10; 
+  transition: all 0.3s ease;
+
+}
+
+
+
+/* Hover-Effekte für die Karte selbst (entspricht Tailwind's hover:) */
+.card:hover {
+  border-color: $cyan-30;
+  box-shadow: 0 0 30px $cyan-10;
+}
+
+.imageContainer {
+  width: 100%;
+  height: 12rem; /* h-48 */
+  background-color: $cyan-05;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid $white-05;;
+  flex-shrink: 0;
+
+}
+
+/* Hover-Effekt für den Container (entspricht Tailwind's group-hover:bg-white/10) */
+.card:hover .imageContainer {
+  background-color: $white-10;
+}
+
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-size: 20px 20px;
+}
+
+.imageWrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.gradientOverlay {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to top, $background, transparent, transparent);
+  opacity: 0.6;
+}
+
+.content {
+  padding: 1.5rem; 
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.iconGroup {
+  display: flex;
+  gap: 1rem; 
+  align-items: center;
+}
+
+.idWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; 
+}
+
+.idText {
+  font-size: 0.75rem; 
+  color: $white-20;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.title {
+  font-size: 1.25rem; 
+  font-weight: 500;
+  color: $headlines;
+  margin-bottom: 0.5rem; 
+  transition: all 0.3s ease;
+
+}
+
+.card:hover .title {
+  color: $cyan;
+}
+
+.bodyWrapper {
+  margin-top: 1rem; 
+  margin-bottom: 1rem; 
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+  margin-bottom: 0.5rem; 
+}
+
+.problemDot {
+  width: 0.375rem; 
+  height: 0.375rem; 
+  border-radius: 9999px;
+  background-color: rgba(239, 68, 68, 0.5);
+}
+
+.problemLabel {
+  font-size: 0.75rem; 
+  color: $white-40;
+  text-transform: uppercase;
+  letter-spacing: 0.05em; 
+  margin: 0;
+}
+
+.problemText {
+  font-size: 0.875rem; 
+  color: $text;
+  font-style: italic;
+  margin-bottom: 1rem; 
+  border-left: 1px solid $white-10;
+  padding-left: 0.75rem; 
+  margin-top: 0;
+}
+
+.solutionDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background-color: $cyan;
+}
+
+.solutionLabel {
+  font-size: 0.75rem;
+  color: $cyan-80;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.solutionText {
+  font-size: 0.875rem;
+  color: $text;
+  line-height: 1.625; 
+  margin: 0;
+}

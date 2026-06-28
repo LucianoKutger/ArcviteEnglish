@@ -1,0 +1,87 @@
+@use "../../styles/variables" as *;
+
+.section {
+  position: relative;
+  z-index: 10;
+  padding-block: $spacing-6xl;
+  border-top: $border-width-base solid $cyan-05;
+  background-color: $background;
+  overflow: hidden;
+  min-height: $layout-min-height-methodology;
+}
+
+.backgroundEffect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.glowBlob {
+  position: absolute;
+  top: 30%;
+  left: -10%;
+  width: $layout-blob-size;
+  height: $layout-blob-size;
+  background-color: $cyan-05;
+  filter: blur($blur-xxl);
+  border-radius: $radius-full;
+  mix-blend-mode: screen;
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding-inline: $spacing-lg;
+  height: 850px;
+}
+
+.flexContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3xl;
+}
+
+.textColumn {
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: $spacing-4xl $spacing-lg;
+}
+
+.headline {
+  margin-bottom: $spacing-lg;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-tight;
+  line-height: $line-height-heading;
+  color: $headlines;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+.subHeadline {
+  color: $headlines;
+}
+
+.description {
+  width: 100%;
+  max-width: $container-max-width;
+  font-size: $font-size-ml;
+  color: $text;
+}
+
+.componentWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-inline: $spacing-3xl;
+  height: 850px;
+}

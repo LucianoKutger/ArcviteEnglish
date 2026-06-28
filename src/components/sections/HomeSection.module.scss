@@ -1,0 +1,175 @@
+@use "../../styles/variables" as *;
+
+.lpHeroSection {
+  position: relative;
+  z-index: 10;
+  min-height: $layout-min-height-screen;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: $background;
+}
+
+.lpHeroContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: $spacing-6xl $spacing-lg;
+}
+
+.lpHeroGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-xl;
+  align-items: center;
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: 80% 20%;
+  }
+}
+
+.lpHeroTextCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.lpHeroH1 {
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-xl;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+}
+
+.heroGradientText {
+  display: block;
+  font-size: $font-size-3xl;
+  line-height: $line-height-none;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-image: linear-gradient(to bottom right, $green-mint, $cyan, $skyblue);
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-4xl;
+  }
+
+  @media (min-width: $breakpoint-xl) {
+    font-size: $font-size-5xl;
+  }
+}
+
+.lpHeroP {
+  font-size: $font-size-ml;
+  color: $text;
+  max-width: $container-md-width;
+  margin-bottom: $spacing-xxl;
+  font-weight: $font-weight-light;
+  line-height: $line-height-loose;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+.lpHeroCtaCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  padding-bottom: $spacing-lg;
+
+  @media (min-width: $breakpoint-lg) {
+    align-items: flex-end;
+  }
+}
+
+.lpCtaWrapperBtn {
+  position: relative;
+  padding: $border-width-base;
+  background: none;
+  border-radius: $radius-lg;
+  border: none; 
+  cursor: pointer;
+  overflow: hidden; 
+  transform: translateZ(0);
+  backface-visibility: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0; 
+    background: linear-gradient(to bottom right, $cyan-30, transparent);
+    opacity: 0; 
+    transition: opacity $transition-base; 
+    z-index: 0;
+    will-change: opacity;
+    transform: translateZ(0);
+  }
+
+  &:hover {
+    &::before {
+      opacity: 1;
+    }
+
+    .lpCtaIconBox {
+      transform: scale(1.05);
+      border-color: $cyan-30;
+    }
+  }
+}
+
+.lpCtaInner {
+  position: relative;
+  z-index: 1;
+  padding: $spacing-lg $spacing-2xl;
+  background: none;
+  backdrop-filter: blur($blur-sm);
+  -webkit-backdrop-filter: blur($blur-sm);
+  border-radius: $radius-lg;
+  border: $border-width-base solid $cyan-10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-lg;
+  color: $text;
+  transition: border-color $transition-base;
+  box-shadow: $shadow-card;
+  transform: translateZ(0);
+}
+
+.lpHeroBtnText {
+  color: $white;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-md;
+  letter-spacing: $letter-spacing-tight;
+  white-space: nowrap;
+}
+
+.lpCtaIconBox {
+  width: $spacing-2xl;
+  height: $spacing-2xl;
+  background-color: $accent;
+  border-radius: $radius-md;
+  color: $black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform $transition-base;
+}
+
+.lpCapacityNote {
+  font-size: $font-size-xxs;
+  color: $white-40;
+  font-style: italic;
+  max-width: $container-xxs-width;
+  text-align: center;
+  line-height: $line-height-snug;
+
+  @media (min-width: $breakpoint-lg) {
+    text-align: right;
+  }
+}

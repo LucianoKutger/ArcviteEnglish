@@ -1,0 +1,160 @@
+@use "../../styles/variables" as *;
+
+.section {
+  position: relative;
+  z-index: 10;
+  padding: $spacing-6xl $spacing-lg;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  border-top: $border-width-base solid $cyan-05;
+  background-color: $background;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: $spacing-3xl;
+  align-items: center;
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $spacing-5xl;
+  }
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  order: 2;
+
+  @media (min-width: $breakpoint-lg) {
+    order: 1;
+  }
+}
+
+.labelContainer {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xl;
+
+  .labelLine {
+    height: $border-width-base;
+    width: $spacing-xl;
+    background-color: $white-50;
+  }
+
+  .labelText {
+    font-size: $font-size-xs;
+    line-height: $line-height-none; // Uses 1rem from variables
+    font-weight: $font-weight-bold;
+    letter-spacing: $letter-spacing-widest;
+    color: $cyan;
+    text-transform: uppercase;
+  }
+}
+
+.heading {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-tight;
+  color: $headlines;
+  margin-bottom: $spacing-xxl;
+  line-height: 1.1;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    font-size: $font-size-4xl;
+  }
+
+  .faded {
+    color: $white-40;
+  }
+}
+
+.description {
+  font-size: $font-size-md;
+  color: $text;
+  line-height: $line-height-relaxed;
+  font-weight: $font-weight-light;
+  max-width: $container-xs-width;
+  margin-bottom: $spacing-xxl;
+
+  > * + * {
+    margin-top: $spacing-lg;
+  }
+}
+
+.quoteBlock {
+  border-left: 2px solid $cyan-40;
+  padding-left: $spacing-lg;
+  margin-bottom: $spacing-2xl;
+  position: relative;
+
+  &:last-of-type {
+    margin-bottom: $spacing-xxl;
+  }
+
+  .quoteText {
+    font-size: $font-size-ml;
+    color: $white-80;
+    font-weight: $font-weight-light;
+    font-style: italic;
+    line-height: $line-height-relaxed;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: $font-size-lg;
+    }
+  }
+
+  .quoteAuthor {
+    font-size: $font-size-xs;
+    color: $cyan;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-widest;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  order: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (min-width: $breakpoint-lg) {
+    order: 2;
+  }
+
+  .imagePattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient($white-05 1px, transparent 1px),
+      linear-gradient(90deg, $white-05 1px, transparent 1px);
+    background-size: 30px 30px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+  }
+
+  .imagePlaceholderText {
+    position: relative;
+    z-index: 20;
+    padding: $spacing-sm $spacing-lg;
+    background-color: transparent;
+    font-size: $font-size-xs;
+    font-family: monospace;
+    color: $white-40;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+    text-align: center;
+  }
+}

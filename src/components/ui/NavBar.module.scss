@@ -1,0 +1,146 @@
+@use '../../styles/variables' as *;
+
+.lpNavbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  transition: all 0.3s ease;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid transparent;
+
+}
+
+.lpNavbar.scrolled {
+  background-color: $background;
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid $cyan-05;
+  padding: 1rem 0;
+}
+
+.lpNavInner {
+  max-width: 80%; 
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 50px;
+}
+
+.lpLogoWrap {
+  cursor: pointer;
+}
+
+.lpNavLinks {
+  display: none; 
+}
+
+.lpNavBtn {
+  background: none;
+  border: none;
+  color: $white-60;
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin: 0 1rem;
+  color: $headlines
+}
+
+.lpNavBtn:hover {
+  color: white;
+}
+
+.lpHeaderAuditBtn {
+  display: none; /* Wird durch Media Query weiter unten auf flex gesetzt, das passt! */
+  position: relative; /* WICHTIG für das ::before Element */
+  overflow: hidden;
+  background: linear-gradient(to bottom right, $cyan-30, transparent);
+  border: 1px solid $cyan-30;
+  color: $headlines;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.3s ease; /* Nur der Rahmen wird hier animiert */
+  align-items: center;
+  gap: 0.5rem;
+
+  /* Unser unsichtbarer Hover-Gradient */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, $cyan-60, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+  }
+}
+
+.lpHeaderAuditBtn:hover {
+  border-color: $cyan-60;
+}
+
+.lpHeaderAuditBtn:hover::before {
+  opacity: 1;
+}
+
+.lpNavActions {
+  display: none;
+}
+
+.lpMobileMenuToggle {
+  display: block;
+  background: none;
+  border: none;
+  color: $cyan;
+  cursor: pointer;
+}
+
+.auditContent {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+}
+
+.auditIcon {
+  width: 0.75rem;  
+  height: 0.75rem; 
+  transition: transform 0.3s ease;
+  display: block; 
+}
+
+.lpHeaderAuditBtn:hover .auditIcon {
+  transform: translateX(0.125rem); 
+}
+
+/* --- Media Queries für die Navbar --- */
+
+@media (min-width: 768px) {
+  .lpNavActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem; 
+  }
+  
+  .lpNavLinks { 
+    display: flex; 
+    align-items: center; 
+    gap: 2rem; 
+  }
+  
+  .lpHeaderAuditBtn { 
+    display: flex; 
+  }
+  
+  .lpMobileMenuToggle { 
+    display: none; 
+  }
+}

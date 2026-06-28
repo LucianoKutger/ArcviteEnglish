@@ -1,0 +1,175 @@
+@use "../../styles/variables" as *;
+
+.section {
+  position: relative;
+  z-index: 10;
+  padding: $spacing-6xl $spacing-lg;
+  background-color: $background;
+  border-top: $border-width-base solid $cyan-05;
+}
+
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+}
+
+.headerContainer {
+  margin-bottom: $spacing-4xl;
+}
+
+.title {
+  font-size: $font-size-xl;
+  line-height: $line-height-lg;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-tight;
+  margin-bottom: $spacing-md;
+  color: $headlines;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+    line-height: $line-height-none;
+  }
+}
+
+.subtitle {
+  color: $text;
+  font-size: $font-size-md;
+  line-height: $line-height-base;
+  max-width: $layout-max-width-subtitle;
+}
+
+.contentBox {
+  position: relative;
+  overflow: hidden;
+  border-radius: $radius-lg;
+  border: $border-width-base solid $cyan-10;
+  background-color: $black;
+  padding: $spacing-xl;
+
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-xxl;
+  }
+}
+
+.gradientBackground {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to bottom right, $cyan-05, transparent, transparent);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-xl;
+  position: relative;
+  z-index: 10;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.bottomSection {
+  position: relative;
+  z-index: 10;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-3xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.quote {
+  font-size: $font-size-lg;
+  color: $text;
+  font-weight: $font-weight-light;
+  line-height: $line-height-relaxed;
+  max-width: $layout-max-width-quote;
+  margin: 0 auto $spacing-xxl;
+  text-align: center;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-xl;
+  }
+}
+
+.strongP {
+  color: $cyan;
+  font-weight: $font-weight-medium;
+}
+
+.buttonWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.ctaButton {
+  position: relative;
+  overflow: hidden; 
+  padding: $spacing-md $spacing-2xl;
+  background: linear-gradient(to bottom right, $cyan-50, transparent);
+  color: $headlines;
+  border: $border-width-base solid $cyan-50;
+  font-weight: $font-weight-bold;
+  letter-spacing: $letter-spacing-widest;
+  text-transform: uppercase;
+  border-radius: $radius-full;
+  transition: border-color $transition-base; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, $cyan-70, transparent);
+    opacity: 0;
+    transition: opacity $transition-base;
+    z-index: 0;
+  }
+
+  &:hover {
+    border-color: $cyan-70;
+
+    &::before {
+      opacity: 1;
+    }
+
+    .chevronIcon {
+      transform: translateX($spacing-xxs);
+    }
+  }
+}
+
+.buttonContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.chevronIcon {
+  width: $spacing-md;
+  height: $spacing-md;
+  transition: transform $transition-base;
+}
+
+.disclaimer {
+  font-size: $font-size-xxs;
+  color: $white-30;
+  font-weight: $font-weight-light;
+  font-style: italic;
+  margin-top: $spacing-xs;
+}

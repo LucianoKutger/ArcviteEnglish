@@ -1,0 +1,57 @@
+@use "../../styles/variables" as *;
+
+.syncSection {
+  position: relative;
+  z-index: 10;
+  padding: $spacing-5xl 0;
+  background-color: $background;
+  border-top: $border-width-base solid $cyan-05;
+  overflow: hidden;
+  min-height: $layout-min-height-hero;
+
+  .syncContainer {
+    max-width: $container-max-width;
+    margin: 0 auto;
+    padding: 0 $spacing-lg;
+    position: relative;
+    z-index: 10;
+  }
+
+  .syncHeader {
+    margin-bottom: $spacing-3xl;
+  }
+
+  .syncTitle {
+    font-size: $font-size-xl;
+    line-height: $line-height-lg;
+    font-weight: $font-weight-semibold;
+    letter-spacing: $letter-spacing-tight;
+    margin: 0 0 $spacing-md 0;
+    color: $headlines;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: $font-size-3xl;
+      line-height: $line-height-none;
+    }
+  }
+
+  .syncSubtitle {
+    color: $text;
+    font-size: $font-size-md;
+    line-height: $line-height-base;
+    margin: 0;
+  }
+
+  .syncGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: $spacing-xl;
+    position: relative;
+    z-index: 20;
+    align-items: flex-start;
+
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
