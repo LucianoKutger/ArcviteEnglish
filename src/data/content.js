@@ -225,7 +225,7 @@ export const syncCardsData = [
       "Long-term trend detection for recovery"
     ],
     className: "relative z-20 bg-[#0A0A0A]",
-    opacity: 0.75
+ 
   },
   {
     id: "Clinical Lab",
@@ -242,6 +242,7 @@ export const syncCardsData = [
       "Detailed medical consultation"
     ],
     className: "relative z-20 bg-[#0A0A0A]",
+  
   },
   {
     id: "Gene Analysis",
@@ -257,6 +258,7 @@ export const syncCardsData = [
       "Immune capacity / Immune age"
     ],
     className: "bg-[#0C0C0C] border-[#E5D9B6]/30 shadow-[0_0_30px_rgba(0,0,0,0.5)]",
+    
   },
   {
     id: "Data Fusion",
@@ -273,6 +275,7 @@ export const syncCardsData = [
       "Anonymized cloud infrastructure"
     ],
     className: "bg-[#0C0C0C] border-[#E5D9B6]/30 shadow-[0_0_30px_rgba(0,0,0,0.5)]",
+  
     wide: true 
   }
 ];
@@ -399,7 +402,7 @@ export const methodologySegments = [
     hex: "#5EEAD4", 
     radius: 540, 
     thickness: 6, 
-    description: "Your Polar Star. In the arch model, the dream is the highest authority according to which we align everything. It defines the guardrails for your Strategic Vision, your Neuro-Biochemistry, and your Core Effects. Everything follows the goal.",
+    description: "Your Polar Star. In the Arc Model, the dream is the highest authority according to which we align everything. It defines the guardrails for your Strategic Vision, your Neuro-Biochemistry, and your Core Effects. Everything follows the goal.",
     listItems: null
   }
 ];

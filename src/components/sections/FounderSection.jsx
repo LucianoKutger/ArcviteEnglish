@@ -2,6 +2,7 @@ import React from 'react';
 import FadeOutSection from '../visuals/FadeoutSection';
 import BackgroundGlow from '../visuals/BackgroundGlow';
 import styles from './FounderSection.module.scss';
+import founderPic from '../../assets/founderPic.png';
 
 const FounderSection = () => {
   return (
@@ -17,13 +18,14 @@ const FounderSection = () => {
             </div>
 
             <h2 className={styles.heading}>
-              "IF YOU THINK BIG,<br />
-              <span className={styles.faded}>TRY THINKING BIGGER."</span>
+              Human Biology.<br/>Mathematically.<br/>Optimized.
+
+              
             </h2>
 
             <div className={styles.description}>
               <p>
-                The arch model is the distillate of intensive systems theory and the analysis of people with an unrelenting obsession for their goals. It is a framework that makes invisible friction losses visible. We eliminate the gap between your vision and actual execution.
+                The Arc Model is the distillate of intensive systems theory and the analysis of people with an unrelenting obsession for their goals. It is a framework that makes invisible friction losses visible. We eliminate the gap between your vision and actual execution.
               </p>
             </div>
             
@@ -49,11 +51,7 @@ const FounderSection = () => {
           </div>
 
           <div className={styles.imageContainer}>
-              <div className={styles.imagePattern} />
-              
-              <div className={styles.imagePlaceholderText}>
-                [Bild: Andreas <br/> (weicher Übergang in den Hintergrund)]
-              </div>
+                <img className={styles.founderPic} src={founderPic} alt='founder' />
           </div>
 
         </div>

@@ -22,6 +22,7 @@
   }
 }
 
+
 .textContent {
   display: flex;
   flex-direction: column;
@@ -60,9 +61,16 @@
   font-size: $font-size-2xl;
   font-weight: $font-weight-semibold;
   letter-spacing: $letter-spacing-tight;
-  color: $headlines;
+
   margin-bottom: $spacing-xxl;
   line-height: 1.1;
+  background: $cyan;
+  
+  -webkit-background-clip: text;
+  background-clip: text;
+  
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 
   @media (min-width: $breakpoint-md) {
     font-size: $font-size-3xl;
@@ -132,29 +140,15 @@
 
   @media (min-width: $breakpoint-lg) {
     order: 2;
+   
   }
 
-  .imagePattern {
-    position: absolute;
-    inset: 0;
-    background-image: 
-      linear-gradient($white-05 1px, transparent 1px),
-      linear-gradient(90deg, $white-05 1px, transparent 1px);
-    background-size: 30px 30px;
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
-  }
+}
 
-  .imagePlaceholderText {
-    position: relative;
-    z-index: 20;
-    padding: $spacing-sm $spacing-lg;
-    background-color: transparent;
-    font-size: $font-size-xs;
-    font-family: monospace;
-    color: $white-40;
-    text-transform: uppercase;
-    letter-spacing: $letter-spacing-wide;
-    text-align: center;
-  }
+.founderPic{
+  width: auto;          
+  height: auto;         
+  max-width: 100%;      
+  max-height: 500px;    
+  display: block;
 }

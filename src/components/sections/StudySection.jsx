@@ -3,13 +3,14 @@ import StudyCard from '../cards/StudyCard';
 import FadeOutSection from '../visuals/FadeoutSection';
 import BackgroundGlow from '../visuals/BackgroundGlow';
 import styles from './StudySection.module.scss';
+import { useNavigate } from 'react-router-dom';
 
 import { studiesData } from "../../data/content";
 
 const StudySection = () => {
-
+  const navigate = useNavigate();
   const handleStudyClick = (viewName, targetId) => {
-    console.log(`Navigiere zu View: ${viewName}, Target ID: ${targetId}`);
+    navigate('/studies');
   };
 
   return (

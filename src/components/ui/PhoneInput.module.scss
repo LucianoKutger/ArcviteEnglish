@@ -1,0 +1,40 @@
+@use "../../styles/variables" as *;
+
+.phoneFieldGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  border-bottom: 1px solid $white-10; // Übernimmt die untere Linie global für das gesamte Feld
+  transition: border-color 0.3s ease;
+  width: 100%;
+
+  &:focus-within {
+    border-bottom-color: $cyan; // Färbt die Linie, sobald Select oder Input aktiv sind
+  }
+}
+
+.countrySelect {
+  background: transparent;
+  border: none;
+  color: $text;
+  padding: 0.75rem 0; // Exakt gleiches vertikales Padding wie dein FormInput
+  font-size: 0.875rem;
+  outline: none;
+  cursor: pointer;
+  
+  option {
+    background-color: $background; // Verhindert weißen Hintergrund im Dropdown bei Darkmode
+    color: $text;
+  }
+}
+
+// Deaktiviert die originale border-bottom des Standard-Inputs, 
+// da die Linie jetzt vom übergeordneten Container gesteuert wird.
+.customInputOverride {
+  border-bottom: none !important;
+  
+  &:focus {
+    border-bottom-color: transparent !important;
+    box-shadow: none !important;
+  }
+}

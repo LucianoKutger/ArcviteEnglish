@@ -32,17 +32,14 @@ const VisionSection = () => {
               <strong className={styles.strongText}> &#10140; An invisible limit.</strong>
             </p>
             <p className={styles.pText}>
-              Despite eiserner discipline, one's own body becomes the bottleneck for the next<br/>growth level.
-              Brain fog during critical decisions, the inevitable<br/>
-              energy crash in the afternoon, and the creeping feeling that business success is<br/>paid for with
-              one's own substance.
+             Despite unwavering discipline, one's own body becomes the bottleneck for the next growth level. Brain fog during critical decisions, the inevitable energy crash in the afternoon, and the creeping feeling that business success is paid for with one's own substance.
             </p>
             <p>
               <strong className={styles.strongText}>Arcvite was founded to close this gap.</strong>
             </p>
             <p className={styles.pText}>
               We understand health not as a lifestyle attribute, but as a high-performance<br/>structure. 
-              Based on our proprietary arch model (the Arc-System), we build<br/>a foundation that goes far beyond conventional coaching.
+              Based on our proprietary arch model (the Arc-System), we build<br/>a foundation that goes far beyond conventional analysis.
             </p>
             <p>
               <strong className={styles.strongText}>Our Goal<br/><br/>You stand at the top not despite, but because of your physical and<br/>mental condition.</strong>
@@ -51,9 +48,9 @@ const VisionSection = () => {
           
           <div className={styles.featuresGrid}>
             {[
-              { title: "Lifespan", desc: "Extension of the health span through preventive medicine.", icon: <Infinity className={styles.featureIcon} /> },
-              { title: "Resilience", desc: "Building an immune system that does not buckle under high pressure.", icon: <Shield className={styles.featureIcon} /> },
-              { title: "Clarity", desc: "Lasting cognitive focus – without dependency on stimulants.", icon: <Brain className={styles.featureIcon} /> },
+              { title: "Lifespan", desc: "Optimizing health-span metrics through data-driven management.", icon: <Infinity className={styles.featureIcon} /> },
+              { title: "Resilience", desc: "Enhancing biological resilience to sustain peak performance.", icon: <Shield className={styles.featureIcon} /> },
+              { title: "Clarity", desc: "Supporting cognitive focus through precision data insights and metabolic optimization.", icon: <Brain className={styles.featureIcon} /> },
             ].map((item, i) => (
               <div key={i} className={styles.featureItem}>
                 <div className={styles.iconWrapper}>

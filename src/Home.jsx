@@ -30,9 +30,7 @@ const Home = () => {
       <HomeSection scrollToSection={scrollToSection} />
       <VisionSection />
       <MethodologySection />
-      <section>
-        <StudySection />
-      </section>
+      <StudySection />
       <FounderSection />
       <BioSyncSection />
       <ProtocolsSection scrollToSection={scrollToSection} />

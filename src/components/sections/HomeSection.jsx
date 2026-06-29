@@ -5,7 +5,6 @@ import { ArrowUpRight } from 'lucide-react';
 import HeroFlowLines from '../visuals/HeroFlowLines';
 import styles from './HomeSection.module.scss'; 
 
-
 const HomeSection = ({ scrollToSection }) => {
 
   const { scrollY } = useScroll();
@@ -19,33 +18,39 @@ const HomeSection = ({ scrollToSection }) => {
         <div className={styles.lpHeroContainer}>
           <motion.div 
             style={{ opacity: heroOpacity, y: heroY }} 
-            className={styles.lpHeroGrid}
+            className={styles.lpHeroContent}
           >
-            <div className={styles.lpHeroTextCol}>
-              <h1 className={styles.lpHeroH1}>
-                <span className={styles.heroGradientText}>
-                  Your biology should not be the limit of your ambitions.
-                </span>
-              </h1>
-              <p className={styles.lpHeroP}>
-                We are your external operating system for maximum biological load capacity. We forge complex medical data into your precise, action-oriented blueprint. Performance without compromise.              </p>
-            </div>
+            {/* Überschrift über die volle Breite */}
+            <h1 className={styles.lpHeroH1}>
+              <span className={styles.heroGradientText}>
+                Your medical data <span className={styles.specialFont}>~ fused ~</span><br/> for peak performance
+              </span>
+            </h1>
 
-            <div className={styles.lpHeroCtaCol}>
-              <button 
-                onClick={() => scrollToSection('audit')}
-                className={styles.lpCtaWrapperBtn}
-              >
-                <div className={styles.lpCtaInner}>
-                  <span className={styles.lpHeroBtnText}>Secure audit</span>
-                  <div className={styles.lpCtaIconBox}>
-                    <ArrowUpRight className="w-5 h-5" />
+            {/* Flexibles Grid: Text links nutzt den gesamten Restplatz, Button rechts komprimiert */}
+            <div className={styles.lpHeroGrid}>
+              <div className={styles.lpHeroTextCol}>
+                <p className={styles.lpHeroP}>
+                  We are your external system for biological resilience and precision data. We transform complex biometric signals into precise, action-oriented blueprints for performance and health. Optimization and data-driven insights without compromise
+                </p>
+              </div>
+
+              <div className={styles.lpHeroCtaCol}>
+                <button 
+                  onClick={() => scrollToSection('audit')}
+                  className={styles.lpCtaWrapperBtn}
+                >
+                  <div className={styles.lpCtaInner}>
+                    <span className={styles.lpHeroBtnText}>Secure audit</span>
+                    <div className={styles.lpCtaIconBox}>
+                      <ArrowUpRight className="w-5 h-5" />
+                    </div>
                   </div>
-                </div>
-              </button>
-              <p className={styles.lpCapacityNote}>
-                * Capacity strictly limited to 4 new newcomers per month to guarantee maximum quality of care.
-              </p>
+                </button>
+                <p className={styles.lpCapacityNote}>
+                  * Capacity strictly limited to 4 new newcomers per month to guarantee maximum quality of care.
+                </p>
+              </div>
             </div>
           </motion.div>
         </div>

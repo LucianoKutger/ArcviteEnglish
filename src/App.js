@@ -6,6 +6,7 @@ import Navbar from './components/ui/Navbar';
 import Home from './Home';                   
 import LegalNotice from './components/LegalNotice';
 import PrivacySettings from './components/PrivacySettings'
+import StudyDetails from './components/StudyDetails';
 
  
 //styles
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/impressum" element={<LegalNotice />} />
             <Route path="/datenschutz" element={<PrivacySettings />} />
+            <Route path="/studies" element={<StudyDetails />}/>
           </Routes>
         </div>
 

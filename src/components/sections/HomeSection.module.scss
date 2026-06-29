@@ -10,6 +10,13 @@
   background-color: $background;
 }
 
+.specialFont{
+  font-family: $font-serif;
+  font-style: italic;
+  display: inline-block;
+  transform: skewX(-10deg);
+  
+}
 .lpHeroContainer {
   position: relative;
   z-index: 10;
@@ -19,14 +26,22 @@
   padding: $spacing-6xl $spacing-lg;
 }
 
+.lpHeroContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .lpHeroGrid {
   display: grid;
   grid-template-columns: 1fr;
   gap: $spacing-xl;
-  align-items: center;
+  align-items: flex-start;
 
   @media (min-width: $breakpoint-lg) {
-    grid-template-columns: 80% 20%;
+    /* 1fr gibt dem Text maximalen Platz, auto zieht den Button kompakt nach rechts */
+    grid-template-columns: 1fr auto; 
+    gap: $spacing-3xl;
   }
 }
 
@@ -39,21 +54,35 @@
 
 .lpHeroH1 {
   font-weight: $font-weight-semibold;
-  margin-bottom: $spacing-xl;
+  margin-bottom: $spacing-xxl;
   line-height: $line-height-tight;
   letter-spacing: $letter-spacing-tight;
+  width: 100%;
 }
+
 
 .heroGradientText {
   display: block;
   font-size: $font-size-3xl;
-  line-height: $line-height-none;
+  
+  /* 1. Line-Height leicht erhöhen, damit die Zeilen bei <br/> nicht kollidieren */
+  line-height: $line-height-tight; 
+  
   color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
   background-image: linear-gradient(to bottom right, $green-mint, $cyan, $skyblue);
 
+  /* 2. Padding unten gibt dem Clipping-Bereich Platz für die 'p'-Bögen */
+  padding-bottom: 0.1em;
+  /* Optional: Negativer Margin kompensiert den Layout-Shift nach unten */
+  margin-bottom: -0.1em; 
+
   @media (min-width: $breakpoint-md) {
+    font-size: $font-size-4xl;
+  }
+
+  @media (min-width: $breakpoint-lg) {
     font-size: $font-size-4xl;
   }
 
@@ -62,11 +91,12 @@
   }
 }
 
+
 .lpHeroP {
   font-size: $font-size-ml;
   color: $text;
-  max-width: $container-md-width;
-  margin-bottom: $spacing-xxl;
+  max-width: 100%; /* Begrenzung aufgehoben, damit der Text sich in 2 Zeilen strecken kann */
+  margin-bottom: 0;
   font-weight: $font-weight-light;
   line-height: $line-height-loose;
 
@@ -84,6 +114,7 @@
 
   @media (min-width: $breakpoint-lg) {
     align-items: flex-end;
+    padding-bottom: 0;
   }
 }
 

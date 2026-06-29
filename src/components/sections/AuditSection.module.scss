@@ -62,6 +62,13 @@
   z-index: 10;
   max-width: 42rem;
   margin: 0 auto;
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    box-shadow: none; /* Verhindert zusätzliche Schatten-Overlays mancher Browser */
+  }
+  
 }
 
 .inputGrid {
@@ -193,4 +200,103 @@
   @media (min-width: $breakpoint-md) {
     font-size: $font-size-xs;
   }
+}
+
+/* Fehler-Zustand für FormInput-Wrapper (Nur Labels werden rot) */
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  &.hasError {
+    label, p, span {
+      color: #ef4444 !important; 
+    }
+    // Keine Border- oder Box-Shadow-Änderungen für Inputs hier!
+  }
+}
+
+/* Fehler-Zustand für die Goals-Sektion (Nur das Haupt-Label wird rot) */
+.goalsSection.hasError {
+  .goalsLabel {
+    color: #ef4444 !important;
+  }
+}
+
+/* Terms of Service Checkbox & Label Styles */
+.tosSection {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+  padding: 0 $spacing-xs;
+  transition: color $transition-base;
+
+  &.hasError {
+    .tosLabel {
+      color: #ef4444 !important;
+    }
+  }
+}
+
+.tosCheckbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: $cyan;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  border: 1px solid $white-10;
+  background-color: transparent;
+}
+
+.tosLabel {
+  font-size: $font-size-sm;
+  color: $white-60;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tosLink {
+  color: $cyan;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $cyan-40;
+    text-decoration: underline;
+  }
+}
+
+/* Schlichte globale Fehlermeldung (Nur Text, kein Background/Padding) */
+.errorMessage {
+  color: #ef4444;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  text-align: center;
+  margin: 0; /* Margin entfernen, da die Abstände vom Container gehalten werden */
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.errorContainer {
+  min-height: 1.5rem; /* Hält den Platz für die Fehlermeldung starr reserviert */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: $spacing-md;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.successMessage {
+  color: #10b981; // Modernes Emerald-Grün für Erfolg
+  font-size: $font-size-sm;
+  font-weight: 500;
+  text-align: center;
+  margin-top: $spacing-md;
+  margin-bottom: 0;
+  animation: fadeIn 0.2s ease-in-out;
 }

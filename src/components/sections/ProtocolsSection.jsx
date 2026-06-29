@@ -8,13 +8,14 @@ import SolutionModal from '../ui/SolutionModal';
 import { solutions } from '../../data/content'; // Pfad angepasst
 import styles from './ProtocolsSection.module.scss';
 
+
 const ProtocolsSection = ({ scrollToSection }) => {
   // Die Modal-Logik lebt jetzt lokal in dieser Section
   const [selectedSolution, setSelectedSolution] = useState(null);
 
   return (
     <FadeOutSection id="protokolle" className={styles.section} delayPercentage={0.65}>
-      
+  
            <div className={styles.container}>
           <div className={styles.headerContainer}>
             <h2 className={styles.title}>The Arcvite <br/> Full-Spectrum Solution</h2>

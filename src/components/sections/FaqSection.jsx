@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
-
+import { Link } from 'react-router-dom';
 import FAQItem from '../cards/Faq';
 import ArcviteLogoPic from '../../assets/ArcviteLogoPic.png';
 import { faqs } from '../../data/content'; 
 import styles from './FaqSection.module.scss';
 
 const FaqSection = ({ scrollToSection }) => {
-
+  
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   return (
@@ -46,8 +46,8 @@ const FaqSection = ({ scrollToSection }) => {
               </div>
             </div>
             <div className={styles.linksContainer}>
-              <a href="/impressum" className={styles.footerLink}>Legal Notice</a>
-              <a href="/datenschutz" className={styles.footerLink}>Privacy Policy</a>
+              <Link to="/impressum" className={styles.footerLink}>Legal Notice</Link>
+              <Link to="/datenschutz" className={styles.footerLink}>Privacy Policy</Link>
             </div>
             {/* Unnecessary copyrightContainer div removed for a flatter DOM */}
             <p className={styles.copyright}>© 2026 Arcvite</p>
