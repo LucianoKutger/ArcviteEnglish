@@ -1,4 +1,4 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .section {
   position: relative;
@@ -7,7 +7,14 @@
   border-top: $border-width-base solid $cyan-05;
   background-color: $background;
   overflow: hidden;
-  min-height: $layout-min-height-methodology;
+  min-height: auto;
+  height: auto;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+    border-top: none;
+    min-height: auto;
+  }
 }
 
 .backgroundEffect {
@@ -36,13 +43,21 @@
   max-width: $container-max-width;
   margin: 0 auto;
   padding-inline: $spacing-lg;
-  height: 850px;
+  height: auto; // <-- VERÄNDERT: Von 850px auf auto für dynamischen Content-Fluss
+
+  @media (max-width: $breakpoint-md) {
+    height: auto;
+  }
 }
 
 .flexContainer {
   display: flex;
   flex-direction: column;
   gap: $spacing-3xl;
+
+  @media (max-width: $breakpoint-md) {
+    gap: $spacing-xl;
+  }
 }
 
 .textColumn {
@@ -50,6 +65,10 @@
   max-width: $container-max-width;
   margin: 0 auto;
   padding: $spacing-4xl $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-4xl $spacing-lg $spacing-xl;
+  }
 }
 
 .headline {
@@ -83,5 +102,16 @@
   max-width: 100%;
   margin: 0 auto;
   padding-inline: $spacing-3xl;
-  height: 850px;
+  height: auto; // Default für flexiblen Fluss auf Mobile
+  min-height: 600px;
+
+  // --- VERÄNDERT: Behält die feste Höhe exklusiv auf Desktop ---
+  @media (min-width: 1024px) {
+    height: auto;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding-inline: 0px;
+    height: auto;
+  }
 }

@@ -2,12 +2,13 @@
 
 .lpNavbar {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   transition: all 0.3s ease;
   padding: 1.5rem 0;
   border-bottom: 1px solid transparent;
-
 }
 
 .lpNavbar.scrolled {
@@ -18,61 +19,74 @@
 }
 
 .lpNavInner {
-  max-width: 80%; 
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 $spacing-lg;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   height: 50px;
+
+  container-type: inline-size;
+  container-name: navbar-inner;
+
+  @media (min-width: $breakpoint-lg) {
+    // --- ANGEPASST: Untergrenze auf 920px gesenkt, damit die Bar auf 1024px-Screens atmen kann ---
+
+    padding: 0 1.5rem;
+    justify-content: center;
+
+    // --- OPTIMIERT: Sanfterer cqi-Faktor für eine weitaus reaktivere Kompression ---
+    gap: clamp(1rem, 5cqi, 6.5rem);
+  }
 }
 
 .lpLogoWrap {
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .lpNavLinks {
-  display: none; 
+  display: none;
 }
 
 .lpNavBtn {
   background: none;
   border: none;
-  color: $white-60;
   text-transform: uppercase;
-  font-size: 1rem;
   letter-spacing: 0.1em;
   cursor: pointer;
   transition: color 0.2s;
-  margin: 0 1rem;
-  color: $headlines
-}
+  color: $headlines;
+  white-space: nowrap;
+  margin: 0;
 
-.lpNavBtn:hover {
-  color: white;
+  &:hover {
+    color: white;
+  }
 }
 
 .lpHeaderAuditBtn {
-  display: none; /* Wird durch Media Query weiter unten auf flex gesetzt, das passt! */
-  position: relative; /* WICHTIG für das ::before Element */
+  display: none;
+  position: relative;
   overflow: hidden;
   background: linear-gradient(to bottom right, $cyan-30, transparent);
   border: 1px solid $cyan-30;
   color: $headlines;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 9999px;
-  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.3s ease; /* Nur der Rahmen wird hier animiert */
+  transition: border-color 0.3s ease;
   align-items: center;
   gap: 0.5rem;
+  flex-shrink: 0;
 
-  /* Unser unsichtbarer Hover-Gradient */
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom right, $cyan-60, transparent);
@@ -80,14 +94,13 @@
     transition: opacity 0.3s ease;
     z-index: 0;
   }
-}
 
-.lpHeaderAuditBtn:hover {
-  border-color: $cyan-60;
-}
-
-.lpHeaderAuditBtn:hover::before {
-  opacity: 1;
+  &:hover {
+    border-color: $cyan-60;
+    &::before {
+      opacity: 1;
+    }
+  }
 }
 
 .lpNavActions {
@@ -107,40 +120,86 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 0.5rem; 
+  gap: 0.5rem;
 }
 
 .auditIcon {
-  width: 0.75rem;  
-  height: 0.75rem; 
+  width: 0.75rem;
+  height: 0.75rem;
   transition: transform 0.3s ease;
-  display: block; 
+  display: block;
 }
 
 .lpHeaderAuditBtn:hover .auditIcon {
-  transform: translateX(0.125rem); 
+  transform: translateX(0.125rem);
 }
 
 /* --- Media Queries für die Navbar --- */
-
-@media (min-width: 768px) {
+@media (min-width: $breakpoint-lg) {
   .lpNavActions {
     display: flex;
     align-items: center;
-    gap: 1rem; 
+    gap: clamp(1rem, 1.5cqi, 1.5rem);
   }
-  
-  .lpNavLinks { 
-    display: flex; 
-    align-items: center; 
-    gap: 2rem; 
+
+  .lpNavLinks {
+    display: flex;
+    align-items: center;
+
+    // --- OPTIMIERT: cqi-Wert reduziert, um Kollisionen im Zwischenbereich komplett zu verhindern ---
+    gap: clamp(1rem, 3.8cqi, 4rem);
+    margin-inline: 0;
   }
-  
-  .lpHeaderAuditBtn { 
-    display: flex; 
+
+  .lpNavBtn {
+    font-size: clamp(0.95rem, 1cqi, 1.15rem);
+    white-space: nowrap;
   }
-  
-  .lpMobileMenuToggle { 
-    display: none; 
+
+  .lpHeaderAuditBtn {
+    display: flex;
+    font-size: clamp(0.95rem, 1cqi, 1.15rem);
+  }
+
+  .lpMobileMenuToggle {
+    display: none;
+  }
+}
+
+// --- Kompaktes 2-Zeilen-Layout für den Zwischenbereich ---
+@media (min-width: $breakpoint-lg) and (max-width: 1180px) {
+  .lpNavInner {
+    // Reduziert die großen Abstände zwischen Logo, Links und Button im Engpass
+    gap: clamp(0.75rem, 3cqi, 3rem);
+  }
+
+  .lpNavLinks {
+    // Komprimiert die Abstände zwischen den einzelnen Nav-Items kontrolliert nach unten
+    gap: clamp(0.75rem, 3cqi, 2rem);
+  }
+
+  .lpHeaderAuditBtn {
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    max-width: 8.5rem;
+    padding: 0.5rem 1rem;
+    flex-shrink: 0;
+  }
+
+  .auditContent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.15;
+    gap: 0.35rem;
+    width: 100%;
+  }
+
+  .auditIcon {
+    width: 0.65rem;
+    height: 0.65rem;
+    flex-shrink: 0;
   }
 }

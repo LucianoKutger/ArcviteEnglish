@@ -1,4 +1,4 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .section {
   position: relative;
@@ -8,6 +8,11 @@
   margin: 0 auto;
   border-top: $border-width-base solid $cyan-05;
   background-color: $background;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+    border-top: none;
+  }
 }
 
 .gridContainer {
@@ -21,7 +26,6 @@
     gap: $spacing-5xl;
   }
 }
-
 
 .textContent {
   display: flex;
@@ -58,27 +62,19 @@
 }
 
 .heading {
-  font-size: $font-size-2xl;
+  font-size: clamp(1.5rem, 8cqi, 5rem);
   font-weight: $font-weight-semibold;
   letter-spacing: $letter-spacing-tight;
 
   margin-bottom: $spacing-xxl;
   line-height: 1.1;
   background: $cyan;
-  
+
   -webkit-background-clip: text;
   background-clip: text;
-  
+
   -webkit-text-fill-color: transparent;
   color: transparent;
-
-  @media (min-width: $breakpoint-md) {
-    font-size: $font-size-3xl;
-  }
-
-  @media (min-width: $breakpoint-lg) {
-    font-size: $font-size-4xl;
-  }
 
   .faded {
     color: $white-40;
@@ -131,24 +127,83 @@
 
 .imageContainer {
   position: relative;
-  width: 100%;
   aspect-ratio: 3 / 4;
-  order: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  @media (min-width: $breakpoint-lg) {
-    order: 2;
-   
-  }
-
 }
 
-.founderPic{
-  width: auto;          
-  height: auto;         
-  max-width: 100%;      
-  max-height: 500px;    
+.founderPic {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 500px;
   display: block;
+  object-fit: contain; // Oder 'contain', falls das ganze Bild sichtbar sein soll
+}
+
+// --- NEU: Richtet Text und Bild auf Mobile nebeneinander aus ---
+.headerFlexContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+
+  container-type: inline-size;
+  container-name: founder-header;
+
+  @media (min-width: $breakpoint-lg) {
+    display: block;
+    margin-bottom: 0;
+    justify-content: space-between;
+  }
+}
+
+.headerTextGroup {
+  display: flex;
+  flex-direction: column;
+
+  // --- VERÄNDERT: Verhindert das künstliche Strecken der Box ---
+  flex: 1; // Hebt das flex: 1 auf Mobile auf
+  width: auto; // Die Box wird exakt so breit wie die längste Textzeile
+  max-width: 100%; // Darf sich voll entfalten
+  min-width: 0; // Sicherheitsnetz, damit der Text auf sehr kleinen Geräten nicht das Bild überlappt
+
+  @media (min-width: $breakpoint-lg) {
+    display: block;
+    width: auto;
+    max-width: none;
+  }
+}
+.mobileImage {
+  display: flex;
+  width: 35%;
+  max-width: 500px;
+
+  // --- NEU: Zentrierung innerhalb des Containers ---
+  justify-content: center; // Horizontal zentrieren
+  align-items: center; // Vertikal zentrieren
+
+  flex-shrink: 0;
+
+  @media (min-width: $breakpoint-lg) {
+    display: none !important;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    max-width: 260px;
+  }
+}
+
+// --- NEU: Ausblendung auf Mobile & Standard-Größe auf Desktop ---
+.desktopImage {
+  display: none;
+
+  @media (min-width: $breakpoint-lg) {
+    display: flex;
+    width: 100%; // <-- Erlaubt dem Bild wieder, seine gesamte Grid-Hälfte auszufüllen
+    order: 2;
+  }
 }

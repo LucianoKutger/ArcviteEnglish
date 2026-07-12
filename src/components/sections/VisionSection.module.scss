@@ -1,4 +1,4 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .section {
   position: relative;
@@ -6,6 +6,10 @@
   padding: $spacing-6xl $spacing-lg;
   border-top: $border-width-base solid $cyan-05;
   background-color: $background;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+  }
 
   .backgroundWrapper {
     position: absolute;
@@ -37,6 +41,9 @@
     z-index: 10;
     padding: $spacing-6xl $spacing-lg;
 
+    @media (max-width: $breakpoint-md) {
+      padding: $spacing-xs $spacing-xs;
+    }
     .heading {
       font-size: $font-size-2xl;
       font-weight: $font-weight-semibold;

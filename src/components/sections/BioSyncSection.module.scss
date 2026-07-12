@@ -1,4 +1,4 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .syncSection {
   position: relative;
@@ -8,6 +8,11 @@
   border-top: $border-width-base solid $cyan-05;
   overflow: hidden;
   min-height: $layout-min-height-hero;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+    border-top: none;
+  }
 
   .syncContainer {
     max-width: $container-max-width;

@@ -1,4 +1,4 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .section {
   position: relative;
@@ -6,6 +6,11 @@
   padding: $spacing-6xl $spacing-lg;
   background-color: $background;
   border-top: $border-width-base solid $cyan-05;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+    border-top: none;
+  }
 }
 
 .container {
@@ -36,7 +41,6 @@
   font-size: $font-size-md;
   line-height: $line-height-base;
   max-width: 100%;
-
 }
 
 .contentBox {
@@ -55,7 +59,12 @@
 .gradientBackground {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to bottom right, $cyan-05, transparent, transparent);
+  background-image: linear-gradient(
+    to bottom right,
+    $cyan-05,
+    transparent,
+    transparent
+  );
   opacity: 0.2;
   pointer-events: none;
 }
@@ -114,7 +123,7 @@
 
 .ctaButton {
   position: relative;
-  overflow: hidden; 
+  overflow: hidden;
   padding: $spacing-md $spacing-2xl;
   background: linear-gradient(to bottom right, $cyan-50, transparent);
   color: $headlines;
@@ -123,7 +132,7 @@
   letter-spacing: $letter-spacing-widest;
   text-transform: uppercase;
   border-radius: $radius-full;
-  transition: border-color $transition-base; 
+  transition: border-color $transition-base;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,7 +140,7 @@
   cursor: pointer;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom right, $cyan-70, transparent);

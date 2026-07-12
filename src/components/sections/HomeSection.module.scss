@@ -1,29 +1,62 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .lpHeroSection {
   position: relative;
   z-index: 10;
-  min-height: $layout-min-height-screen;
   display: flex;
   align-items: center;
   overflow: hidden;
   background-color: $background;
+
+  // --- NEU: Schafft den Platz unter der fixed Navbar für alle Bildschirmgrößen ---
+  padding-top: calc($spacing-6xl + 8rem);
+
+  @media (max-width: 1023px) {
+    // Mobilbereich angepasst an deine schmalere Mobile-Navbar
+    padding-top: calc($spacing-4xl + 3rem);
+  }
 }
 
-.specialFont{
+.specialFont {
   font-family: $font-serif;
   font-style: italic;
   display: inline-block;
   transform: skewX(-10deg);
-  
+  will-change: transform;
+  vertical-align: baseline;
+
+  /* HIER: Gleiches Spacing für das Wort 'fused' */
+  letter-spacing: -0.025rem;
+
+  background-image: linear-gradient(
+    to bottom right,
+    $green-mint,
+    $cyan,
+    $skyblue
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
+
 .lpHeroContainer {
   position: relative;
   z-index: 10;
   width: 100%;
   max-width: $container-max-width;
   margin: 0 auto;
-  padding: $spacing-6xl $spacing-lg;
+
+  // --- VERÄNDERT: padding-top entfernt (0), da dies nun die Sektion regelt.
+  // Das untere Padding bleibt für den Abstand zur nachfolgenden Sektion aktiv.
+  padding: 0 $spacing-lg 16rem $spacing-lg;
+
+  container-type: inline-size;
+  container-name: home-hero;
+
+  @media (max-width: $breakpoint-md) {
+    // Symmetrischer Rückfallschutz für Mobile
+    padding: 0 $spacing-lg $spacing-xl $spacing-lg;
+  }
 }
 
 .lpHeroContent {
@@ -40,7 +73,7 @@
 
   @media (min-width: $breakpoint-lg) {
     /* 1fr gibt dem Text maximalen Platz, auto zieht den Button kompakt nach rechts */
-    grid-template-columns: 1fr auto; 
+    grid-template-columns: 1fr auto;
     gap: $spacing-3xl;
   }
 }
@@ -55,47 +88,47 @@
 .lpHeroH1 {
   font-weight: $font-weight-semibold;
   margin-bottom: $spacing-xxl;
-  line-height: $line-height-tight;
-  letter-spacing: $letter-spacing-tight;
   width: 100%;
-}
 
-
-.heroGradientText {
-  display: block;
-  font-size: $font-size-3xl;
-  
-  /* 1. Line-Height leicht erhöhen, damit die Zeilen bei <br/> nicht kollidieren */
-  line-height: $line-height-tight; 
-  
-  color: transparent;
-  background-clip: text;
-  -webkit-background-clip: text;
-  background-image: linear-gradient(to bottom right, $green-mint, $cyan, $skyblue);
-
-  /* 2. Padding unten gibt dem Clipping-Bereich Platz für die 'p'-Bögen */
-  padding-bottom: 0.1em;
-  /* Optional: Negativer Margin kompensiert den Layout-Shift nach unten */
-  margin-bottom: -0.1em; 
+  /* --- VERÄNDERT: Nutzt jetzt cqi statt vw für die interne Skalierung --- */
+  font-size: clamp(1.35rem, 8.2cqi, 5rem);
+  line-height: 1.15;
+  letter-spacing: -0.025rem;
 
   @media (min-width: $breakpoint-md) {
     font-size: $font-size-4xl;
+    line-height: $line-height-heading;
   }
-
   @media (min-width: $breakpoint-lg) {
     font-size: $font-size-4xl;
   }
-
   @media (min-width: $breakpoint-xl) {
     font-size: $font-size-5xl;
   }
 }
+.heroGradientText {
+  display: inline;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-image: linear-gradient(
+    to bottom right,
+    $green-mint,
+    $cyan,
+    $skyblue
+  );
 
+  /* HIER: Setzt das enge H1-Spacing außer Kraft */
+  letter-spacing: -0.025rem; /* ODER: letter-spacing: 0.02em; falls du es noch weiter willst */
+
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
 
 .lpHeroP {
   font-size: $font-size-ml;
   color: $text;
-  max-width: 100%; /* Begrenzung aufgehoben, damit der Text sich in 2 Zeilen strecken kann */
+  max-width: 100%;
   margin-bottom: 0;
   font-weight: $font-weight-light;
   line-height: $line-height-loose;
@@ -123,19 +156,19 @@
   padding: $border-width-base;
   background: none;
   border-radius: $radius-lg;
-  border: none; 
+  border: none;
   cursor: pointer;
-  overflow: hidden; 
+  overflow: hidden;
   transform: translateZ(0);
   backface-visibility: hidden;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
-    inset: 0; 
+    inset: 0;
     background: linear-gradient(to bottom right, $cyan-30, transparent);
-    opacity: 0; 
-    transition: opacity $transition-base; 
+    opacity: 0;
+    transition: opacity $transition-base;
     z-index: 0;
     will-change: opacity;
     transform: translateZ(0);
@@ -202,5 +235,29 @@
 
   @media (min-width: $breakpoint-lg) {
     text-align: right;
+  }
+}
+
+.mobileBr {
+  display: inline;
+
+  @media (min-width: $breakpoint-lg) {
+    display: none; // Deaktiviert den Umbruch auf Desktop-Größe
+  }
+}
+
+.desktopBr {
+  display: none; // Auf Mobile und Tablet unsichtbar
+
+  @media (min-width: $breakpoint-lg) {
+    display: inline; // Erst ab Desktop (1024px) aktiv werden
+  }
+}
+
+.desktopSubHeader {
+  display: none;
+
+  @media (min-width: $breakpoint-lg) {
+    display: inline;
   }
 }

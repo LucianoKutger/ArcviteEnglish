@@ -1,4 +1,4 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 /* Basis-Styles */
 .footer {
@@ -7,6 +7,11 @@
   padding: $spacing-4xl 0;
   border-top: 1px solid $white-10;
   background-color: $background;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+    border-top: none;
+  }
 }
 
 .container {
@@ -66,9 +71,8 @@
   input:focus,
   textarea:focus {
     outline: none;
-    box-shadow: none; /* Verhindert zusätzliche Schatten-Overlays mancher Browser */
+    box-shadow: none;
   }
-  
 }
 
 .inputGrid {
@@ -149,12 +153,12 @@
 
   /* Invisible hover gradient overlaid */
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom right, $cyan-70, transparent);
     opacity: 0;
-    transition: opacity $transition-base; 
+    transition: opacity $transition-base;
     z-index: 0;
   }
 
@@ -173,7 +177,7 @@
 
 .submitButtonContent {
   position: relative;
-  z-index: 1; 
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,8 +213,10 @@
   width: 100%;
 
   &.hasError {
-    label, p, span {
-      color: #ef4444 !important; 
+    label,
+    p,
+    span {
+      color: #ef4444 !important;
     }
     // Keine Border- oder Box-Shadow-Änderungen für Inputs hier!
   }
@@ -287,8 +293,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .successMessage {

@@ -1,26 +1,29 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .studyContainer {
   position: relative;
-  width: 100%; 
+  width: 100%;
   min-height: $layout-min-height-screen;
   background-color: $background;
   border-top: solid $border-width-base $cyan-20;
-  
-  /* overflow-x: hidden;
-      overflow-y: visible; */
-  
-  
+
+  @media (max-width: $breakpoint-md) {
+    border-top: none;
+  }
 }
 
 /* Layout & Typography */
 .studysSection {
   position: relative;
   z-index: 10;
-  padding: 6rem 1rem 3rem 1rem;
+  padding: 6rem 1rem 16rem 1rem;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+  }
 }
 
 @media (min-width: 768px) {
@@ -69,7 +72,7 @@
   z-index: 10;
   margin: 0 auto;
 
-  @media (min-width: $breakpoint-md) {
+  @media (min-width: $breakpoint-lg) {
     flex-direction: row;
   }
 }
@@ -78,7 +81,7 @@
 .cardDivider {
   display: none;
 
-  @media (min-width: $breakpoint-md) {
+  @media (min-width: $breakpoint-lg) {
     display: block;
     flex-shrink: 0;
     width: 1px;
@@ -98,7 +101,7 @@
   margin: $spacing-lg 0;
   background: linear-gradient(to right, transparent, $cyan-40, transparent);
 
-  @media (min-width: $breakpoint-md) {
+  @media (min-width: $breakpoint-lg) {
     display: none;
   }
 }

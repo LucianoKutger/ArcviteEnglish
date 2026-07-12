@@ -1,4 +1,4 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 /* --- Hauptsektion --- */
 .section {
@@ -10,6 +10,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+    border-top: none;
+  }
 }
 
 /* --- FAQ Bereich --- */
@@ -82,7 +87,7 @@
     cursor: pointer;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
       background: linear-gradient(to bottom right, $cyan-60, transparent);
