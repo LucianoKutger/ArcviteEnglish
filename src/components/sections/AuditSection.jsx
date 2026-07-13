@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Send } from 'lucide-react';
-import { useForm, Controller } from 'react-hook-form'; 
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -12,12 +12,24 @@ import { goalOptions } from '../../data/content';
 import styles from './AuditSection.module.scss';
 
 const auditSchema = z.object({
-  firstName: z.string().min(2, "First Name (min. 2 characters)").max(20, "First Name (max. 20 characters)"),
-  lastName: z.string().min(2, "Last Name (min. 2 characters)").max(20, "Last Name (max. 20 characters)"),
-  email: z.string().email("a valid E-Mail address").max(40, "a Valid Email (max. 40 characters)"), 
-  phone: z.string().min(6, "a valid Phone Number").max(20, "a Valif Phone Number (max. 20 characters)"),
-  goals: z.array(z.string()).min(1, "Goals"),
-  tos: z.boolean().refine((val) => val === true, "Terms of Service"),
+  firstName: z
+    .string()
+    .min(2, 'First Name (min. 2 characters)')
+    .max(20, 'First Name (max. 20 characters)'),
+  lastName: z
+    .string()
+    .min(2, 'Last Name (min. 2 characters)')
+    .max(20, 'Last Name (max. 20 characters)'),
+  email: z
+    .string()
+    .email('a valid E-Mail address')
+    .max(40, 'a Valid Email (max. 40 characters)'),
+  phone: z
+    .string()
+    .min(6, 'a valid Phone Number')
+    .max(20, 'a Valif Phone Number (max. 20 characters)'),
+  goals: z.array(z.string()).min(1, 'Goals'),
+  tos: z.boolean().refine((val) => val === true, 'Terms of Service'),
 });
 
 const AuditSection = () => {
@@ -48,8 +60,14 @@ const AuditSection = () => {
 
     let cleanedPhoneBody = data.phone.trim();
     const currentCountry = COUNTRIES.find((c) => c.code === phoneCountry);
-    if (currentCountry && currentCountry.trunkPrefix && cleanedPhoneBody.startsWith(currentCountry.trunkPrefix)) {
-      cleanedPhoneBody = cleanedPhoneBody.slice(currentCountry.trunkPrefix.length);
+    if (
+      currentCountry &&
+      currentCountry.trunkPrefix &&
+      cleanedPhoneBody.startsWith(currentCountry.trunkPrefix)
+    ) {
+      cleanedPhoneBody = cleanedPhoneBody.slice(
+        currentCountry.trunkPrefix.length
+      );
     }
     const fullPhoneNumber = `${phoneCountry}${cleanedPhoneBody}`;
 
@@ -59,11 +77,11 @@ const AuditSection = () => {
     });
 
     // 1. React-Hook-Form-Zustände zurücksetzen
-    reset(); 
+    reset();
     setPhoneCountry('+49');
-    
+
     // 2. NEU: Key hochzählen, um die Autofill-Farbblöcke im Browser wegzusprengen!
-    setFormResetKey(prev => prev + 1);
+    setFormResetKey((prev) => prev + 1);
   };
 
   const hasErrors = Object.keys(errors).length > 0;
@@ -79,28 +97,49 @@ const AuditSection = () => {
           </div>
 
           {/* NEU: key={formResetKey} zwingt das Formular zum sauberen Remount */}
-          <form 
-            key={formResetKey} 
-            className={styles.form} 
-            onSubmit={handleSubmit(onSubmit)} 
-            noValidate 
+          <form
+            key={formResetKey}
+            className={styles.form}
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
             autoComplete="off"
           >
             <div className={styles.inputGrid}>
-              <div className={`${styles.inputWrapper} ${errors.firstName ? styles.hasError : ''}`}>
-                <FormInput label="First Name *" placeholder="John" {...register('firstName')} />
+              <div
+                className={`${styles.inputWrapper} ${errors.firstName ? styles.hasError : ''}`}
+              >
+                <FormInput
+                  label="First Name *"
+                  placeholder="John"
+                  {...register('firstName')}
+                />
               </div>
-              <div className={`${styles.inputWrapper} ${errors.lastName ? styles.hasError : ''}`}>
-                <FormInput label="Last Name *" placeholder="Doe" {...register('lastName')} />
+              <div
+                className={`${styles.inputWrapper} ${errors.lastName ? styles.hasError : ''}`}
+              >
+                <FormInput
+                  label="Last Name *"
+                  placeholder="Doe"
+                  {...register('lastName')}
+                />
               </div>
             </div>
 
             <div className={styles.inputGrid}>
-              <div className={`${styles.inputWrapper} ${errors.email ? styles.hasError : ''}`}>
-                <FormInput label="E-Mail *" type="email" placeholder="john@company.com" {...register('email')} />
+              <div
+                className={`${styles.inputWrapper} ${errors.email ? styles.hasError : ''}`}
+              >
+                <FormInput
+                  label="E-Mail *"
+                  type="email"
+                  placeholder="john@company.com"
+                  {...register('email')}
+                />
               </div>
-              
-              <div className={`${styles.inputWrapper} ${errors.phone ? styles.hasError : ''}`}>
+
+              <div
+                className={`${styles.inputWrapper} ${errors.phone ? styles.hasError : ''}`}
+              >
                 <Controller
                   name="phone"
                   control={control}
@@ -120,8 +159,12 @@ const AuditSection = () => {
               </div>
             </div>
 
-            <div className={`${styles.goalsSection} ${errors.goals ? styles.hasError : ''}`}>
-              <label className={styles.goalsLabel}>Goals * (multiple selection possible)</label>
+            <div
+              className={`${styles.goalsSection} ${errors.goals ? styles.hasError : ''}`}
+            >
+              <label className={styles.goalsLabel}>
+                Goals * (multiple selection possible)
+              </label>
               <Controller
                 name="goals"
                 control={control}
@@ -151,22 +194,36 @@ const AuditSection = () => {
               />
             </div>
 
-            <div className={`${styles.tosSection} ${errors.tos ? styles.hasError : ''}`}>
+            <div
+              className={`${styles.tosSection} ${errors.tos ? styles.hasError : ''}`}
+            >
               <input
                 type="checkbox"
                 id="tos"
                 className={styles.tosCheckbox}
-                {...register('tos', { onChange: () => { if (isSuccess) setIsSuccess(false); } })}
+                {...register('tos', {
+                  onChange: () => {
+                    if (isSuccess) setIsSuccess(false);
+                  },
+                })}
               />
               <label htmlFor="tos" className={styles.tosLabel}>
-                I have read and agree to the <Link to="/datenschutz" className={styles.tosLink}>Privacy Policy</Link> and
-                 consent to the processing of my data for the purpose of this audit request. *
+                I have read and agree to the{' '}
+                <Link to="/datenschutz" className={styles.tosLink}>
+                  Privacy Policy
+                </Link>{' '}
+                and consent to the processing of my data for the purpose of this
+                audit request. *
               </label>
             </div>
 
             {hasErrors && submitCount > 0 && (
               <p className={styles.errorMessage}>
-                Please provide the following: {Object.values(errors).map((e) => e.message).join(', ')}.
+                Please provide the following:{' '}
+                {Object.values(errors)
+                  .map((e) => e.message)
+                  .join(', ')}
+                .
               </p>
             )}
 
@@ -178,13 +235,19 @@ const AuditSection = () => {
 
             <button type="submit" className={styles.submitButton}>
               <span className={styles.submitButtonContent}>
-                Check availability
+                <span className={styles.submitButtonText}>
+                  <span>Check</span>
+                  <span>availability</span>
+                </span>
+
                 <Send className={styles.sendIcon} />
               </span>
             </button>
 
             <p className={styles.disclaimer}>
-              * To guarantee the depth and excellence of our service, we only accept a limited number of new clients per quarter. We will get back to you within 24 hours.
+              * To guarantee the depth and excellence of our service, we only
+              accept a limited number of new clients per quarter. We will get
+              back to you within 24 hours.
             </p>
           </form>
         </div>

@@ -3,13 +3,14 @@
 .lpHeroSection {
   position: relative;
   z-index: 10;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   overflow: hidden;
   background-color: $background;
 
   // --- NEU: Schafft den Platz unter der fixed Navbar für alle Bildschirmgrößen ---
-  padding-top: calc($spacing-6xl + 8rem);
+  padding-top: calc($spacing-6xl + 10rem);
 
   @media (max-width: 1023px) {
     // Mobilbereich angepasst an deine schmalere Mobile-Navbar
@@ -55,7 +56,7 @@
 
   @media (max-width: $breakpoint-md) {
     // Symmetrischer Rückfallschutz für Mobile
-    padding: 0 $spacing-lg $spacing-xl $spacing-lg;
+    padding: 0 $spacing-lg 16rem $spacing-lg;
   }
 }
 
@@ -68,7 +69,7 @@
 .lpHeroGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-xl;
+  gap: $spacing-3xl;
   align-items: flex-start;
 
   @media (min-width: $breakpoint-lg) {
@@ -91,20 +92,9 @@
   width: 100%;
 
   /* --- VERÄNDERT: Nutzt jetzt cqi statt vw für die interne Skalierung --- */
-  font-size: clamp(1.35rem, 8.2cqi, 5rem);
+  font-size: clamp(1rem, 10cqi, 5rem);
   line-height: 1.15;
   letter-spacing: -0.025rem;
-
-  @media (min-width: $breakpoint-md) {
-    font-size: $font-size-4xl;
-    line-height: $line-height-heading;
-  }
-  @media (min-width: $breakpoint-lg) {
-    font-size: $font-size-4xl;
-  }
-  @media (min-width: $breakpoint-xl) {
-    font-size: $font-size-5xl;
-  }
 }
 .heroGradientText {
   display: inline;
