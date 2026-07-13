@@ -24,6 +24,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "images:generate": "node scripts/generate-responsive-images.cjs",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -45,6 +46,7 @@
     ]
   },
   "devDependencies": {
-    "sass": "^1.99.0"
+    "sass": "^1.99.0",
+    "sharp": "^0.35.3"
   }
 }
