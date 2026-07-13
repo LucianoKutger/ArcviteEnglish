@@ -48,6 +48,7 @@ const FaqSection = ({ scrollToSection }) => {
                   variant="display"
                   sizes={imageSizes.logo}
                   pictureClassName={styles.logoPicture}
+                  loading="lazy"
                   alt="Arcvite Logo"
                 />
               </div>

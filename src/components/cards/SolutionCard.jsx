@@ -19,6 +19,7 @@ const SolutionCard = ({ item, onOpen, image }) => {
                      variant="card"
                      sizes={imageSizes.protocolCard}
                      pictureClassName={styles.imagePicture}
+                     loading="lazy"
                      alt=""
                    />
                </div>

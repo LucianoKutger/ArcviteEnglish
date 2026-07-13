@@ -9,7 +9,14 @@ const ResponsiveImage = ({ image, variant, sizes, pictureClassName, ...imageProp
       {sources.webp && (
         <source type="image/webp" srcSet={sources.webp} sizes={sizes} />
       )}
-      <img src={image.fallback} alt="" {...imageProps} />
+      <img
+        src={image.fallback}
+        width={image.width}
+        height={image.height}
+        decoding="async"
+        alt=""
+        {...imageProps}
+      />
     </picture>
   );
 };

@@ -34,6 +34,7 @@ const ExpandableCard = ({
               variant="card"
               sizes={wide ? imageSizes.bioSyncWide : imageSizes.bioSyncCard}
               alt={title} 
+              loading="lazy"
               pictureClassName={styles.cardPicture}
               className={styles.cardImage}
               style={{opacity: opacityVal}}

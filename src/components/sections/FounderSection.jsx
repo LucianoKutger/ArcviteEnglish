@@ -37,6 +37,7 @@ const FounderSection = () => {
                 sizes={imageSizes.founder}
                 pictureClassName={styles.founderPicture}
                 className={styles.founderPic}
+                loading="lazy"
                 alt="founder"
               />
             </div>
@@ -76,6 +77,7 @@ const FounderSection = () => {
             sizes={imageSizes.founder}
             pictureClassName={styles.founderPicture}
             className={styles.founderPic}
+            loading="lazy"
             alt="founder"
           />
         </div>
