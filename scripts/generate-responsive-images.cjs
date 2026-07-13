@@ -44,7 +44,7 @@ const imageGroups = [
 
 const logoGroup = {
   directory: 'logo',
-  widths: [170, 340],
+  widths: [170, 340, 510],
   images: [['ArcviteLogoPic.png', 'arcvite-logo']],
 };
 

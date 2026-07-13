@@ -44,6 +44,7 @@ import founder960Avif from '../assets/optimized/founder/founder-960.avif';
 import founder960Webp from '../assets/optimized/founder/founder-960.webp';
 import logo170Webp from '../assets/optimized/logo/arcvite-logo-170.webp';
 import logo340Webp from '../assets/optimized/logo/arcvite-logo-340.webp';
+import logo510Webp from '../assets/optimized/logo/arcvite-logo-510.webp';
 
 import fullSpec1320Avif from '../assets/optimized/protocols/full-spec-1-320.avif';
 import fullSpec1320Webp from '../assets/optimized/protocols/full-spec-1-320.webp';
@@ -221,7 +222,7 @@ export const logoImage = createImage({
   height: 286,
   variants: {
     display: {
-      webp: [[logo170Webp, 170], [logo340Webp, 340]],
+      webp: [[logo170Webp, 170], [logo340Webp, 340], [logo510Webp, 510]],
     },
   },
 });
