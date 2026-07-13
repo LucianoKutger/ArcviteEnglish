@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import FAQItem from '../cards/Faq';
-import ArcviteLogoPic from '../../assets/ArcviteLogoPic.png';
-import { faqs } from '../../data/content'; 
+import ResponsiveImage from '../ui/ResponsiveImage';
+import { faqs } from '../../data/content';
+import { imageSizes, logoImage } from '../../data/responsiveImages';
 import styles from './FaqSection.module.scss';
 
 const FaqSection = ({ scrollToSection }) => {
@@ -42,7 +43,13 @@ const FaqSection = ({ scrollToSection }) => {
         <div className={styles.bottomFooter}>
             <div className={styles.logoContainer}>
               <div className={styles.logoWrapper} onClick={() => scrollToSection('home')}>
-                <img src={ArcviteLogoPic} alt='Arcvite Logo'/>
+                <ResponsiveImage
+                  image={logoImage}
+                  variant="display"
+                  sizes={imageSizes.logo}
+                  pictureClassName={styles.logoPicture}
+                  alt="Arcvite Logo"
+                />
               </div>
             </div>
             <div className={styles.linksContainer}>

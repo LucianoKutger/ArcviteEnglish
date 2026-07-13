@@ -1,15 +1,6 @@
 import React from "react";
 import { Brain, Dna, HeartPulse } from 'lucide-react';
-import fullSpec1 from '../assets/FullSpec1.png';
-import fullSpec2 from '../assets/FullSpec2.png';
-import fullSpec3 from '../assets/FullSpec3.png';
-import fullSpec4 from '../assets/FullSpec4.png';
-import fullSpec5 from '../assets/FullSpec5.png';
-import fullSpec6 from '../assets/FullSpec6.png';
-import biometricHub from '../assets/BiometricHub.png';
-import clinicalLab from '../assets/ClinicalLab.png';
-import geneAnalysis from '../assets/GeneAnalysis.png';
-import dataFusion from '../assets/DataFusion.jpg';
+import { bioSyncImages, protocolImages } from './responsiveImages';
 
 export const navItems = [
     { label: 'Vision', targetId: 'vision' },
@@ -27,7 +18,7 @@ export const solutions = [
     problem: "No time for implementation",
     solution: "We work with rapid on-site implementation. You stay where you are. We come to you. The supplements, blueprints, and equipment arrive on your desk without you having to lift a finger.",
     details: "Our operational team takes over the complete management of your health logistics. From scheduling appointments with specialists to the just-in-time delivery of supplements and equipment – we act as an invisible interface that ensures all protocols are followed without you having to adjust your agenda. This also includes proactive communication with your existing medical infrastructure.",
-    imgSrc: fullSpec1
+    image: protocolImages[0]
   },
   {
     id: 2,
@@ -35,7 +26,7 @@ export const solutions = [
     problem: "Cognitive noise & loss of focus",
     solution: "Elimination of inflammation and stabilization of neurochemistry. Constant mental sharpness for high-stakes decisions, regardless of the time of day.",
     details: "We use advanced neuro-feedback technologies and precisely tuned nootropic stacks to optimize your neurotransmitter balance. The goal is a state of lasting mental clarity and enhanced executive function, even during periods of high psychological stress.",
-    imgSrc: fullSpec2
+    image: protocolImages[1]
   },
   {
     id: 3,
@@ -43,7 +34,7 @@ export const solutions = [
     problem: "Incalculable biological failure risks",
     solution: "We manage your health like an investment portfolio. Through quarterly in-depth analyses (ApoB, HbA1c, hormones), our early warning systems detect risks before they jeopardize your operational capacity.",
     details: "Through the continuous monitoring of over 50 biomarkers, we create an early warning system that detects pathological developments long before symptoms appear. We manage your health with the same care and foresight as an institutional asset portfolio. This includes genetic predisposition analyses and epigenetic age tests.",
-    imgSrc: fullSpec3
+    image: protocolImages[2]
   },
   {
     id: 4,
@@ -51,7 +42,7 @@ export const solutions = [
     problem: "Performance drop due to global mobility",
     solution: "Travel-specific approach. From jet lag protocols to precise restaurant briefings for business dinners – we dynamically adapt your biology to every time zone and every social scenario.",
     details: "Our system adapts to your lifestyle, not the other way around. We develop adaptive protocols for time zone changes, business trips, and irregular sleep cycles so that your physiological performance remains stable regardless of external factors.",
-    imgSrc: fullSpec4
+    image: protocolImages[3]
   },
   {
     id: 5,
@@ -59,7 +50,7 @@ export const solutions = [
     problem: "Sensitive health data",
     solution: "Highest discretion at a family office level. Your data remains anonymized, encrypted, and never leaves our protected loop.",
     details: "Your data is stored in a private, isolated cloud infrastructure and is only accessible to our core medical team. We guarantee absolute discretion and security. No cloud backups with third-party providers, full sovereignty over your biological data.",
-    imgSrc: fullSpec5
+    image: protocolImages[4]
   },
   {
     id: 6,
@@ -67,7 +58,7 @@ export const solutions = [
     problem: "Biological limit as a growth inhibitor",
     solution: "We transform your biology from an unpredictable variable into your strongest multiplier. By maximizing your energetic output, we create the foundation for boundless entrepreneurial scaling.",
     details: "Health is not a cost factor, but a lever for business success. By maximizing your physical and cognitive resources, we increase your decision-making capacity and resilience, which is directly reflected in your professional performance.",
-    imgSrc: fullSpec6
+    image: protocolImages[5]
   },
 ];
 export const goalOptions = [
@@ -217,7 +208,7 @@ export const syncCardsData = [
     focusTitle: "Automatic Tracking 24/7",
     focusDesc: "Continuous tracking of autonomous stress capacity and analysis of your sleep architecture for maximum recovery precision",
     imageLabel: "Biometric Hub",
-    imageSrc: biometricHub,
+    image: bioSyncImages.biometricHub,
     details: [
       "Automatic synchronization with dashboard",
       "Daily strain recommendation based on HRV",
@@ -234,7 +225,7 @@ export const syncCardsData = [
     focusTitle: "Metabolic Mapping",
     focusDesc: "Based on our timing system, we analyze 30+ biomarkers to guide performance, health, and longevity",
     imageLabel: "Lab",
-    imageSrc: clinicalLab,
+    image: bioSyncImages.clinicalLab,
     details: [
       "Quarterly blood sampling at your preferred location",
       "Comprehensive hormone panel (testosterone, cortisol)",
@@ -251,7 +242,7 @@ export const syncCardsData = [
     focusTitle: "",
     focusDesc: "Decoding your genetic blueprint for the precise management of longevity and physical resilience",
     imageLabel: "Genetic Profiling",
-    imageSrc: geneAnalysis,
+    image: bioSyncImages.geneAnalysis,
     details: [
       "Rate of aging",
       "Inflammation levels",
@@ -267,7 +258,7 @@ export const syncCardsData = [
     focusTitle: "Performance Synchronisation",
     focusDesc: "We aggregate all data streams into a coherent picture for maximum operational precision",
     imageLabel: "Sync",
-    imageSrc: dataFusion,
+    image: bioSyncImages.dataFusion,
     details: [
       "End-to-end encrypted protocols",
       "Manual evaluation by performance specialists",

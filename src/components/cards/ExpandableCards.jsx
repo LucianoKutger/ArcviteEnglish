@@ -1,9 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { imageSizes } from "../../data/responsiveImages";
+import ResponsiveImage from "../ui/ResponsiveImage";
 import styles from "./ExpandableCards.module.scss";
 
 const ExpandableCard = ({ 
-  title, category, focusTitle, focusDesc, imageLabel, imageSrc, details, className = "", isOpen, onToggle, opacity, wide
+  title, category, focusTitle, focusDesc, imageLabel, image, details, className = "", isOpen, onToggle, opacity, wide
 }) => {
   const opacityVal = opacity ?? 1;
 
@@ -26,10 +28,13 @@ const ExpandableCard = ({
         <div className={styles.cardGradientOverlay} />
         
         <div className={styles.imageContainer}>
-          {imageSrc ? (
-            <img 
-              src={imageSrc} 
+          {image ? (
+            <ResponsiveImage
+              image={image}
+              variant="card"
+              sizes={wide ? imageSizes.bioSyncWide : imageSizes.bioSyncCard}
               alt={title} 
+              pictureClassName={styles.cardPicture}
               className={styles.cardImage}
               style={{opacity: opacityVal}}
             />

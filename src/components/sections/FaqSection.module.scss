@@ -160,6 +160,13 @@
       transform-origin: left center;
       cursor: pointer;
     }
+
+    .logoPicture,
+    .logoPicture img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
   }
 
   .linksContainer {

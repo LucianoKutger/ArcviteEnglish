@@ -291,3 +291,16 @@
   width: 1rem;
   height: 1rem;
 }
+
+.headerPicture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.headerPicture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}

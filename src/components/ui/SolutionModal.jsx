@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from "framer-motion";
 import { X, ArrowUpRight } from 'lucide-react';
+import { imageSizes } from '../../data/responsiveImages';
+import ResponsiveImage from './ResponsiveImage';
 import styles from './SolutionModal.module.scss';
 
 const SolutionModal = ({ item, onClose }) => {
@@ -33,14 +35,14 @@ const SolutionModal = ({ item, onClose }) => {
                     </button>
                 </div>
 
-                <div 
-                    className={styles.headerImageContainer} 
-                    style={{
-                        backgroundImage: `url(${item.imgSrc})`,
-                        backgroundSize: 'cover',        
-                        backgroundPosition: 'center',  
-                        backgroundRepeat: 'no-repeat', 
-                    }}>
+                <div className={styles.headerImageContainer}>
+                    <ResponsiveImage
+                        image={item.image}
+                        variant="modal"
+                        sizes={imageSizes.protocolModal}
+                        pictureClassName={styles.headerPicture}
+                        alt=""
+                    />
                     <div className={styles.gridPattern} />
                     <div className={styles.gradientOverlay} />
                     <div className={styles.titleWrapper}>

@@ -1,8 +1,9 @@
 import React from 'react';
 import FadeOutSection from '../visuals/FadeoutSection';
 import BackgroundGlow from '../visuals/BackgroundGlow';
+import ResponsiveImage from '../ui/ResponsiveImage';
+import { founderImage, imageSizes } from '../../data/responsiveImages';
 import styles from './FounderSection.module.scss';
-import founderPic from '../../assets/founderPic.png';
 
 const FounderSection = () => {
   return (
@@ -30,9 +31,12 @@ const FounderSection = () => {
 
             {/* --- NEU: Mobiles Bild (wird auf Desktop ausgeblendet) --- */}
             <div className={`${styles.imageContainer} ${styles.mobileImage}`}>
-              <img
+              <ResponsiveImage
+                image={founderImage}
+                variant="display"
+                sizes={imageSizes.founder}
+                pictureClassName={styles.founderPicture}
                 className={styles.founderPic}
-                src={founderPic}
                 alt="founder"
               />
             </div>
@@ -66,7 +70,14 @@ const FounderSection = () => {
 
         {/* --- VERÄNDERT: Klasse desktopImage hinzugefügt (wird auf Mobile ausgeblendet) --- */}
         <div className={`${styles.imageContainer} ${styles.desktopImage}`}>
-          <img className={styles.founderPic} src={founderPic} alt="founder" />
+          <ResponsiveImage
+            image={founderImage}
+            variant="display"
+            sizes={imageSizes.founder}
+            pictureClassName={styles.founderPicture}
+            className={styles.founderPic}
+            alt="founder"
+          />
         </div>
       </div>
     </FadeOutSection>

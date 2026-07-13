@@ -52,7 +52,13 @@
   justify-content: center;
 }
 
-.imageWrapper img {
+.imagePicture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.imagePicture img {
   width: 100%;
   height: 100%;
   object-fit: fill;

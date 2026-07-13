@@ -35,7 +35,7 @@ const BioSyncSection = () => {
                 imageLabel={card.imageLabel}
                 details={card.details}
                 className={card.className} 
-                imageSrc={card.imageSrc} 
+                image={card.image}
                 isOpen={activeCard === card.id}
                 onToggle={() => setActiveCard(activeCard === card.id ? null : card.id)}
                 opacity={card.opacity}

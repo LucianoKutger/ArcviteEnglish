@@ -1,9 +1,16 @@
 import logoStyles from './ArcviteLogo.module.scss';
-import ArcviteLogoPic from '../../assets/ArcviteLogoPic.png'
+import { imageSizes, logoImage } from '../../data/responsiveImages';
+import ResponsiveImage from './ResponsiveImage';
 
 const ArcviteLogo = () => (
     <div className={logoStyles.logoContainer}>
-        <img src={ArcviteLogoPic} alt='Arcvite Logo'/>
+        <ResponsiveImage
+          image={logoImage}
+          variant="display"
+          sizes={imageSizes.logo}
+          pictureClassName={logoStyles.logoPicture}
+          alt="Arcvite Logo"
+        />
     </div>
 );
 

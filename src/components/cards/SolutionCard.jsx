@@ -1,7 +1,9 @@
 import styles from './SolutionCard.module.scss';
 import { AiOutlineExpandAlt } from "react-icons/ai";
+import { imageSizes } from '../../data/responsiveImages';
+import ResponsiveImage from '../ui/ResponsiveImage';
 
-const SolutionCard = ({ item, onOpen, imgSrc }) => {
+const SolutionCard = ({ item, onOpen, image }) => {
     return (
       <div 
           layoutId={`card-${item.id}`} 
@@ -12,7 +14,13 @@ const SolutionCard = ({ item, onOpen, imgSrc }) => {
           <div className={styles.imageContainer}>
                <div className={styles.gridPattern} />
                <div className={styles.imageWrapper}>
-                   <img src={imgSrc} alt="" ></img>
+                   <ResponsiveImage
+                     image={image}
+                     variant="card"
+                     sizes={imageSizes.protocolCard}
+                     pictureClassName={styles.imagePicture}
+                     alt=""
+                   />
                </div>
                <div className={styles.gradientOverlay} />
           </div>

@@ -29,7 +29,7 @@ const ProtocolsSection = ({ scrollToSection }) => {
             
             <div className={styles.grid}>
               {solutions.map((item, idx) => (
-                  <SolutionCard key={item.id} item={item} onOpen={setSelectedSolution} imgSrc={item.imgSrc} />
+                  <SolutionCard key={item.id} item={item} onOpen={setSelectedSolution} image={item.image} />
               ))}
             </div>
 
