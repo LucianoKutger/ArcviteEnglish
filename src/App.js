@@ -22,10 +22,6 @@ const App = () => {
       wheelMultiplier: 1.0  
     }}>
       <div className={styles.landingPageWrapper}>
-        
-        <div className={styles.lpNoiseContainer}>
-          <div className={styles.lpNoiseOverlay} />
-        </div>
 
         <Navbar />
         <div className={styles.contentArea}>

@@ -20,21 +20,6 @@
   background-color: $white-30;
 }
 
-.lpNoiseContainer {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.lpNoiseOverlay {
-  position: absolute;
-  inset: 0;
-  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-  opacity: 0.2;
-  filter: brightness(100%) contrast(150%);
-}
-
 .contentArea {
   position: relative;
   z-index: 1; 
