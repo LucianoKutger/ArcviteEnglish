@@ -1,5 +1,8 @@
 import { useEffect, useRef, memo } from "react";
 import styles from "./HeroFlowLines.module.scss"; 
+import useViewportActivity from '../../hooks/useViewportActivity';
+
+const DEFAULT_COLORS = ["#2DD4BF", "#38BDF8", "#5EEAD4"];
 
 const hexToRgb = (hex) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -10,10 +13,14 @@ const hexToRgb = (hex) => {
 
 const HeroFlowLines = ({ 
   // Standardmäßig ein Array, falls du nichts übergibst
-  colors = ["#2DD4BF", "#38BDF8", "#5EEAD4"], 
+  colors = DEFAULT_COLORS,
   direction = "right" 
 }) => {
   const canvasRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const animateRef = useRef(null);
+  const { targetRef, isActive } = useViewportActivity();
+  const isActiveRef = useRef(isActive);
   const gradientClass = direction === "right" ? styles.lpGradientXright : styles.lpGradientXleft;
 
   useEffect(() => {
@@ -21,7 +28,7 @@ const HeroFlowLines = ({
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let time = 0;
-    let animationFrameId;
+    let isDisposed = false;
     let width = 0;
     let height = 0;
 
@@ -82,6 +89,9 @@ const HeroFlowLines = ({
     };
 
     const animate = () => {
+        animationFrameRef.current = null;
+        if (isDisposed || !isActiveRef.current) return;
+
         time += 0.008;
         ctx.clearRect(0, 0, width, height);
         
@@ -95,19 +105,41 @@ const HeroFlowLines = ({
         // 3. Deep Background Wave (Farbe 2)
         drawWave(0.55, 0.0008, 140, 0.5, 0.15, 4, getColorRGB(2));
 
-        animationFrameId = requestAnimationFrame(animate);
+        animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animateRef.current = animate;
+    if (isActiveRef.current) animate();
 
     return () => {
+        isDisposed = true;
+        animateRef.current = null;
         window.removeEventListener('resize', resize);
-        cancelAnimationFrame(animationFrameId);
+        if (animationFrameRef.current !== null) {
+          cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
+        }
     };
   }, [colors, direction]); // Abhängigkeit auf colors geändert
 
+  useEffect(() => {
+    isActiveRef.current = isActive;
+
+    if (!isActive) {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      return;
+    }
+
+    if (animateRef.current && animationFrameRef.current === null) {
+      animationFrameRef.current = requestAnimationFrame(animateRef.current);
+    }
+  }, [isActive]);
+
   return (
-    <div className={styles.lpHeroBg}>
+    <div ref={targetRef} className={styles.lpHeroBg}>
         <canvas ref={canvasRef} className={styles.canvas} style={{ mixBlendMode: 'screen' }} />
         <div className={gradientClass} />
         <div className={styles.lpGradientY} />
