@@ -12,7 +12,7 @@ const HomeSection = ({ scrollToSection }) => {
       className={styles.lpHeroSection}
       delayPercentage={0.2}
     >
-      <HeroFlowLines />
+      <HeroFlowLines className="flow" />
 
       <div className={styles.lpHeroContainer}>
         <div className={styles.lpHeroContent}>
