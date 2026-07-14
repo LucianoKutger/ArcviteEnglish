@@ -1,6 +1,7 @@
 import React, { StrictMode } from 'react';
 import { act, render, screen } from '@testing-library/react';
 import useViewportActivity from './useViewportActivity';
+import { vi } from 'vitest';
 
 let observers;
 
@@ -8,8 +9,8 @@ class MockIntersectionObserver {
   constructor(callback, options) {
     this.callback = callback;
     this.options = options;
-    this.observe = jest.fn();
-    this.disconnect = jest.fn();
+    this.observe = vi.fn();
+    this.disconnect = vi.fn();
     observers.push(this);
   }
 
@@ -40,7 +41,7 @@ describe('useViewportActivity', () => {
   const originalIntersectionObserver = window.IntersectionObserver;
   const originalVisibilityDescriptor = Object.getOwnPropertyDescriptor(
     document,
-    'visibilityState',
+    'visibilityState'
   );
 
   beforeEach(() => {
@@ -56,7 +57,7 @@ describe('useViewportActivity', () => {
       Object.defineProperty(
         document,
         'visibilityState',
-        originalVisibilityDescriptor,
+        originalVisibilityDescriptor
       );
     } else {
       delete document.visibilityState;
@@ -67,7 +68,7 @@ describe('useViewportActivity', () => {
     const { unmount } = render(
       <StrictMode>
         <ActivityProbe />
-      </StrictMode>,
+      </StrictMode>
     );
     const observer = observers[observers.length - 1];
 

@@ -23,12 +23,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "vitest run",
     "images:generate": "node scripts/generate-responsive-images.cjs",
     "eject": "react-scripts eject",
     "dev:vite": "vite",
     "build:vite": "vite build",
-    "preview:vite": "vite preview"
+    "preview:vite": "vite preview",
+    "test:watch": "vitest"
   },
   "eslintConfig": {
     "extends": [
