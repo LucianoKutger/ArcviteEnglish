@@ -1,38 +1,40 @@
 import { ReactLenis } from 'lenis/react';
 import { Routes, Route } from 'react-router-dom';
 
+import { lazy, Suspense } from 'react';
+import Navbar from './components/ui/Navbar';
+import Home from './Home';
 
-import Navbar from './components/ui/Navbar'; 
-import Home from './Home';                   
-import LegalNotice from './components/LegalNotice';
-import PrivacySettings from './components/PrivacySettings'
-import StudyDetails from './components/StudyDetails';
-
- 
 //styles
 import styles from './App.module.scss';
 
+const LegalNotice = lazy(() => import('./components/LegalNotice'));
+const PrivacySettings = lazy(() => import('./components/PrivacySettings'));
+const StudyDetails = lazy(() => import('./components/StudyDetails'));
+
 const App = () => {
-
   return (
-    <ReactLenis root options={{ 
-      lerp: 0.07,          
-      duration: 1.2,        
-      smoothWheel: true,    
-      wheelMultiplier: 1.0  
-    }}>
+    <ReactLenis
+      root
+      options={{
+        lerp: 0.07,
+        duration: 1.2,
+        smoothWheel: true,
+        wheelMultiplier: 1.0,
+      }}
+    >
       <div className={styles.landingPageWrapper}>
-
         <Navbar />
         <div className={styles.contentArea}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/impressum" element={<LegalNotice />} />
-            <Route path="/datenschutz" element={<PrivacySettings />} />
-            <Route path="/studies" element={<StudyDetails />}/>
-          </Routes>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/impressum" element={<LegalNotice />} />
+              <Route path="/datenschutz" element={<PrivacySettings />} />
+              <Route path="/studies" element={<StudyDetails />} />
+            </Routes>
+          </Suspense>
         </div>
-
       </div>
     </ReactLenis>
   );
