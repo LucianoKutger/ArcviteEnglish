@@ -3,15 +3,23 @@ import { Infinity, Shield, Brain } from 'lucide-react';
 import FadeOutSection from '../visuals/FadeoutSection';
 import BackgroundGlow from '../visuals/BackgroundGlow';
 import styles from './VisionSection.module.scss';
+import useLocalSectionGlowVisibility from '../../hooks/useLocalSectionGlowVisibility';
 
 const VisionSection = () => {
+  const shouldRenderLocalGlows = useLocalSectionGlowVisibility();
+
   return (
     <FadeOutSection id="vision" className={styles.section}>
       <BackgroundGlow className="glow" variant='vision' />
       
-       <div className={styles.backgroundWrapper}>
+      {shouldRenderLocalGlows && (
+        <div
+          className={styles.backgroundWrapper}
+          data-testid="vision-local-glow"
+        >
           <div className={styles.glowEffect} />
         </div>
+      )}
 
         <div className={styles.container}>
           <h2 className={styles.heading}>
