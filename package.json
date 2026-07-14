@@ -21,15 +21,12 @@
     "zod": "^4.4.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "vite --port 3000",
+    "build": "vite build",
     "test": "vitest run",
     "images:generate": "node scripts/generate-responsive-images.cjs",
-    "eject": "react-scripts eject",
-    "dev:vite": "vite",
-    "build:vite": "vite build",
-    "preview:vite": "vite preview",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "preview": "vite preview"
   },
   "eslintConfig": {
     "extends": [
