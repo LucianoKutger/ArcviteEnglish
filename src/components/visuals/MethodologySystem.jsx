@@ -1,7 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
 import styles from './MethodologySystem.module.scss';
 import { methodologySegments } from '../../data/content';
+import useViewportActivity from '../../hooks/useViewportActivity';
+
+const IMPACT_FLOW_ANIMATION = {
+  pathOffset: [-0.15, 1],
+  opacity: [0.5, 1, 0.5],
+  strokeWidth: [2, 6, 2],
+  transition: {
+    pathOffset: { duration: 4, repeat: Infinity, ease: 'linear' },
+    opacity: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
+    strokeWidth: {
+      duration: 4,
+      repeat: Infinity,
+      ease: 'easeInOut',
+    },
+  },
+};
+
+const POLAR_STAR_ANIMATION = {
+  r: 14,
+  opacity: 0,
+  transition: { duration: 2.5, repeat: Infinity, ease: 'easeOut' },
+};
 
 const ArcSystem = () => {
   // 1. Ersetzt activeSegment -> Steuert das INSTANTE Aufleuchten der Bögen/Titel
@@ -17,6 +39,9 @@ const ArcSystem = () => {
   const [isCenterHovered, setIsCenterHovered] = useState(false);
 
   const [isDesktop, setIsDesktop] = useState(true);
+  const { targetRef, isActive } = useViewportActivity();
+  const impactFlowControls = useAnimationControls();
+  const polarStarControls = useAnimationControls();
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 1024px)');
@@ -27,6 +52,22 @@ const ArcSystem = () => {
 
     return () => mediaQuery.removeEventListener('change', handleMediaChange);
   }, []);
+
+  useEffect(() => {
+    if (!isActive) {
+      impactFlowControls.stop();
+      polarStarControls.stop();
+      return undefined;
+    }
+
+    impactFlowControls.start(IMPACT_FLOW_ANIMATION);
+    polarStarControls.start(POLAR_STAR_ANIMATION);
+
+    return () => {
+      impactFlowControls.stop();
+      polarStarControls.stop();
+    };
+  }, [impactFlowControls, isActive, polarStarControls]);
 
   // --- GEOMETRIE LOGIK ---
   const centerX = 120;
@@ -120,7 +161,7 @@ const ArcSystem = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div ref={targetRef} className={styles.container}>
       {/* LINKSEITE: DAS SVG MODELL */}
       <div className={styles.visualWrapper}>
         <svg viewBox="0 0 700 700" className={styles.svgGraph}>
@@ -203,20 +244,7 @@ const ArcSystem = () => {
               stroke="url(#flow-energy-white)"
               strokeLinecap="round"
               initial={{ pathLength: 0.15, pathOffset: -0.15, opacity: 0 }}
-              animate={{
-                pathOffset: [-0.15, 1],
-                opacity: [0.5, 1, 0.5],
-                strokeWidth: [2, 6, 2],
-              }}
-              transition={{
-                pathOffset: { duration: 4, repeat: Infinity, ease: 'linear' },
-                opacity: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
-                strokeWidth: {
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                },
-              }}
+              animate={impactFlowControls}
               style={{
                 filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.9))',
               }}
@@ -335,8 +363,7 @@ const ArcSystem = () => {
               cx={polarStarPoint.x}
               cy={polarStarPoint.y}
               initial={{ r: 4, opacity: 0.4 }}
-              animate={{ r: 14, opacity: 0 }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
+              animate={polarStarControls}
               fill="#FFF"
             />
             <circle
