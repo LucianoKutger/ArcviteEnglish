@@ -256,7 +256,7 @@ const ArcSystem = () => {
               fillOpacity="0.75"
               fontSize="10"
               letterSpacing="0.5em"
-              className="uppercase italic font-extralight"
+              className={styles.impactFlowLabel}
             >
               Impact Flow
             </text>
@@ -264,7 +264,7 @@ const ArcSystem = () => {
 
           {/* Center Point "YOU" */}
           <g
-            className="cursor-pointer"
+            className={styles.interactiveGroup}
             onMouseEnter={() => setIsCenterHovered(true)}
             onMouseLeave={() => setIsCenterHovered(false)}
           >
@@ -302,7 +302,7 @@ const ArcSystem = () => {
               y={centerY + 75}
               textAnchor="middle"
               fill="#FFFF"
-              className="text-[10px] uppercase tracking-[0.4em] font-light italic"
+              className={styles.svgLabel}
               style={{
                 filter: 'drop-shadow(0 0 10px rgba(229, 217, 182, 0.3))',
               }}
@@ -321,7 +321,7 @@ const ArcSystem = () => {
             return (
               <g
                 key={s.id}
-                className="cursor-pointer group"
+                className={styles.interactiveGroup}
                 onMouseEnter={isDesktop ? () => handleMouseEnter(s) : undefined}
                 onMouseLeave={isDesktop ? handleMouseLeave : undefined}
                 onClick={!isDesktop ? () => handleSegmentClick(s) : undefined}
@@ -329,7 +329,7 @@ const ArcSystem = () => {
                 <path
                   d={getPointyArcPath(s.radius, -5, 100, s.thickness + 20)}
                   fill="transparent"
-                  className="pointer-events-auto"
+                  className={styles.interactiveHitArea}
                 />
                 <motion.path
                   animate={{
@@ -378,7 +378,7 @@ const ArcSystem = () => {
               y={polarStarPoint.y - 85}
               textAnchor="middle"
               fill="#FFF"
-              className="text-[10px] uppercase tracking-[0.4em] font-light italic"
+              className={styles.svgLabel}
               style={{
                 filter: 'drop-shadow(0 0 10px rgba(45, 212, 191, 0.5))',
               }}

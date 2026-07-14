@@ -215,6 +215,11 @@
   transition: transform $transition-base;
 }
 
+.ctaIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 .lpCapacityNote {
   font-size: $font-size-xxs;
   color: $white-40;

@@ -5,13 +5,16 @@ import ResponsiveImage from "../ui/ResponsiveImage";
 import styles from "./ExpandableCards.module.scss";
 
 const ExpandableCard = ({ 
-  title, category, focusTitle, focusDesc, imageLabel, image, details, className = "", isOpen, onToggle, opacity, wide
+  title, category, focusTitle, focusDesc, imageLabel, image, details, appearance, isOpen, onToggle, opacity, wide
 }) => {
   const opacityVal = opacity ?? 1;
+  const appearanceClass = appearance === 'foreground'
+    ? styles.cardForeground
+    : styles.cardElevated;
 
   return (
     /* Der Wrapper hält die Stellung im CSS-Grid */
-    <div className={`${styles.cardWrapper} ${wide ? styles.cardWide : ''} ${className}`}>
+    <div className={`${styles.cardWrapper} ${wide ? styles.cardWide : ''} ${appearanceClass}`}>
       <motion.div 
         className={`${styles.card} ${isOpen ? styles.cardOpen : ''}`}
         onClick={onToggle}

@@ -215,7 +215,7 @@ export const syncCardsData = [
       "Sleep phase analysis (REM/Deep)",
       "Long-term trend detection for recovery"
     ],
-    className: "relative z-20 bg-[#0A0A0A]",
+    appearance: "foreground",
  
   },
   {
@@ -232,7 +232,7 @@ export const syncCardsData = [
       "Cardiovascular risk analysis (ApoB, Lp(a))",
       "Detailed medical consultation"
     ],
-    className: "relative z-20 bg-[#0A0A0A]",
+    appearance: "foreground",
   
   },
   {
@@ -248,7 +248,7 @@ export const syncCardsData = [
       "Inflammation levels",
       "Immune capacity / Immune age"
     ],
-    className: "bg-[#0C0C0C] border-[#E5D9B6]/30 shadow-[0_0_30px_rgba(0,0,0,0.5)]",
+    appearance: "elevated",
     
   },
   {
@@ -265,7 +265,7 @@ export const syncCardsData = [
       "Correlation of blood values with sleep data",
       "Anonymized cloud infrastructure"
     ],
-    className: "bg-[#0C0C0C] border-[#E5D9B6]/30 shadow-[0_0_30px_rgba(0,0,0,0.5)]",
+    appearance: "elevated",
   
     wide: true 
   }

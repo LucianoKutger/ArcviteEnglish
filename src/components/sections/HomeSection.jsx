@@ -53,7 +53,7 @@ const HomeSection = ({ scrollToSection }) => {
                 <div className={styles.lpCtaInner}>
                   <span className={styles.lpHeroBtnText}>Secure audit</span>
                   <div className={styles.lpCtaIconBox}>
-                    <ArrowUpRight className="w-5 h-5" />
+                    <ArrowUpRight className={styles.ctaIcon} />
                   </div>
                 </div>
               </button>

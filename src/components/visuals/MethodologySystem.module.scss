@@ -43,6 +43,28 @@
   display: block;
 }
 
+.impactFlowLabel {
+  font-weight: 200;
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+.svgLabel {
+  font-size: 10px;
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+}
+
+.interactiveGroup {
+  cursor: pointer;
+}
+
+.interactiveHitArea {
+  pointer-events: auto;
+}
+
 .textWrapper {
   max-width: 600px;
   width: 100%;
