@@ -1,12 +1,18 @@
 import React from 'react';
 import styles from './BackgroundGlow.module.scss';
+import useViewportActivity from '../../hooks/useViewportActivity';
 
 export default function BackgroundGlow({ className = "", variant = "study" }) {
 
   const variantClass = styles[variant] || styles.study;
+  const { targetRef, isActive } = useViewportActivity();
+  const animationStateClass = isActive ? '' : styles.animationsPaused;
 
   return (
-    <div className={`${styles.backgroundGlowLayer} ${variantClass} ${className}`}>
+    <div
+      ref={targetRef}
+      className={`${styles.backgroundGlowLayer} ${variantClass} ${animationStateClass} ${className}`}
+    >
   
       <div className={styles.bgGlow}></div>
       

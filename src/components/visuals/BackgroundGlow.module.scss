@@ -33,6 +33,10 @@
   animation: pulseOrb linear infinite alternate;
 }
 
+.animationsPaused .ambientOrb {
+  animation-play-state: paused;
+}
+
 // Basis-Eigenschaften der Orbs (Größe & Farben bleiben überall gleich)
 .orb1 {
   width: 450px;
