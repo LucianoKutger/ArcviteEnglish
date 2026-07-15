@@ -34,6 +34,7 @@ const ArcSystem = () => {
 
   // 3. Neu -> Speichert die aktuelle Hover-ID für die Exit-Synchronisation
   const latestHoveredIdRef = useRef(null);
+  const pendingSegmentRef = useRef(null);
 
   // 4. Fix -> Wieder hinzugefügt für das Hover-Verhalten des "YOU"-Zentrums!
   const [isCenterHovered, setIsCenterHovered] = useState(false);
@@ -117,53 +118,87 @@ const ArcSystem = () => {
   // --- ANIMATION CHAINING LOGIK ---
   const handleMouseEnter = (segment) => {
     latestHoveredIdRef.current = segment.id;
+    pendingSegmentRef.current = segment;
+
     setHoveredSegment(segment);
 
-    if (activeContentId === null) {
-      // Wenn nichts offen ist, sofort ausfahren
-      setActiveContentId(segment.id);
-    } else if (activeContentId !== segment.id) {
-      // Wenn ein anderer Text offen ist, schließe ihn erst (setze auf null)
-      // Der neue Text wartet, bis handleExitComplete feuert
-      setActiveContentId(null);
-    }
+    setActiveContentId((currentActiveId) => {
+      // Noch kein Text geöffnet:
+      // Das ausgewählte Element darf sofort geöffnet werden.
+      if (currentActiveId === null) {
+        pendingSegmentRef.current = null;
+        return segment.id;
+      }
+
+      // Das Element ist bereits geöffnet.
+      // Es muss nichts verändert werden.
+      if (currentActiveId === segment.id) {
+        pendingSegmentRef.current = null;
+        return currentActiveId;
+      }
+
+      // Ein anderes Element ist aktuell geöffnet.
+      // Zuerst nur das aktuelle Element schließen.
+      // Das neue Element wird erst in handleExitComplete geöffnet.
+      return null;
+    });
   };
 
-  const handleMouseLeave = () => {
+  const handleInteractionLeave = () => {
     latestHoveredIdRef.current = null;
+    pendingSegmentRef.current = null;
+
     setHoveredSegment(null);
     setActiveContentId(null);
   };
 
   const handleExitComplete = () => {
-    // Diese Funktion wird ERST aufgerufen, wenn der alte Text vollständig unsichtbar eingezogen ist
-    if (latestHoveredIdRef.current !== null) {
-      setActiveContentId(latestHoveredIdRef.current);
+    const pendingSegment = pendingSegmentRef.current;
+
+    if (!pendingSegment) {
+      return;
     }
+
+    if (latestHoveredIdRef.current !== pendingSegment.id) {
+      return;
+    }
+
+    pendingSegmentRef.current = null;
+    setActiveContentId(pendingSegment.id);
   };
 
   const handleSegmentClick = (segment) => {
     if (activeContentId === segment.id) {
-      // Wenn es bereits offen ist -> Schließen
       latestHoveredIdRef.current = null;
+      pendingSegmentRef.current = null;
+
       setHoveredSegment(null);
       setActiveContentId(null);
-    } else {
-      // Wenn es geschlossen ist oder ein anderes offen ist -> Wechseln
-      latestHoveredIdRef.current = segment.id;
-      setHoveredSegment(segment);
-      if (activeContentId === null) {
-        setActiveContentId(segment.id);
-      } else {
-        setActiveContentId(null); // Löst handleExitComplete für das neue Segment aus
-      }
+      return;
     }
+
+    latestHoveredIdRef.current = segment.id;
+    pendingSegmentRef.current = segment;
+
+    setHoveredSegment(segment);
+
+    setActiveContentId((currentActiveId) => {
+      if (currentActiveId === null) {
+        pendingSegmentRef.current = null;
+        return segment.id;
+      }
+
+      return null;
+    });
   };
 
   return (
     <div ref={targetRef} className={styles.container}>
       {/* LINKSEITE: DAS SVG MODELL */}
-      <div className={styles.visualWrapper}>
+      <div
+        className={styles.visualWrapper}
+        onMouseLeave={isDesktop ? handleInteractionLeave : undefined}
+      >
         <svg viewBox="0 0 700 700" className={styles.svgGraph}>
           <defs>
             {methodologySegments.map((s) => (
@@ -323,7 +358,6 @@ const ArcSystem = () => {
                 key={s.id}
                 className={styles.interactiveGroup}
                 onMouseEnter={isDesktop ? () => handleMouseEnter(s) : undefined}
-                onMouseLeave={isDesktop ? handleMouseLeave : undefined}
                 onClick={!isDesktop ? () => handleSegmentClick(s) : undefined}
               >
                 <path
@@ -390,7 +424,10 @@ const ArcSystem = () => {
       </div>
 
       {/* RECHTE SEITE: TEXT INFORMATION ALS LISTE */}
-      <div className={styles.textWrapper}>
+      <div
+        className={styles.textWrapper}
+        onMouseLeave={isDesktop ? handleInteractionLeave : undefined}
+      >
         <div className={styles.textList}>
           {[...methodologySegments].reverse().map((segment) => {
             const isHovered = hoveredSegment?.id === segment.id;
@@ -400,11 +437,12 @@ const ArcSystem = () => {
             return (
               <motion.div
                 key={segment.id}
-                className={`${styles.textListItem} ${isInactive ? styles.dimmedItem : ''}`}
+                className={`${styles.textListItem} ${
+                  isInactive ? styles.dimmedItem : ''
+                }`}
                 onMouseEnter={
                   isDesktop ? () => handleMouseEnter(segment) : undefined
                 }
-                onMouseLeave={isDesktop ? handleMouseLeave : undefined}
                 onClick={
                   !isDesktop ? () => handleSegmentClick(segment) : undefined
                 }
@@ -447,18 +485,36 @@ const ArcSystem = () => {
                 {/* Hier übergeben wir handleExitComplete an AnimatePresence.
                   Das garantiert, dass Framer Motion erst den Einzug beendet, bevor der neue State gesetzt wird.
                 */}
-                <AnimatePresence onExitComplete={handleExitComplete}>
+                <AnimatePresence
+                  mode="wait"
+                  initial={false}
+                  onExitComplete={handleExitComplete}
+                >
                   {isContentActive && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{
-                        opacity: 1,
-                        height: 'auto',
-                        marginTop: '1rem',
-                      }}
-                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      key={`content-${segment.id}`}
                       className={styles.expandedContent}
+                      initial={{
+                        height: 0,
+                        opacity: 0,
+                      }}
+                      animate={{
+                        height: 'auto',
+                        opacity: 1,
+                      }}
+                      exit={{
+                        height: 0,
+                        opacity: 0,
+                      }}
+                      transition={{
+                        height: {
+                          duration: 0.35,
+                          ease: [0.22, 1, 0.36, 1],
+                        },
+                        opacity: {
+                          duration: 0.2,
+                        },
+                      }}
                     >
                       <p className={styles.infoDesc}>{segment.description}</p>
 

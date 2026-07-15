@@ -13,6 +13,7 @@
   // --- KORREKTUR: Zentriert alles horizontal ---
   align-items: center;
   justify-content: center;
+  overflow-anchor: none;
 }
 
 @media (min-width: 1024px) {
@@ -33,6 +34,7 @@
   // --- ENTFERNT: align-self: flex-start gelöscht, da es die Zentrierung blockiert hat ---
   flex: 0 0 auto;
   flex-shrink: 0;
+  overflow-anchor: none;
 }
 
 .svgGraph {
@@ -72,6 +74,8 @@
   flex-direction: column;
   min-height: 100px;
   flex: 1;
+
+  overflow-anchor: none;
 
   // --- ZENTRIERUNG DES BLOCKS ---
   align-items: start;
@@ -149,6 +153,7 @@
 
 .expandedContent {
   overflow: hidden;
+  overflow-anchor: none;
 }
 
 .infoDesc {
