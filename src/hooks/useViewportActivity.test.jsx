@@ -9,8 +9,9 @@ import {
 
 import useViewportActivity from './useViewportActivity';
 
-function ActivityProbe() {
-  const { targetRef, isActive } = useViewportActivity();
+function ActivityProbe({ rootMargin } = {}) {
+  const options = rootMargin ? { rootMargin } : undefined;
+  const { targetRef, isActive } = useViewportActivity(options);
 
   return (
     <div ref={targetRef} data-testid="activity-probe">
@@ -77,6 +78,46 @@ describe('useViewportActivity', () => {
     vi.stubGlobal('IntersectionObserver', undefined);
 
     render(<ActivityProbe />);
+
+    expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');
+  });
+
+  test('passes a custom root margin to IntersectionObserver', () => {
+    render(<ActivityProbe rootMargin="50px 25px" />);
+
+    const observer = intersectionController.latestObserver;
+    const probe = screen.getByTestId('activity-probe');
+
+    expect(observer.options).toEqual({
+      rootMargin: '50px 25px',
+      threshold: 0,
+    });
+
+    expect(observer.observe).toHaveBeenCalledWith(probe);
+  });
+
+  test('starts paused when the document is initially hidden', () => {
+    visibilityController.setVisibility('hidden');
+
+    render(<ActivityProbe />);
+
+    expect(screen.getByTestId('activity-probe')).toHaveTextContent('paused');
+
+    act(() => {
+      visibilityController.setVisibility('visible');
+    });
+
+    expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');
+  });
+
+  test('stays active when IntersectionObserver provides no entry', () => {
+    render(<ActivityProbe />);
+
+    const observer = intersectionController.latestObserver;
+
+    act(() => {
+      observer.callback([], observer);
+    });
 
     expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');
   });

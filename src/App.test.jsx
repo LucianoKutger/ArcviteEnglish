@@ -1,58 +1,115 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
-vi.mock(
-  'lenis/react',
-  () => {
-    const React = require('react');
+import App from './App';
+import { renderWithRouter } from './test-utils/renderWithRouter';
 
-    return {
-      ReactLenis: ({ children }) =>
-        React.createElement(React.Fragment, null, children),
-    };
+vi.mock('lenis/react', () => ({
+  ReactLenis: ({ children }) => children,
+}));
+
+vi.mock('./Home', () => ({
+  default: function MockHome() {
+    return <main aria-label="Home page" />;
   },
-  { virtual: true }
-);
+}));
 
-vi.mock(
-  'react-router-dom',
-  () => {
-    const React = require('react');
+describe('App routing', () => {
+  test('renders navigation and the home route at "/"', () => {
+    renderWithRouter(<App />, {
+      route: '/',
+    });
 
-    return {
-      Routes: ({ children }) => {
-        const startRoute = React.Children.toArray(children).find(
-          (child) => React.isValidElement(child) && child.props.path === '/'
-        );
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
 
-        return startRoute?.props.element ?? null;
-      },
-      Route: () => null,
-      Link: ({ to, children, ...props }) =>
-        React.createElement('a', { href: to, ...props }, children),
-      useNavigate: () => () => {},
-      useLocation: () => ({ pathname: '/' }),
-    };
-  },
-  { virtual: true }
-);
+    expect(
+      screen.getByRole('main', {
+        name: 'Home page',
+      })
+    ).toBeInTheDocument();
+  });
 
-vi.mock('./Home', () => {
-  const React = require('react');
+  test('loads the legal notice route at "/impressum"', async () => {
+    renderWithRouter(<App />, {
+      route: '/impressum',
+    });
 
-  return {
-    default: function MockHome() {
-      return React.createElement('main', {
-        'aria-label': 'Home page',
-      });
-    },
-  };
-});
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
 
-test('renders the application navigation and home content', () => {
-  render(<App />);
+    expect(
+      screen.queryByRole('heading', {
+        name: 'Impressum',
+      })
+    ).not.toBeInTheDocument();
 
-  expect(screen.getByRole('navigation')).toBeInTheDocument();
-  expect(screen.getByRole('main', { name: 'Home page' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Impressum',
+      })
+    ).toBeInTheDocument();
+  });
+
+  test('loads the privacy route at "/datenschutz"', async () => {
+    renderWithRouter(<App />, {
+      route: '/datenschutz',
+    });
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Datenschutz Filler',
+      })
+    ).toBeInTheDocument();
+  });
+
+  test('loads the studies route at "/studies"', async () => {
+    renderWithRouter(<App />, {
+      route: '/studies',
+    });
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Hier kommen die Studien',
+      })
+    ).toBeInTheDocument();
+  });
+
+  test('keeps the global navigation but renders no page for an unknown route', () => {
+    const consoleWarnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {});
+
+    renderWithRouter(<App />, {
+      route: '/unknown-route',
+    });
+
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
+
+    expect(
+      screen.queryByRole('main', {
+        name: 'Home page',
+      })
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByRole('heading', {
+        name: 'Impressum',
+      })
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByRole('heading', {
+        name: 'Datenschutz Filler',
+      })
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByRole('heading', {
+        name: 'Hier kommen die Studien',
+      })
+    ).not.toBeInTheDocument();
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('No routes matched location')
+    );
+  });
 });

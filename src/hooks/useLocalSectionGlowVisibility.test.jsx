@@ -78,6 +78,36 @@ describe('useLocalSectionGlowVisibility', () => {
     );
   });
 
+  test('supports legacy MediaQueryList listeners', () => {
+    const controller = createMatchMediaController(1536, {
+      useLegacyListeners: true,
+    });
+
+    const { unmount } = render(<VisibilityProbe />);
+
+    const subscribedQuery = controller.mediaQueries.at(-1);
+    const subscribedListener = subscribedQuery.addListener.mock.calls[0][0];
+
+    expect(subscribedQuery.addEventListener).toBeUndefined();
+    expect(subscribedQuery.addListener).toHaveBeenCalledWith(
+      subscribedListener
+    );
+
+    expect(screen.getByTestId('glow-visibility')).toHaveTextContent('render');
+
+    act(() => {
+      controller.setWidth(1440);
+    });
+
+    expect(screen.getByTestId('glow-visibility')).toHaveTextContent('omit');
+
+    unmount();
+
+    expect(subscribedQuery.removeListener).toHaveBeenCalledWith(
+      subscribedListener
+    );
+  });
+
   test('keeps glows visible when matchMedia is unavailable', () => {
     vi.stubGlobal('matchMedia', undefined);
 
