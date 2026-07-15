@@ -1,22 +1,25 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import VisionSection from './VisionSection';
+import { vi } from 'vitest';
 
 let mockShouldRenderLocalGlows;
 
-jest.mock('../../hooks/useLocalSectionGlowVisibility', () => () =>
-  mockShouldRenderLocalGlows,
-);
+vi.mock('../../hooks/useLocalSectionGlowVisibility', () => ({
+  default: () => mockShouldRenderLocalGlows,
+}));
 
-jest.mock('../visuals/FadeoutSection', () => ({ children, ...props }) => (
-  <section {...props}>{children}</section>
-));
+vi.mock('../visuals/FadeoutSection', () => ({
+  default: ({ children, ...props }) => <section {...props}>{children}</section>,
+}));
 
-jest.mock('../visuals/BackgroundGlow', () => () => (
-  <div data-testid="vision-background-glow" />
-));
+vi.mock('../visuals/BackgroundGlow', () => ({
+  default: () => <div data-testid="vision-background-glow" />,
+}));
 
-jest.mock('./VisionSection.module.scss', () => ({}));
+vi.mock('./VisionSection.module.scss', () => ({
+  default: {},
+}));
 
 describe('VisionSection local glow visibility', () => {
   test('omits only the local glow on reduced viewports', () => {
@@ -29,7 +32,7 @@ describe('VisionSection local glow visibility', () => {
     expect(
       screen.getByRole('heading', {
         name: /the new standard of leadership/i,
-      }),
+      })
     ).toBeInTheDocument();
   });
 

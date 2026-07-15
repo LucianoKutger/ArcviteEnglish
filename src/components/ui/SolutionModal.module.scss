@@ -1,8 +1,8 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .overlay {
   position: fixed;
-  inset: 0; 
+  inset: 0;
   z-index: 100;
   display: flex;
   align-items: center;
@@ -25,7 +25,7 @@
 
 .modalCard {
   width: 100%;
-  max-width: 56rem; 
+  max-width: 56rem;
   max-height: 100%;
   background-color: $background;
   border: 1px solid $white-20;
@@ -35,7 +35,6 @@
   box-shadow: 0 25px 50px -12px $black-25;
   display: flex;
   flex-direction: column;
- 
 }
 
 .closeButtonContainer {
@@ -70,7 +69,7 @@
 
 .headerImageContainer {
   width: 100%;
-  height: 16rem; 
+  height: 16rem;
   position: relative;
   flex-shrink: 0;
   overflow: hidden;
@@ -78,16 +77,16 @@
 
 @media (min-width: 768px) {
   .headerImageContainer {
-    height: 20rem; 
+    height: 20rem;
   }
 }
 
 .gridPattern {
   position: absolute;
   inset: 0;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 30px 30px;
 }
 
@@ -109,12 +108,12 @@
 
 @media (min-width: 768px) {
   .titleWrapper {
-    left: 3rem; 
+    left: 3rem;
   }
 }
 
 .title {
-  font-size: 1.875rem; 
+  font-size: 1.875rem;
   font-weight: 500;
   color: white;
   margin-bottom: 0.5rem;
@@ -126,7 +125,7 @@
 
 @media (min-width: 768px) {
   .title {
-    font-size: 3rem; 
+    font-size: 3rem;
   }
 }
 
@@ -134,9 +133,9 @@
   padding: 2rem;
   background-color: $background;
   overflow-y: auto;
-  flex: 1 1 0; 
-  min-height: 0; 
-  overscroll-behavior: contain; 
+  flex: 1 1 auto;
+  min-height: 0;
+  overscroll-behavior: contain;
 }
 
 @media (min-width: 768px) {
@@ -144,7 +143,6 @@
     padding: 3rem;
   }
 }
-
 
 .contentContainer::-webkit-scrollbar {
   width: 6px;
@@ -255,7 +253,7 @@
   color: $white-70;
   line-height: 1.625;
   margin: 0;
-  white-space: pre-wrap; 
+  white-space: pre-wrap;
 }
 
 .buttonContainer {
@@ -284,7 +282,7 @@
 .actionButton:hover {
   background: linear-gradient(to bottom right, $cyan-10, transparent);
   color: $text;
-  border: 1px solid $cyan-40
+  border: 1px solid $cyan-40;
 }
 
 .iconSmall {
