@@ -24,7 +24,9 @@
     "test": "vitest run",
     "images:generate": "node scripts/generate-responsive-images.cjs",
     "test:watch": "vitest",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "test:coverage": "vitest run --coverage"
   },
   "browserslist": {
     "production": [
@@ -42,6 +44,7 @@
     "@eslint/js": "^9.39.5",
     "@vitejs/plugin-legacy": "^8.2.0",
     "@vitejs/plugin-react": "^6.0.3",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9.39.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",

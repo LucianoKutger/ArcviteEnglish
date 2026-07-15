@@ -1,23 +1,13 @@
 import React, { StrictMode } from 'react';
 import { act, render, screen } from '@testing-library/react';
-import useViewportActivity from './useViewportActivity';
 import { vi } from 'vitest';
 
-let observers;
+import {
+  createDocumentVisibilityController,
+  createIntersectionObserverController,
+} from '../test-utils/browserMocks';
 
-class MockIntersectionObserver {
-  constructor(callback, options) {
-    this.callback = callback;
-    this.options = options;
-    this.observe = vi.fn();
-    this.disconnect = vi.fn();
-    observers.push(this);
-  }
-
-  setIsIntersecting(isIntersecting) {
-    this.callback([{ isIntersecting }]);
-  }
-}
+import useViewportActivity from './useViewportActivity';
 
 function ActivityProbe() {
   const { targetRef, isActive } = useViewportActivity();
@@ -29,39 +19,13 @@ function ActivityProbe() {
   );
 }
 
-const setDocumentVisibility = (visibilityState) => {
-  Object.defineProperty(document, 'visibilityState', {
-    configurable: true,
-    value: visibilityState,
-  });
-  document.dispatchEvent(new Event('visibilitychange'));
-};
-
 describe('useViewportActivity', () => {
-  const originalIntersectionObserver = window.IntersectionObserver;
-  const originalVisibilityDescriptor = Object.getOwnPropertyDescriptor(
-    document,
-    'visibilityState'
-  );
+  let intersectionController;
+  let visibilityController;
 
   beforeEach(() => {
-    observers = [];
-    window.IntersectionObserver = MockIntersectionObserver;
-    setDocumentVisibility('visible');
-  });
-
-  afterEach(() => {
-    window.IntersectionObserver = originalIntersectionObserver;
-
-    if (originalVisibilityDescriptor) {
-      Object.defineProperty(
-        document,
-        'visibilityState',
-        originalVisibilityDescriptor
-      );
-    } else {
-      delete document.visibilityState;
-    }
+    intersectionController = createIntersectionObserverController();
+    visibilityController = createDocumentVisibilityController('visible');
   });
 
   test('combines viewport proximity with document visibility', () => {
@@ -70,32 +34,47 @@ describe('useViewportActivity', () => {
         <ActivityProbe />
       </StrictMode>
     );
-    const observer = observers[observers.length - 1];
+
+    const observer = intersectionController.latestObserver;
 
     expect(observer.options).toEqual({
       rootMargin: '250px 0px',
       threshold: 0,
     });
+
     expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');
 
-    act(() => observer.setIsIntersecting(false));
+    act(() => {
+      observer.setIsIntersecting(false);
+    });
+
     expect(screen.getByTestId('activity-probe')).toHaveTextContent('paused');
 
-    act(() => observer.setIsIntersecting(true));
+    act(() => {
+      observer.setIsIntersecting(true);
+    });
+
     expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');
 
-    act(() => setDocumentVisibility('hidden'));
+    act(() => {
+      visibilityController.setVisibility('hidden');
+    });
+
     expect(screen.getByTestId('activity-probe')).toHaveTextContent('paused');
 
-    act(() => setDocumentVisibility('visible'));
+    act(() => {
+      visibilityController.setVisibility('visible');
+    });
+
     expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');
 
     unmount();
+
     expect(observer.disconnect).toHaveBeenCalledTimes(1);
   });
 
   test('keeps animations active when IntersectionObserver is unavailable', () => {
-    window.IntersectionObserver = undefined;
+    vi.stubGlobal('IntersectionObserver', undefined);
 
     render(<ActivityProbe />);
 

@@ -1,46 +1,17 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+
+import { createMatchMediaController } from '../test-utils/browserMocks';
+
 import useLocalSectionGlowVisibility, {
   getMediaQueryMatch,
   LOCAL_SECTION_GLOW_MEDIA_QUERY,
 } from './useLocalSectionGlowVisibility';
 
-import { vi } from 'vitest';
-
 const hiddenGlowWidths = [390, 768, 1024, 1180, 1280, 1366, 1376, 1439, 1440];
+
 const visibleGlowWidths = [1441, 1536, 1920];
-
-const createMatchMediaController = (initialWidth) => {
-  let width = initialWidth;
-  const listeners = new Set();
-  const mediaQueries = [];
-
-  window.matchMedia = vi.fn((query) => {
-    const mediaQuery = {
-      media: query,
-      get matches() {
-        return width <= 1440;
-      },
-      addEventListener: vi.fn((_eventName, listener) => {
-        listeners.add(listener);
-      }),
-      removeEventListener: vi.fn((_eventName, listener) => {
-        listeners.delete(listener);
-      }),
-    };
-
-    mediaQueries.push(mediaQuery);
-    return mediaQuery;
-  });
-
-  return {
-    mediaQueries,
-    setWidth(nextWidth) {
-      width = nextWidth;
-      listeners.forEach((listener) => listener({ matches: width <= 1440 }));
-    },
-  };
-};
 
 function VisibilityProbe() {
   const shouldRender = useLocalSectionGlowVisibility();
@@ -51,18 +22,13 @@ function VisibilityProbe() {
 }
 
 describe('useLocalSectionGlowVisibility', () => {
-  const originalMatchMedia = window.matchMedia;
-
-  afterEach(() => {
-    window.matchMedia = originalMatchMedia;
-  });
-
   test.each(hiddenGlowWidths)('omits local glows at %ipx', (width) => {
     createMatchMediaController(width);
 
     render(<VisibilityProbe />);
 
     expect(screen.getByTestId('glow-visibility')).toHaveTextContent('omit');
+
     expect(window.matchMedia).toHaveBeenCalledWith(
       LOCAL_SECTION_GLOW_MEDIA_QUERY
     );
@@ -78,20 +44,28 @@ describe('useLocalSectionGlowVisibility', () => {
 
   test('unmounts and remounts glows when the query boundary changes', () => {
     const controller = createMatchMediaController(1536);
+
     render(<VisibilityProbe />);
 
     expect(screen.getByTestId('glow-visibility')).toHaveTextContent('render');
 
-    act(() => controller.setWidth(1440));
+    act(() => {
+      controller.setWidth(1440);
+    });
+
     expect(screen.getByTestId('glow-visibility')).toHaveTextContent('omit');
 
-    act(() => controller.setWidth(1441));
+    act(() => {
+      controller.setWidth(1441);
+    });
+
     expect(screen.getByTestId('glow-visibility')).toHaveTextContent('render');
   });
 
   test('removes the media query listener on unmount', () => {
     const controller = createMatchMediaController(1536);
     const { unmount } = render(<VisibilityProbe />);
+
     const subscribedQuery = controller.mediaQueries.at(-1);
     const subscribedListener =
       subscribedQuery.addEventListener.mock.calls[0][1];
@@ -105,7 +79,7 @@ describe('useLocalSectionGlowVisibility', () => {
   });
 
   test('keeps glows visible when matchMedia is unavailable', () => {
-    window.matchMedia = undefined;
+    vi.stubGlobal('matchMedia', undefined);
 
     render(<VisibilityProbe />);
 

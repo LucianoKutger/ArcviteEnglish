@@ -17,10 +17,14 @@ const vitestGlobals = {
 
 export default [
   {
-    ignores: ['build/**', 'build-vite/**', 'node_modules/**'],
+    ignores: ['build/**', 'build-vite/**', 'coverage/**', 'node_modules/**'],
   },
   {
-    files: ['src/**/*.{js,jsx}'],
+    files: [
+      'src/**/*.test.{js,jsx}',
+      'src/setupVitest.js',
+      'src/test-utils/**/*.{js,jsx}',
+    ],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
