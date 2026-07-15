@@ -1,6 +1,4 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-no-undef */
-
+/*
 <FadeOutSection id="biometrics" className={biometricsStyles.biometricsSection}>
           <div className={biometricsStyles.biometricsContainer}>
             <div className={biometricsStyles.biometricsContentWrapper}></div>
@@ -50,4 +48,4 @@
               </div>
             </BentoCard>
           </div>
-</FadeOutSection>
+</FadeOutSection>*/
