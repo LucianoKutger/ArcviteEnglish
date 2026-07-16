@@ -143,8 +143,7 @@ const ArcSystem = () => {
     >
       {/* LINKSEITE: DAS SVG MODELL */}
       <div
-        className={styles.textWrapper}
-        data-testid="methodology-text-wrapper"
+        className={styles.visualWrapper}
         onMouseLeave={isDesktop ? handleInteractionLeave : undefined}
       >
         <svg
@@ -410,6 +409,7 @@ const ArcSystem = () => {
       {/* RECHTE SEITE: TEXT INFORMATION ALS LISTE */}
       <div
         className={styles.textWrapper}
+        data-testid="methodology-text-wrapper"
         onMouseLeave={isDesktop ? handleInteractionLeave : undefined}
       >
         <div className={styles.textList}>
