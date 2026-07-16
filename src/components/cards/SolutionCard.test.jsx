@@ -88,4 +88,34 @@ describe('SolutionCard', () => {
     expect(onOpen).toHaveBeenCalledTimes(1);
     expect(onOpen).toHaveBeenCalledWith(testItem);
   });
+  test('is an accessible control that opens exactly once per mouse or keyboard activation', async () => {
+    const onOpen = vi.fn();
+
+    render(<SolutionCard item={testItem} image={testImage} onOpen={onOpen} />);
+
+    const card = screen.getByRole('button', {
+      name: `Open ${testItem.title}`,
+    });
+
+    expect(card).toHaveAttribute('tabindex', '0');
+
+    await userEvent.click(card);
+
+    expect(onOpen).toHaveBeenCalledTimes(1);
+    expect(onOpen).toHaveBeenLastCalledWith(testItem);
+
+    card.focus();
+
+    expect(card).toHaveFocus();
+
+    await userEvent.keyboard('{Enter}');
+
+    expect(onOpen).toHaveBeenCalledTimes(2);
+    expect(onOpen).toHaveBeenLastCalledWith(testItem);
+
+    await userEvent.keyboard(' ');
+
+    expect(onOpen).toHaveBeenCalledTimes(3);
+    expect(onOpen).toHaveBeenLastCalledWith(testItem);
+  });
 });

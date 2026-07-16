@@ -159,6 +159,17 @@
       transform: scale(0.75);
       transform-origin: left center;
       cursor: pointer;
+
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      font: inherit;
+
+      &:focus-visible {
+        outline: 2px solid $cyan;
+        outline-offset: 4px;
+      }
     }
 
     .logoPicture,

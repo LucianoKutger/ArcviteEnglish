@@ -1,4 +1,4 @@
-@use "../../styles/variables" as *;
+@use '../../styles/variables' as *;
 
 .faqItem {
   border-bottom: 1px solid $cyan-05;
@@ -10,7 +10,7 @@
 
 .faqButton {
   width: 100%;
-  padding: 1.5rem 0; 
+  padding: 1.5rem 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,32 +18,43 @@
   background: none;
   border: none;
   cursor: pointer;
-  outline: none;
 }
 
 @media (min-width: 768px) {
   .faqButton {
-    padding: 2rem 0; 
+    padding: 2rem 0;
   }
 }
 
 .question {
-  font-size: 1.125rem; 
+  font-size: 1.125rem;
   font-weight: 500;
   color: $headlines;
   transition: color 0.2s ease;
-  padding-right: 2rem; 
+  padding-right: 2rem;
 }
 
 @media (min-width: 768px) {
   .question {
-    font-size: 1.25rem; 
+    font-size: 1.25rem;
   }
 }
 
 /* Hover-Effekt über die Button-Group */
 .faqButton:hover .question {
   color: $cyan;
+}
+.faqButton:focus-visible {
+  outline: 2px solid $cyan;
+  outline-offset: 4px;
+}
+
+.faqButton:focus-visible .question {
+  color: $cyan;
+}
+
+.faqButton:focus-visible .iconWrapper {
+  opacity: 1;
 }
 
 .iconWrapper {

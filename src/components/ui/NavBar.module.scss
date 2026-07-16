@@ -45,8 +45,16 @@
 .lpLogoWrap {
   cursor: pointer;
   flex-shrink: 0;
-}
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
 
+  &:focus-visible {
+    outline: 2px solid $cyan;
+    outline-offset: 4px;
+  }
+}
 .lpNavLinks {
   display: none;
 }
@@ -113,6 +121,51 @@
   border: none;
   color: $cyan;
   cursor: pointer;
+  padding: $spacing-xs;
+
+  &:focus-visible {
+    outline: 2px solid $cyan;
+    outline-offset: 4px;
+  }
+}
+
+.lpMobileMenu {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg $spacing-lg;
+  background-color: $background;
+  border-top: 1px solid $cyan-05;
+}
+
+.lpMobileMenu[hidden] {
+  display: none;
+}
+
+.lpMobileNavBtn,
+.lpMobileAuditBtn {
+  width: 100%;
+  padding: $spacing-sm;
+  border: 0;
+  background: none;
+  color: $headlines;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $cyan;
+    outline-offset: 2px;
+  }
+}
+
+.lpMobileAuditBtn {
+  color: $cyan;
+  border: 1px solid $cyan-30;
+  border-radius: $radius-full;
+  text-align: center;
 }
 
 .auditContent {
@@ -162,6 +215,10 @@
   }
 
   .lpMobileMenuToggle {
+    display: none;
+  }
+
+  .lpMobileMenu {
     display: none;
   }
 }

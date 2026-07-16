@@ -5,8 +5,26 @@ import ResponsiveImage from '../ui/ResponsiveImage';
 import { motion } from 'framer-motion';
 
 const SolutionCard = ({ item, onOpen, image }) => {
+  const handleOpen = () => {
+    onOpen(item);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleOpen();
+    }
+  };
+
   return (
-    <div onClick={() => onOpen(item)} className={styles.card}>
+    <motion.div
+      role="button"
+      tabIndex={0}
+      aria-label={`Open ${item.title}`}
+      onClick={handleOpen}
+      onKeyDown={handleKeyDown}
+      className={styles.card}
+    >
       <div className={styles.imageContainer}>
         <div className={styles.gridPattern} />
         <div className={styles.imageWrapper}>
@@ -46,7 +64,7 @@ const SolutionCard = ({ item, onOpen, image }) => {
           <p className={styles.solutionText}>{item.solution}</p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

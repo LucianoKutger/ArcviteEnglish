@@ -1,54 +1,79 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-import { imageSizes } from "../../data/responsiveImages";
-import ResponsiveImage from "../ui/ResponsiveImage";
-import styles from "./ExpandableCards.module.scss";
+import { useId } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
+import { imageSizes } from '../../data/responsiveImages';
+import ResponsiveImage from '../ui/ResponsiveImage';
+import styles from './ExpandableCards.module.scss';
 
-const ExpandableCard = ({ 
-  title, category, focusTitle, focusDesc, imageLabel, image, details, appearance, isOpen, onToggle, opacity, wide
+const ExpandableCard = ({
+  title,
+  category,
+  focusTitle,
+  focusDesc,
+  imageLabel,
+  image,
+  details,
+  appearance,
+  isOpen,
+  onToggle,
+  opacity,
+  wide,
 }) => {
   const opacityVal = opacity ?? 1;
-  const appearanceClass = appearance === 'foreground'
-    ? styles.cardForeground
-    : styles.cardElevated;
+
+  const detailsId = useId();
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onToggle();
+    }
+  };
+  const appearanceClass =
+    appearance === 'foreground' ? styles.cardForeground : styles.cardElevated;
 
   return (
     /* Der Wrapper hält die Stellung im CSS-Grid */
-    <div className={`${styles.cardWrapper} ${wide ? styles.cardWide : ''} ${appearanceClass}`}>
-      <motion.div 
+    <div
+      className={`${styles.cardWrapper} ${wide ? styles.cardWide : ''} ${appearanceClass}`}
+    >
+      <motion.div
+        role="button"
+        tabIndex={0}
+        aria-expanded={isOpen}
+        aria-controls={detailsId}
         className={`${styles.card} ${isOpen ? styles.cardOpen : ''}`}
         onClick={onToggle}
+        onKeyDown={handleKeyDown}
         /* Direkte CSS-Height Animation statt unzuverlässigem Layout-Tracking */
         animate={{
-          height: isOpen ? "auto" : "100%",
-          zIndex: isOpen ? 50 : 10
+          height: isOpen ? 'auto' : '100%',
+          zIndex: isOpen ? 50 : 10,
         }}
         transition={{
           duration: 0.3,
-          ease: "easeInOut"
+          ease: 'easeInOut',
         }}
       >
         <div className={styles.cardGradientOverlay} />
-        
+
         <div className={styles.imageContainer}>
           {image ? (
             <ResponsiveImage
               image={image}
               variant="card"
               sizes={wide ? imageSizes.bioSyncWide : imageSizes.bioSyncCard}
-              alt={title} 
+              alt={title}
               loading="lazy"
               pictureClassName={styles.cardPicture}
               className={styles.cardImage}
-              style={{opacity: opacityVal}}
+              style={{ opacity: opacityVal }}
             />
           ) : (
             <>
               <div className={styles.fallbackPattern} />
               <div className={styles.fallbackCenter}>
-                <div className={styles.fallbackLabel}>
-                  [Bild: {imageLabel}]
-                </div>
+                <div className={styles.fallbackLabel}>[Bild: {imageLabel}]</div>
               </div>
             </>
           )}
@@ -58,7 +83,7 @@ const ExpandableCard = ({
         <div className={styles.contentWrapper}>
           <div className={styles.headerRow}>
             <h3 className={styles.title}>{title}</h3>
-            <motion.div 
+            <motion.div
               animate={{ rotate: isOpen ? 180 : 0 }}
               transition={{ duration: 0.3 }}
               className={styles.chevronWrapper}
@@ -79,15 +104,16 @@ const ExpandableCard = ({
           <AnimatePresence>
             {isOpen && (
               <motion.div
+                id={detailsId}
                 initial={{ opacity: 0, height: 0, marginTop: 0 }}
                 animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
                 exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className={styles.detailsContainer}
               >
                 <div className={styles.detailsList}>
                   {details.map((item, i) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}

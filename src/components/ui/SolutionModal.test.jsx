@@ -1,3 +1,4 @@
+import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
@@ -26,11 +27,34 @@ vi.mock('./ResponsiveImage', () => ({
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, className, onClick }) => (
-      <div className={className} onClick={onClick}>
-        {children}
-      </div>
-    ),
+    div: React.forwardRef(function MockMotionDiv(
+      {
+        children,
+        className,
+        onClick,
+        role,
+        tabIndex,
+        onKeyDown,
+        'aria-modal': ariaModal,
+        'aria-labelledby': ariaLabelledBy,
+      },
+      ref
+    ) {
+      return (
+        <div
+          ref={ref}
+          className={className}
+          onClick={onClick}
+          role={role}
+          tabIndex={tabIndex}
+          onKeyDown={onKeyDown}
+          aria-modal={ariaModal}
+          aria-labelledby={ariaLabelledBy}
+        >
+          {children}
+        </div>
+      );
+    }),
   },
 }));
 
@@ -144,5 +168,137 @@ describe('SolutionModal', () => {
 
     expect(parentWheelHandler).not.toHaveBeenCalled();
     expect(parentTouchHandler).not.toHaveBeenCalled();
+  });
+
+  test('exposes an accessible modal dialog and close control', () => {
+    render(<SolutionModal item={testItem} onClose={vi.fn()} />);
+
+    const dialog = screen.getByRole('dialog', {
+      name: testItem.title,
+    });
+
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+
+    const title = screen.getByRole('heading', {
+      name: testItem.title,
+    });
+
+    expect(title).toHaveAttribute('id');
+
+    expect(dialog).toHaveAttribute('aria-labelledby', title.getAttribute('id'));
+
+    expect(
+      screen.getByRole('button', {
+        name: /close/i,
+      })
+    ).toBeInTheDocument();
+  });
+
+  test('moves focus into the modal and closes when Escape is pressed', () => {
+    const onClose = vi.fn();
+
+    render(<SolutionModal item={testItem} onClose={onClose} />);
+
+    const closeButton = screen.getByRole('button', {
+      name: /close modal/i,
+    });
+
+    expect(closeButton).toHaveFocus();
+
+    fireEvent.keyDown(document, {
+      key: 'Escape',
+      code: 'Escape',
+    });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('keeps keyboard focus inside the open dialog', async () => {
+    render(<SolutionModal item={testItem} onClose={vi.fn()} />);
+
+    const closeButton = screen.getByRole('button', {
+      name: /close modal/i,
+    });
+
+    const studiesButton = screen.getByRole('button', {
+      name: /view related studies/i,
+    });
+
+    expect(closeButton).toHaveFocus();
+
+    await userEvent.tab({
+      shift: true,
+    });
+
+    expect(studiesButton).toHaveFocus();
+
+    await userEvent.tab();
+
+    expect(closeButton).toHaveFocus();
+
+    studiesButton.focus();
+
+    expect(studiesButton).toHaveFocus();
+
+    await userEvent.tab();
+
+    expect(closeButton).toHaveFocus();
+  });
+
+  test('focuses the dialog when no focusable controls are available', async () => {
+    render(<SolutionModal item={testItem} onClose={vi.fn()} />);
+
+    const dialog = screen.getByRole('dialog', {
+      name: testItem.title,
+    });
+
+    const buttons = screen.getAllByRole('button');
+
+    buttons.forEach((button) => {
+      button.setAttribute('disabled', '');
+    });
+
+    dialog.focus();
+
+    expect(dialog).toHaveFocus();
+
+    await userEvent.keyboard('{Tab}');
+
+    expect(dialog).toHaveFocus();
+  });
+
+  test('returns focus to the dialog when it moves outside the modal', async () => {
+    const outsideButton = document.createElement('button');
+
+    outsideButton.textContent = 'Outside control';
+    document.body.appendChild(outsideButton);
+
+    render(<SolutionModal item={testItem} onClose={vi.fn()} />);
+
+    const closeButton = screen.getByRole('button', {
+      name: /close modal/i,
+    });
+
+    const studiesButton = screen.getByRole('button', {
+      name: /view related studies/i,
+    });
+
+    outsideButton.focus();
+
+    expect(outsideButton).toHaveFocus();
+
+    await userEvent.tab();
+
+    expect(closeButton).toHaveFocus();
+
+    outsideButton.focus();
+
+    await userEvent.tab({
+      shift: true,
+    });
+
+    expect(studiesButton).toHaveFocus();
+
+    outsideButton.remove();
   });
 });
