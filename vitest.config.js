@@ -27,9 +27,6 @@ export default defineConfig({
         'src/main.jsx',
         'src/test-utils/**',
 
-        // Derzeit nicht in der Anwendung verwendet.
-        // Rolldown kann die unveränderte JSX-Datei bei der
-        // Erfassung ungetesteter Dateien nicht instrumentieren.
         'src/components/visuals/ArcSystem.jsx',
       ],
     },

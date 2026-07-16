@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { auditSchema, normalizePhoneNumber } from '../../validation/auditForm';
 
 import FadeOutSection from '../visuals/FadeoutSection';
 import FormInput from '../ui/FormInput';
@@ -11,31 +11,18 @@ import PhoneInput, { COUNTRIES } from '../ui/PhoneInput';
 import { goalOptions } from '../../data/content';
 import styles from './AuditSection.module.scss';
 
-const auditSchema = z.object({
-  firstName: z
-    .string()
-    .min(2, 'First Name (min. 2 characters)')
-    .max(20, 'First Name (max. 20 characters)'),
-  lastName: z
-    .string()
-    .min(2, 'Last Name (min. 2 characters)')
-    .max(20, 'Last Name (max. 20 characters)'),
-  email: z
-    .string()
-    .email('a valid E-Mail address')
-    .max(40, 'a Valid Email (max. 40 characters)'),
-  phone: z
-    .string()
-    .min(6, 'a valid Phone Number')
-    .max(20, 'a Valif Phone Number (max. 20 characters)'),
-  goals: z.array(z.string()).min(1, 'Goals'),
-  tos: z.boolean().refine((val) => val === true, 'Terms of Service'),
-});
-
 const AuditSection = () => {
   const [phoneCountry, setPhoneCountry] = useState('+49');
   const [isSuccess, setIsSuccess] = useState(false);
-  const [formResetKey, setFormResetKey] = useState(0); // NEU: Der Reset-Key für das Formular
+  const [formResetKey, setFormResetKey] = useState(0);
+  const [clearedErrorStyles, setClearedErrorStyles] = useState({});
+
+  const clearErrorStyle = (fieldName) => {
+    setClearedErrorStyles((currentStyles) => ({
+      ...currentStyles,
+      [fieldName]: true,
+    }));
+  };
 
   const {
     register,
@@ -45,6 +32,8 @@ const AuditSection = () => {
     formState: { errors, submitCount },
   } = useForm({
     resolver: zodResolver(auditSchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -58,18 +47,15 @@ const AuditSection = () => {
   const onSubmit = (data) => {
     setIsSuccess(true);
 
-    let cleanedPhoneBody = data.phone.trim();
-    const currentCountry = COUNTRIES.find((c) => c.code === phoneCountry);
-    if (
-      currentCountry &&
-      currentCountry.trunkPrefix &&
-      cleanedPhoneBody.startsWith(currentCountry.trunkPrefix)
-    ) {
-      cleanedPhoneBody = cleanedPhoneBody.slice(
-        currentCountry.trunkPrefix.length
-      );
-    }
-    const fullPhoneNumber = `${phoneCountry}${cleanedPhoneBody}`;
+    const currentCountry = COUNTRIES.find(
+      (country) => country.code === phoneCountry
+    );
+
+    const fullPhoneNumber = normalizePhoneNumber({
+      countryCode: phoneCountry,
+      phoneNumber: data.phone,
+      trunkPrefix: currentCountry?.trunkPrefix ?? '',
+    });
 
     console.log('Form submitted perfectly:', {
       ...data,
@@ -86,6 +72,10 @@ const AuditSection = () => {
 
   const hasErrors = Object.keys(errors).length > 0;
 
+  const onInvalid = () => {
+    setClearedErrorStyles({});
+  };
+
   return (
     <FadeOutSection id="audit" className={styles.footer}>
       <div className={styles.container}>
@@ -100,45 +90,73 @@ const AuditSection = () => {
           <form
             key={formResetKey}
             className={styles.form}
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit, onInvalid)}
             noValidate
             autoComplete="off"
           >
             <div className={styles.inputGrid}>
               <div
-                className={`${styles.inputWrapper} ${errors.firstName ? styles.hasError : ''}`}
+                className={`${styles.inputWrapper} ${
+                  errors.firstName && !clearedErrorStyles.firstName
+                    ? styles.hasError
+                    : ''
+                }`}
               >
                 <FormInput
                   label="First Name *"
                   placeholder="John"
-                  {...register('firstName')}
+                  {...register('firstName', {
+                    onChange: () => {
+                      clearErrorStyle('firstName');
+                    },
+                  })}
                 />
               </div>
               <div
-                className={`${styles.inputWrapper} ${errors.lastName ? styles.hasError : ''}`}
+                className={`${styles.inputWrapper} ${
+                  errors.lastName && !clearedErrorStyles.lastName
+                    ? styles.hasError
+                    : ''
+                }`}
               >
                 <FormInput
                   label="Last Name *"
                   placeholder="Doe"
-                  {...register('lastName')}
+                  {...register('lastName', {
+                    onChange: () => {
+                      clearErrorStyle('lastName');
+                    },
+                  })}
                 />
               </div>
             </div>
 
             <div className={styles.inputGrid}>
               <div
-                className={`${styles.inputWrapper} ${errors.email ? styles.hasError : ''}`}
+                className={`${styles.inputWrapper} ${
+                  errors.email && !clearedErrorStyles.email
+                    ? styles.hasError
+                    : ''
+                }`}
               >
                 <FormInput
                   label="E-Mail *"
                   type="email"
                   placeholder="john@company.com"
-                  {...register('email')}
+                  {...register('email', {
+                    onChange: () => {
+                      clearErrorStyle('email');
+                    },
+                  })}
                 />
               </div>
 
               <div
-                className={`${styles.inputWrapper} ${errors.phone ? styles.hasError : ''}`}
+                className={`${styles.inputWrapper} ${
+                  errors.phone && !clearedErrorStyles.phone
+                    ? styles.hasError
+                    : ''
+                }`}
               >
                 <Controller
                   name="phone"
@@ -149,9 +167,13 @@ const AuditSection = () => {
                       countryValue={phoneCountry}
                       onCountryChange={setPhoneCountry}
                       phoneValue={field.value}
-                      onPhoneChange={(val) => {
-                        field.onChange(val);
-                        if (isSuccess) setIsSuccess(false);
+                      onPhoneChange={(value) => {
+                        field.onChange(value);
+                        clearErrorStyle('phone');
+
+                        if (isSuccess) {
+                          setIsSuccess(false);
+                        }
                       }}
                     />
                   )}
@@ -176,6 +198,7 @@ const AuditSection = () => {
                         <button
                           key={goal.value}
                           type="button"
+                          aria-pressed={isActive}
                           className={`${styles.goalButton} ${isActive ? styles.active : styles.inactive}`}
                           onClick={() => {
                             if (isSuccess) setIsSuccess(false);
@@ -233,7 +256,11 @@ const AuditSection = () => {
               </p>
             )}
 
-            <button type="submit" className={styles.submitButton}>
+            <button
+              type="submit"
+              className={styles.submitButton}
+              aria-label="Check availability"
+            >
               <span className={styles.submitButtonContent}>
                 <span className={styles.submitButtonText}>
                   <span>Check</span>
