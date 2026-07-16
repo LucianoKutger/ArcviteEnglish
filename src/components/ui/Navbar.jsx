@@ -50,29 +50,29 @@ const Navbar = () => {
     setMobileMenuOpen(false);
 
     if (location.pathname !== '/') {
-      navigate('/');
+      navigate('/', {
+        state: {
+          scrollTarget: id,
+        },
+      });
 
-      setTimeout(() => {
-        if (id === 'home') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          const element = document.getElementById(id);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-          }
-        }
-      }, 100);
       return;
     }
 
     if (id === 'home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+
+      return;
     }
+
+    const element = document.getElementById(id);
+
+    element?.scrollIntoView({
+      behavior: 'smooth',
+    });
   };
 
   return (

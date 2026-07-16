@@ -14,7 +14,15 @@ vi.mock('./ArcviteLogo', () => ({
 const LocationDisplay = () => {
   const location = useLocation();
 
-  return <div data-testid="current-location">{location.pathname}</div>;
+  return (
+    <>
+      <div data-testid="current-location">{location.pathname}</div>
+
+      <div data-testid="scroll-target">
+        {location.state?.scrollTarget ?? ''}
+      </div>
+    </>
+  );
 };
 
 const renderNavbar = (initialEntry = '/') =>
@@ -176,98 +184,6 @@ describe('Navbar', () => {
     window.scrollTo = originalScrollTo;
   });
 
-  test('returns from a subpage and scrolls to the requested section after navigation', () => {
-    vi.useFakeTimers();
-
-    const targetSection = document.createElement('section');
-
-    targetSection.id = navItems[0].targetId;
-    targetSection.scrollIntoView = vi.fn();
-
-    document.body.appendChild(targetSection);
-
-    renderNavbar('/impressum');
-
-    expect(screen.getByTestId('current-location')).toHaveTextContent(
-      '/impressum'
-    );
-
-    const navigation = screen.getByRole('navigation');
-
-    const desktopNavigation = navigation.querySelector(
-      `.${navBarStyles.lpNavLinks}`
-    );
-
-    expect(desktopNavigation).not.toBeNull();
-
-    const visionButton = within(desktopNavigation).getByRole('button', {
-      name: navItems[0].label,
-      hidden: true,
-    });
-
-    fireEvent.click(visionButton);
-
-    expect(screen.getByTestId('current-location')).toHaveTextContent('/');
-
-    expect(targetSection.scrollIntoView).not.toHaveBeenCalled();
-
-    act(() => {
-      vi.advanceTimersByTime(99);
-    });
-
-    expect(targetSection.scrollIntoView).not.toHaveBeenCalled();
-
-    act(() => {
-      vi.advanceTimersByTime(1);
-    });
-
-    expect(targetSection.scrollIntoView).toHaveBeenCalledTimes(1);
-
-    expect(targetSection.scrollIntoView).toHaveBeenCalledWith({
-      behavior: 'smooth',
-    });
-
-    targetSection.remove();
-    vi.useRealTimers();
-  });
-
-  test('returns from a subpage and scrolls to the top when the logo is activated', () => {
-    vi.useFakeTimers();
-
-    const originalScrollTo = window.scrollTo;
-    window.scrollTo = vi.fn();
-
-    renderNavbar('/datenschutz');
-
-    expect(screen.getByTestId('current-location')).toHaveTextContent(
-      '/datenschutz'
-    );
-
-    const homeButton = screen.getByRole('button', {
-      name: /go to home/i,
-    });
-
-    fireEvent.click(homeButton);
-
-    expect(screen.getByTestId('current-location')).toHaveTextContent('/');
-
-    expect(window.scrollTo).not.toHaveBeenCalled();
-
-    act(() => {
-      vi.advanceTimersByTime(100);
-    });
-
-    expect(window.scrollTo).toHaveBeenCalledTimes(1);
-
-    expect(window.scrollTo).toHaveBeenCalledWith({
-      top: 0,
-      behavior: 'smooth',
-    });
-
-    window.scrollTo = originalScrollTo;
-    vi.useRealTimers();
-  });
-
   test('updates its appearance on scroll and removes the scroll listener on unmount', () => {
     const originalScrollYDescriptor = Object.getOwnPropertyDescriptor(
       window,
@@ -409,5 +325,46 @@ describe('Navbar', () => {
     expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     expect(mobileNavigation).toHaveAttribute('hidden');
     expect(menuButton).toHaveFocus();
+  });
+
+  test('passes the requested section while returning from a subpage', () => {
+    renderNavbar('/impressum');
+
+    expect(screen.getByTestId('current-location')).toHaveTextContent(
+      '/impressum'
+    );
+
+    const navigation = screen.getByRole('navigation');
+
+    const desktopNavigation = navigation.querySelector(
+      `.${navBarStyles.lpNavLinks}`
+    );
+
+    const visionButton = within(desktopNavigation).getByRole('button', {
+      name: navItems[0].label,
+      hidden: true,
+    });
+
+    fireEvent.click(visionButton);
+
+    expect(screen.getByTestId('current-location')).toHaveTextContent('/');
+
+    expect(screen.getByTestId('scroll-target')).toHaveTextContent(
+      navItems[0].targetId
+    );
+  });
+
+  test('passes the home target when returning through the logo', () => {
+    renderNavbar('/datenschutz');
+
+    const homeButton = screen.getByRole('button', {
+      name: /go to home/i,
+    });
+
+    fireEvent.click(homeButton);
+
+    expect(screen.getByTestId('current-location')).toHaveTextContent('/');
+
+    expect(screen.getByTestId('scroll-target')).toHaveTextContent('home');
   });
 });
