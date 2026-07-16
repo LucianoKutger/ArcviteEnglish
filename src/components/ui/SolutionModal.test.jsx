@@ -28,29 +28,11 @@ vi.mock('./ResponsiveImage', () => ({
 vi.mock('framer-motion', () => ({
   motion: {
     div: React.forwardRef(function MockMotionDiv(
-      {
-        children,
-        className,
-        onClick,
-        role,
-        tabIndex,
-        onKeyDown,
-        'aria-modal': ariaModal,
-        'aria-labelledby': ariaLabelledBy,
-      },
+      { children, initial, animate, exit, transition, layoutId, ...domProps },
       ref
     ) {
       return (
-        <div
-          ref={ref}
-          className={className}
-          onClick={onClick}
-          role={role}
-          tabIndex={tabIndex}
-          onKeyDown={onKeyDown}
-          aria-modal={ariaModal}
-          aria-labelledby={ariaLabelledBy}
-        >
+        <div ref={ref} {...domProps}>
           {children}
         </div>
       );
@@ -123,24 +105,19 @@ describe('SolutionModal', () => {
   test('closes through both the backdrop and the close button', async () => {
     const onClose = vi.fn();
 
-    const { container } = render(
-      <SolutionModal item={testItem} onClose={onClose} />
-    );
+    render(<SolutionModal item={testItem} onClose={onClose} />);
 
-    const overlay = container.firstElementChild;
-    const backdrop = overlay?.firstElementChild;
-
-    if (!(backdrop instanceof HTMLElement)) {
-      throw new Error('Modal backdrop was not found');
-    }
+    const backdrop = screen.getByTestId('solution-modal-backdrop');
 
     await userEvent.click(backdrop);
 
     expect(onClose).toHaveBeenCalledTimes(1);
 
-    const buttons = screen.getAllByRole('button');
+    const closeButton = screen.getByRole('button', {
+      name: /close modal/i,
+    });
 
-    await userEvent.click(buttons[0]);
+    await userEvent.click(closeButton);
 
     expect(onClose).toHaveBeenCalledTimes(2);
   });
@@ -149,13 +126,17 @@ describe('SolutionModal', () => {
     const parentWheelHandler = vi.fn();
     const parentTouchHandler = vi.fn();
 
-    const { container } = render(
+    render(
       <div onWheel={parentWheelHandler} onTouchMove={parentTouchHandler}>
         <SolutionModal item={testItem} onClose={vi.fn()} />
       </div>
     );
 
-    const contentContainer = container.querySelector(
+    const dialog = screen.getByRole('dialog', {
+      name: testItem.title,
+    });
+
+    const contentContainer = dialog.querySelector(
       '[data-lenis-prevent="true"]'
     );
 
@@ -167,6 +148,7 @@ describe('SolutionModal', () => {
     fireEvent.touchMove(contentContainer);
 
     expect(parentWheelHandler).not.toHaveBeenCalled();
+
     expect(parentTouchHandler).not.toHaveBeenCalled();
   });
 
