@@ -7,8 +7,11 @@ import { navItems } from '../../data/content';
 
 import navBarStyles from './NavBar.module.scss';
 
+const getInitialScrollState = () =>
+  typeof window !== 'undefined' && window.scrollY > 20;
+
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(getInitialScrollState);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuButtonRef = useRef(null);
@@ -19,7 +22,10 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -78,6 +84,7 @@ const Navbar = () => {
   return (
     <nav
       id="nav"
+      data-scrolled={isScrolled}
       className={`${navBarStyles.lpNavbar} ${isScrolled ? navBarStyles.scrolled : ''}`}
     >
       <div className={navBarStyles.lpNavInner}>
