@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
 import { useLocation } from 'react-router-dom';
-
+import { useReducedMotion } from 'framer-motion';
 import HomeSection from './components/sections/HomeSection';
 import VisionSection from './components/sections/VisionSection';
 import MethodologySection from './components/sections/MethodologySection';
@@ -14,6 +14,10 @@ import StudySection from './components/sections/StudySection';
 
 const Home = () => {
   const location = useLocation();
+
+  const shouldReduceMotion = useReducedMotion();
+
+  const scrollBehavior = shouldReduceMotion ? 'auto' : 'smooth';
 
   const handledNavigationKeyRef = useRef(null);
 
@@ -30,7 +34,7 @@ const Home = () => {
       if (scrollTarget === 'home') {
         window.scrollTo({
           top: 0,
-          behavior: 'smooth',
+          behavior: scrollBehavior,
         });
 
         return;
@@ -39,20 +43,20 @@ const Home = () => {
       const element = document.getElementById(scrollTarget);
 
       element?.scrollIntoView({
-        behavior: 'smooth',
+        behavior: scrollBehavior,
       });
     });
 
     return () => {
       window.cancelAnimationFrame(frameId);
     };
-  }, [location.key, scrollTarget]);
+  }, [location.key, scrollTarget, scrollBehavior]);
 
   const scrollToSection = (id) => {
     if (id === 'home') {
       window.scrollTo({
         top: 0,
-        behavior: 'smooth',
+        behavior: scrollBehavior,
       });
 
       return;
@@ -61,7 +65,7 @@ const Home = () => {
     const element = document.getElementById(id);
 
     element?.scrollIntoView({
-      behavior: 'smooth',
+      behavior: scrollBehavior,
     });
   };
 

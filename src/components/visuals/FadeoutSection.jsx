@@ -1,11 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
 
 const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
   const ref = useRef(null);
   const [offsetTop, setOffsetTop] = useState(0);
   const [sectionHeight, setSectionHeight] = useState(0);
   const [isDesktop, setIsDesktop] = useState(true);
+
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const updatePosition = () => {
@@ -52,9 +59,11 @@ const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
     [0, 1]
   );
 
-  const activeOpacity = isDesktop ? contentOpacity : undefined;
-  const activeY = isDesktop ? y : undefined;
-  const activeTransform = isDesktop ? undefined : 'none';
+  const motionEnabled = isDesktop && !shouldReduceMotion;
+
+  const activeOpacity = motionEnabled ? contentOpacity : undefined;
+  const activeY = motionEnabled ? y : undefined;
+  const activeTransform = motionEnabled ? undefined : 'none';
 
   // Automatisches Trennen von Hintergrund-Elementen und Text-Inhalt
   const childrenArray = React.Children.toArray(children);
@@ -96,6 +105,7 @@ const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
       {/* 1. HINTERGRUND-EBENE: Fadet aus, wird aber NIEMALS mit 'y' verschoben. Verhindert das Abschneiden der Blurs. */}
       {backgroundChildren.length > 0 && (
         <motion.div
+          data-motion-layer="background"
           style={{
             opacity: activeOpacity,
             transform: activeTransform,
@@ -111,6 +121,7 @@ const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
 
       {/* 2. INHALTS-EBENE: Text und Karten bewegen sich flüssig nach unten */}
       <motion.div
+        data-motion-layer="content"
         style={{
           opacity: activeOpacity,
           y: activeY,
@@ -122,8 +133,9 @@ const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
       </motion.div>
 
       {/* 3. OVERLAY-EBENE: Wechselt nahtlos zu absolutem Schwarz */}
-      {isDesktop && (
+      {motionEnabled && (
         <motion.div
+          data-motion-layer="overlay"
           style={{
             opacity: overlayOpacity,
             position: 'absolute',

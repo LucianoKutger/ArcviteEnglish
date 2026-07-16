@@ -1,12 +1,15 @@
 import { screen } from '@testing-library/react';
-import { vi } from 'vitest';
-
+import { beforeEach, vi } from 'vitest';
 import App from './App';
 import { renderWithRouter } from './test-utils/renderWithRouter';
 import userEvent from '@testing-library/user-event';
 
+const motionPreference = vi.hoisted(() => ({
+  reduced: false,
+}));
+
 vi.mock('lenis/react', () => ({
-  ReactLenis: ({ children }) => children,
+  ReactLenis: ({ children }) => <div data-testid="lenis-root">{children}</div>,
 }));
 
 vi.mock('./Home', () => ({
@@ -15,7 +18,15 @@ vi.mock('./Home', () => ({
   },
 }));
 
+vi.mock('framer-motion', () => ({
+  useReducedMotion: () => motionPreference.reduced,
+}));
+
 describe('App routing', () => {
+  beforeEach(() => {
+    motionPreference.reduced = false;
+  });
+
   test('renders navigation and the home route at "/"', () => {
     renderWithRouter(<App />, {
       route: '/',
@@ -98,5 +109,19 @@ describe('App routing', () => {
         name: 'Home page',
       })
     ).toBeInTheDocument();
+  });
+
+  test('disables smooth scrolling when reduced motion is requested', () => {
+    motionPreference.reduced = true;
+
+    renderWithRouter(<App />, {
+      route: '/',
+    });
+
+    expect(
+      document.querySelector('[data-smooth-scroll="disabled"]')
+    ).toBeInTheDocument();
+
+    expect(screen.queryByTestId('lenis-root')).not.toBeInTheDocument();
   });
 });

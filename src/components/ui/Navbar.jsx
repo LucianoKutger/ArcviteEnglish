@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronRight } from 'lucide-react';
-
+import { useReducedMotion } from 'framer-motion';
 import ArcviteLogo from './ArcviteLogo';
 import { navItems } from '../../data/content';
 
@@ -19,6 +19,8 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const shouldReduceMotion = useReducedMotion();
+  const scrollBehavior = shouldReduceMotion ? 'auto' : 'smooth';
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -68,7 +70,7 @@ const Navbar = () => {
     if (id === 'home') {
       window.scrollTo({
         top: 0,
-        behavior: 'smooth',
+        behavior: scrollBehavior,
       });
 
       return;
@@ -77,7 +79,7 @@ const Navbar = () => {
     const element = document.getElementById(id);
 
     element?.scrollIntoView({
-      behavior: 'smooth',
+      behavior: scrollBehavior,
     });
   };
 

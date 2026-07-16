@@ -6,6 +6,14 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import Home from './Home';
 
+const motionPreference = vi.hoisted(() => ({
+  reduced: false,
+}));
+
+vi.mock('framer-motion', () => ({
+  useReducedMotion: () => motionPreference.reduced,
+}));
+
 vi.mock('./components/sections/HomeSection', () => ({
   default: () => <section id="home">Home</section>,
 }));
@@ -62,6 +70,7 @@ const renderHome = (scrollTarget) =>
 
 describe('Home route scrolling', () => {
   beforeEach(() => {
+    motionPreference.reduced = false;
     vi.stubGlobal('requestAnimationFrame', (callback) => {
       callback(0);
       return 1;
@@ -124,5 +133,27 @@ describe('Home route scrolling', () => {
     expect(scrollToSpy).not.toHaveBeenCalled();
 
     expect(getElementSpy).not.toHaveBeenCalled();
+  });
+
+  test('uses instant section scrolling with reduced motion', async () => {
+    motionPreference.reduced = true;
+
+    const scrollIntoView = vi.fn();
+
+    vi.spyOn(document, 'getElementById').mockImplementation((id) =>
+      id === 'vision'
+        ? {
+            scrollIntoView,
+          }
+        : null
+    );
+
+    renderHome('vision');
+
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'auto',
+      });
+    });
   });
 });

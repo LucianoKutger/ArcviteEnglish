@@ -1,11 +1,20 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
+
 import navBarStyles from './NavBar.module.scss';
 
 import Navbar from './Navbar';
 import { navItems } from '../../data/content';
+
+const motionPreference = vi.hoisted(() => ({
+  reduced: false,
+}));
+
+vi.mock('framer-motion', () => ({
+  useReducedMotion: () => motionPreference.reduced,
+}));
 
 vi.mock('./ArcviteLogo', () => ({
   default: () => <img alt="Arcvite Logo" />,
@@ -34,6 +43,10 @@ const renderNavbar = (initialEntry = '/') =>
   );
 
 describe('Navbar', () => {
+  beforeEach(() => {
+    motionPreference.reduced = false;
+  });
+
   test('provides accessible controls for the logo and mobile navigation', async () => {
     renderNavbar();
 
@@ -366,5 +379,37 @@ describe('Navbar', () => {
     expect(screen.getByTestId('current-location')).toHaveTextContent('/');
 
     expect(screen.getByTestId('scroll-target')).toHaveTextContent('home');
+  });
+
+  test('uses instant section scrolling with reduced motion', async () => {
+    motionPreference.reduced = true;
+
+    const targetSection = document.createElement('section');
+
+    targetSection.id = navItems[0].targetId;
+    targetSection.scrollIntoView = vi.fn();
+
+    document.body.appendChild(targetSection);
+
+    renderNavbar();
+
+    const navigation = screen.getByRole('navigation');
+
+    const desktopNavigation = navigation.querySelector(
+      `.${navBarStyles.lpNavLinks}`
+    );
+
+    const visionButton = within(desktopNavigation).getByRole('button', {
+      name: navItems[0].label,
+      hidden: true,
+    });
+
+    await userEvent.click(visionButton);
+
+    expect(targetSection.scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'auto',
+    });
+
+    targetSection.remove();
   });
 });
