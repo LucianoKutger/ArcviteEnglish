@@ -32,6 +32,13 @@ export default defineConfig({
         'src/components/dashboards/BiometricSlider.jsx',
         'src/components/visuals/ArcSystem.jsx',
       ],
+
+      thresholds: {
+        statements: 98,
+        branches: 95,
+        functions: 100,
+        lines: 99,
+      },
     },
   },
 });
