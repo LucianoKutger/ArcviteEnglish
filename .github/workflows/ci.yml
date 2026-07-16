@@ -1,11 +1,7 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - dev
-      - main
-      - test/ci-pipeline
+  push: {}
   pull_request:
     branches:
       - dev
