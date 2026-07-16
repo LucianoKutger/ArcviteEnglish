@@ -11,6 +11,7 @@ import styles from './App.module.scss';
 const LegalNotice = lazy(() => import('./components/LegalNotice'));
 const PrivacySettings = lazy(() => import('./components/PrivacySettings'));
 const StudyDetails = lazy(() => import('./components/StudyDetails'));
+const NotFound = lazy(() => import('./components/NotFound'));
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
               <Route path="/impressum" element={<LegalNotice />} />
               <Route path="/datenschutz" element={<PrivacySettings />} />
               <Route path="/studies" element={<StudyDetails />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </div>

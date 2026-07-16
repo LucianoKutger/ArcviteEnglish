@@ -7,7 +7,7 @@ import { imageSizes } from '../../data/responsiveImages';
 import ResponsiveImage from './ResponsiveImage';
 import styles from './SolutionModal.module.scss';
 
-const SolutionModal = ({ item, onClose }) => {
+const SolutionModal = ({ item, onClose, onViewStudies }) => {
   const titleId = useId();
 
   const closeButtonRef = useRef(null);
@@ -94,6 +94,11 @@ const SolutionModal = ({ item, onClose }) => {
     };
   }, [item, onClose]);
 
+  const handleViewStudies = () => {
+    onClose();
+    onViewStudies();
+  };
+
   if (!item) return null;
 
   return createPortal(
@@ -179,7 +184,11 @@ const SolutionModal = ({ item, onClose }) => {
               <p className={styles.deepDiveText}>{item.details}</p>
 
               <div className={styles.buttonContainer}>
-                <button className={styles.actionButton}>
+                <button
+                  type="button"
+                  className={styles.actionButton}
+                  onClick={handleViewStudies}
+                >
                   View related studies{' '}
                   <ArrowUpRight className={styles.iconSmall} />
                 </button>

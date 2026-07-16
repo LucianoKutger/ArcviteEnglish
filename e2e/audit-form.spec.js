@@ -176,7 +176,7 @@ test.describe('audit application form', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Datenschutz Filler',
+        name: 'Privacy Policy',
       })
     ).toBeVisible();
   });

@@ -283,4 +283,26 @@ describe('SolutionModal', () => {
 
     outsideButton.remove();
   });
+
+  test('closes the modal and opens the related studies flow', async () => {
+    const onClose = vi.fn();
+    const onViewStudies = vi.fn();
+
+    render(
+      <SolutionModal
+        item={testItem}
+        onClose={onClose}
+        onViewStudies={onViewStudies}
+      />
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /view related studies/i,
+      })
+    );
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onViewStudies).toHaveBeenCalledTimes(1);
+  });
 });

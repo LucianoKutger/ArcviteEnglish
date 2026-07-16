@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 
 import App from './App';
 import { renderWithRouter } from './test-utils/renderWithRouter';
+import userEvent from '@testing-library/user-event';
 
 vi.mock('lenis/react', () => ({
   ReactLenis: ({ children }) => children,
@@ -56,7 +57,7 @@ describe('App routing', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: 'Datenschutz Filler',
+        name: 'Privacy Policy',
       })
     ).toBeInTheDocument();
   });
@@ -68,16 +69,12 @@ describe('App routing', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: 'Hier kommen die Studien',
+        name: 'Related Studies',
       })
     ).toBeInTheDocument();
   });
 
-  test('keeps the global navigation but renders no page for an unknown route', () => {
-    const consoleWarnSpy = vi
-      .spyOn(console, 'warn')
-      .mockImplementation(() => {});
-
+  test('renders a not-found page and returns to the home route', async () => {
     renderWithRouter(<App />, {
       route: '/unknown-route',
     });
@@ -85,31 +82,21 @@ describe('App routing', () => {
     expect(screen.getByRole('navigation')).toBeInTheDocument();
 
     expect(
-      screen.queryByRole('main', {
+      await screen.findByRole('heading', {
+        name: 'Page not found',
+      })
+    ).toBeInTheDocument();
+
+    const homeLink = screen.getByRole('link', {
+      name: 'Return home',
+    });
+
+    await userEvent.click(homeLink);
+
+    expect(
+      screen.getByRole('main', {
         name: 'Home page',
       })
-    ).not.toBeInTheDocument();
-
-    expect(
-      screen.queryByRole('heading', {
-        name: 'Impressum',
-      })
-    ).not.toBeInTheDocument();
-
-    expect(
-      screen.queryByRole('heading', {
-        name: 'Datenschutz Filler',
-      })
-    ).not.toBeInTheDocument();
-
-    expect(
-      screen.queryByRole('heading', {
-        name: 'Hier kommen die Studien',
-      })
-    ).not.toBeInTheDocument();
-
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('No routes matched location')
-    );
+    ).toBeInTheDocument();
   });
 });

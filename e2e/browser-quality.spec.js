@@ -15,11 +15,11 @@ const routes = [
   },
   {
     path: '/datenschutz',
-    heading: 'Datenschutz Filler',
+    heading: 'Privacy Policy',
   },
   {
     path: '/studies',
-    heading: 'Hier kommen die Studien',
+    heading: 'Related Studies',
   },
 ];
 
