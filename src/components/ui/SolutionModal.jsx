@@ -1,4 +1,6 @@
 import React, { useEffect, useId, useRef } from 'react';
+
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, ArrowUpRight } from 'lucide-react';
 import { imageSizes } from '../../data/responsiveImages';
@@ -94,9 +96,10 @@ const SolutionModal = ({ item, onClose }) => {
 
   if (!item) return null;
 
-  return (
+  return createPortal(
     <div className={styles.overlay}>
       <motion.div
+        data-testid="solution-modal-backdrop"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -185,7 +188,8 @@ const SolutionModal = ({ item, onClose }) => {
           </div>
         </div>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
