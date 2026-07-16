@@ -64,6 +64,7 @@ const AuditSection = () => {
 
     // 1. React-Hook-Form-Zustände zurücksetzen
     reset();
+    setClearedErrorStyles({});
     setPhoneCountry('+49');
 
     // 2. NEU: Key hochzählen, um die Autofill-Farbblöcke im Browser wegzusprengen!
@@ -182,7 +183,9 @@ const AuditSection = () => {
             </div>
 
             <div
-              className={`${styles.goalsSection} ${errors.goals ? styles.hasError : ''}`}
+              className={`${styles.goalsSection} ${
+                errors.goals && !clearedErrorStyles.goals ? styles.hasError : ''
+              }`}
             >
               <label className={styles.goalsLabel}>
                 Goals * (multiple selection possible)
@@ -201,11 +204,18 @@ const AuditSection = () => {
                           aria-pressed={isActive}
                           className={`${styles.goalButton} ${isActive ? styles.active : styles.inactive}`}
                           onClick={() => {
-                            if (isSuccess) setIsSuccess(false);
+                            if (isSuccess) {
+                              setIsSuccess(false);
+                            }
+
                             const nextValue = isActive
-                              ? field.value.filter((v) => v !== goal.value)
+                              ? field.value.filter(
+                                  (value) => value !== goal.value
+                                )
                               : [...field.value, goal.value];
+
                             field.onChange(nextValue);
+                            clearErrorStyle('goals');
                           }}
                         >
                           {goal.label}
@@ -218,7 +228,9 @@ const AuditSection = () => {
             </div>
 
             <div
-              className={`${styles.tosSection} ${errors.tos ? styles.hasError : ''}`}
+              className={`${styles.tosSection} ${
+                errors.tos && !clearedErrorStyles.tos ? styles.hasError : ''
+              }`}
             >
               <input
                 type="checkbox"
@@ -226,7 +238,11 @@ const AuditSection = () => {
                 className={styles.tosCheckbox}
                 {...register('tos', {
                   onChange: () => {
-                    if (isSuccess) setIsSuccess(false);
+                    clearErrorStyle('tos');
+
+                    if (isSuccess) {
+                      setIsSuccess(false);
+                    }
                   },
                 })}
               />

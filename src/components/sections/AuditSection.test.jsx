@@ -589,76 +589,109 @@ describe('AuditSection', () => {
     );
   });
 
-  it('restores the goals label color after a valid goal is submitted again', async () => {
+  it('removes the red goals label style when the user selects a goal', async () => {
     renderAuditSection();
 
-    const submitButton = screen.getByRole('button', {
-      name: /check availability/i,
-    });
-
-    const getGoalsSection = () =>
-      screen
+    const getGoalsSection = () => {
+      const goalsSection = screen
         .getByText(/goals\s*\*\s*\(multiple selection possible\)/i)
-        .closest('div');
+        .closest(`.${styles.goalsSection}`);
 
-    // Erstes Absenden ohne ausgewähltes Ziel
-    await userEvent.click(submitButton);
+      if (!(goalsSection instanceof HTMLElement)) {
+        throw new Error('Goals section was not found');
+      }
 
-    // Die Validierung durch React Hook Form und Zod ist asynchron
-    await waitFor(() => {
-      expect(getGoalsSection()?.className).toMatch(/hasError/);
-    });
+      return goalsSection;
+    };
 
-    // Ziel auswählen
-    await userEvent.click(
-      screen.getByRole('button', {
-        name: /performance & energy/i,
-      })
+    await userEvent.click(getSubmitButton());
+
+    const errorMessage = await screen.findByText(
+      /please provide the following/i
     );
 
-    // Der Fehler bleibt bis zum nächsten Submit bestehen
-    expect(getGoalsSection()?.className).toMatch(/hasError/);
-
-    // Erneute Validierung
-    await userEvent.click(submitButton);
-
     await waitFor(() => {
-      expect(getGoalsSection()?.className).not.toMatch(/hasError/);
+      expect(getGoalsSection()).toHaveClass(styles.hasError);
     });
+
+    expect(errorMessage).toHaveTextContent('Goals');
+
+    await userEvent.click(getGoalButton('Performance & Energy'));
+
+    // Die rote Darstellung verschwindet unmittelbar nach der Auswahl.
+    await waitFor(() => {
+      expect(getGoalsSection()).not.toHaveClass(styles.hasError);
+    });
+
+    // Die eigentliche Validierung bleibt bis zum nächsten Submit unverändert.
+    expect(screen.getByText(/please provide the following/i)).toHaveTextContent(
+      'Goals'
+    );
+
+    await userEvent.click(getSubmitButton());
+
+    // Erst jetzt wird der Goals-Fehler aus der Validierung entfernt.
+    await waitFor(() => {
+      expect(
+        screen.getByText(/please provide the following/i)
+      ).not.toHaveTextContent('Goals');
+    });
+
+    expect(getGoalsSection()).not.toHaveClass(styles.hasError);
   });
 
-  it('restores the privacy policy label color after the checkbox is submitted again', async () => {
+  it('removes the red privacy policy label style when the checkbox is changed', async () => {
     renderAuditSection();
-
-    const submitButton = screen.getByRole('button', {
-      name: /check availability/i,
-    });
 
     const getPolicyCheckbox = () => screen.getByRole('checkbox');
 
-    const getPolicySection = () => getPolicyCheckbox().closest('div');
+    const getPolicySection = () => {
+      const policySection = getPolicyCheckbox().closest(
+        `.${styles.tosSection}`
+      );
 
-    // Erstes Absenden ohne Zustimmung
-    await userEvent.click(submitButton);
+      if (!(policySection instanceof HTMLElement)) {
+        throw new Error('Policy section was not found');
+      }
 
-    // Auf den asynchron gesetzten Fehlerzustand warten
+      return policySection;
+    };
+
+    await userEvent.click(getSubmitButton());
+
+    const errorMessage = await screen.findByText(
+      /please provide the following/i
+    );
+
     await waitFor(() => {
-      expect(getPolicySection()?.className).toMatch(/hasError/);
+      expect(getPolicySection()).toHaveClass(styles.hasError);
     });
 
-    // Privacy Policy akzeptieren
+    expect(errorMessage).toHaveTextContent('Terms of Service');
+
     await userEvent.click(getPolicyCheckbox());
 
     expect(getPolicyCheckbox()).toBeChecked();
 
-    // Der Fehler bleibt bis zum nächsten Submit bestehen
-    expect(getPolicySection()?.className).toMatch(/hasError/);
-
-    // Erneute Validierung
-    await userEvent.click(submitButton);
-
+    // Die rote Darstellung verschwindet unmittelbar nach der Änderung.
     await waitFor(() => {
-      expect(getPolicySection()?.className).not.toMatch(/hasError/);
+      expect(getPolicySection()).not.toHaveClass(styles.hasError);
     });
+
+    // Die eigentliche Validierung bleibt bis zum nächsten Submit unverändert.
+    expect(screen.getByText(/please provide the following/i)).toHaveTextContent(
+      'Terms of Service'
+    );
+
+    await userEvent.click(getSubmitButton());
+
+    // Erst jetzt wird der Policy-Fehler aus der Validierung entfernt.
+    await waitFor(() => {
+      expect(
+        screen.getByText(/please provide the following/i)
+      ).not.toHaveTextContent('Terms of Service');
+    });
+
+    expect(getPolicySection()).not.toHaveClass(styles.hasError);
   });
 });
