@@ -21,7 +21,7 @@ env:
 
 jobs:
   quality:
-    name: Unit tests, coverage, lint, and build
+    name: Tests, coverage, lint, and build
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -39,10 +39,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run unit and component tests
-        run: npm test
-
-      - name: Enforce coverage thresholds
+      - name: Run tests and enforce coverage thresholds
         run: npm run test:coverage
 
       - name: Run ESLint
