@@ -1,8 +1,8 @@
-import { render } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { createMatchMediaController } from '../../test-utils/browserMocks';
-
+import { methodologySegments } from '../../data/content';
 import MethodologySystem from './MethodologySystem';
 
 const animationMocks = vi.hoisted(() => {
@@ -57,6 +57,30 @@ vi.mock('../../hooks/useViewportActivity', () => ({
   default: () => animationMocks.viewportState,
 }));
 
+const presenceMocks = vi.hoisted(() => {
+  let latestExitComplete = null;
+
+  return {
+    registerExitComplete(callback) {
+      latestExitComplete = callback;
+    },
+
+    completeExit() {
+      if (typeof latestExitComplete !== 'function') {
+        throw new Error(
+          'No AnimatePresence exit callback has been registered.'
+        );
+      }
+
+      latestExitComplete();
+    },
+
+    reset() {
+      latestExitComplete = null;
+    },
+  };
+});
+
 vi.mock('framer-motion', async () => {
   const React = await vi.importActual('react');
 
@@ -97,15 +121,37 @@ vi.mock('framer-motion', async () => {
       circle: createMotionComponent('circle'),
     },
 
-    AnimatePresence: ({ children }) => children,
+    AnimatePresence: ({ children, onExitComplete }) => {
+      presenceMocks.registerExitComplete(onExitComplete);
+
+      return children;
+    },
 
     useAnimationControls: animationMocks.getNextControl,
   };
 });
 
+const [coreSegment, neuroSegment, operationalSegment] = methodologySegments;
+
+const getSegmentItem = (title) =>
+  screen.getByRole('heading', {
+    level: 2,
+    name: title,
+  }).parentElement;
+
+const getTextWrapper = () =>
+  getSegmentItem('Dream').parentElement.parentElement;
+
+const completeExit = () => {
+  act(() => {
+    presenceMocks.completeExit();
+  });
+};
+
 describe('MethodologySystem viewport animations', () => {
   beforeEach(() => {
     animationMocks.reset();
+    presenceMocks.reset();
   });
 
   test('starts both continuous animations while the component is active', () => {
@@ -235,5 +281,194 @@ describe('MethodologySystem viewport animations', () => {
       'change',
       registeredHandler
     );
+  });
+});
+
+describe('MethodologySystem segment interactions', () => {
+  beforeEach(() => {
+    animationMocks.reset();
+    presenceMocks.reset();
+  });
+
+  test('opens desktop content immediately when a segment is hovered', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
+
+    expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
+
+    coreSegment.listItems.forEach((item) => {
+      expect(screen.getByText(item.label)).toBeInTheDocument();
+
+      expect(screen.getByText(item.text)).toBeInTheDocument();
+    });
+  });
+
+  test('waits for the current desktop content to exit before opening the next segment', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
+
+    expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
+
+    fireEvent.mouseEnter(getSegmentItem(neuroSegment.title));
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(neuroSegment.description)
+    ).not.toBeInTheDocument();
+
+    completeExit();
+
+    expect(screen.getByText(neuroSegment.description)).toBeInTheDocument();
+  });
+
+  test('opens only the latest segment during a rapid desktop A to B to C switch', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
+
+    fireEvent.mouseEnter(getSegmentItem(neuroSegment.title));
+
+    fireEvent.mouseEnter(getSegmentItem(operationalSegment.title));
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(neuroSegment.description)
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(operationalSegment.description)
+    ).not.toBeInTheDocument();
+
+    completeExit();
+
+    expect(
+      screen.getByText(operationalSegment.description)
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByText(neuroSegment.description)
+    ).not.toBeInTheDocument();
+  });
+
+  test('does not reopen pending content after leaving the desktop interaction area', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
+
+    fireEvent.mouseEnter(getSegmentItem(neuroSegment.title));
+
+    fireEvent.mouseLeave(getTextWrapper());
+
+    completeExit();
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(neuroSegment.description)
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(operationalSegment.description)
+    ).not.toBeInTheDocument();
+  });
+
+  test('opens and closes segments through clicks on mobile', () => {
+    createMatchMediaController(390);
+
+    render(<MethodologySystem />);
+
+    fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    fireEvent.click(getSegmentItem(coreSegment.title));
+
+    expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
+
+    fireEvent.click(getSegmentItem(coreSegment.title));
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    completeExit();
+
+    fireEvent.click(getSegmentItem(neuroSegment.title));
+
+    expect(screen.getByText(neuroSegment.description)).toBeInTheDocument();
+  });
+
+  test('uses only the latest pending selection during rapid mobile clicks', () => {
+    createMatchMediaController(390);
+
+    render(<MethodologySystem />);
+
+    fireEvent.click(getSegmentItem(coreSegment.title));
+
+    expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
+
+    fireEvent.click(getSegmentItem(neuroSegment.title));
+
+    fireEvent.click(getSegmentItem(operationalSegment.title));
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(neuroSegment.description)
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(operationalSegment.description)
+    ).not.toBeInTheDocument();
+
+    completeExit();
+
+    expect(
+      screen.getByText(operationalSegment.description)
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByText(neuroSegment.description)
+    ).not.toBeInTheDocument();
+  });
+
+  test('switches from mobile click behavior to desktop hover behavior', () => {
+    const mediaController = createMatchMediaController(390);
+
+    render(<MethodologySystem />);
+
+    fireEvent.click(getSegmentItem(coreSegment.title));
+
+    expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
+
+    fireEvent.click(getSegmentItem(coreSegment.title));
+
+    completeExit();
+
+    act(() => {
+      mediaController.setWidth(1280);
+    });
+
+    fireEvent.click(getSegmentItem(neuroSegment.title));
+
+    expect(
+      screen.queryByText(neuroSegment.description)
+    ).not.toBeInTheDocument();
+
+    fireEvent.mouseEnter(getSegmentItem(neuroSegment.title));
+
+    expect(screen.getByText(neuroSegment.description)).toBeInTheDocument();
   });
 });
