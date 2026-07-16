@@ -136,9 +136,15 @@
   flex-direction: column;
   align-items: stretch;
   gap: $spacing-sm;
-  padding: $spacing-md $spacing-lg $spacing-lg;
+  padding: $spacing-md $spacing-lg max($spacing-lg, env(safe-area-inset-bottom));
+
   background-color: $background;
   border-top: 1px solid $cyan-05;
+
+  max-height: calc(100dvh - 98px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .lpMobileMenu[hidden] {
