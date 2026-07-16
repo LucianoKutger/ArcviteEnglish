@@ -254,6 +254,8 @@ const ArcSystem = () => {
             <motion.circle
               cx={centerX}
               cy={centerY}
+              r={10}
+              initial={false}
               animate={{
                 r: isCenterHovered ? 20 : 10,
                 opacity: isCenterHovered ? 0.25 : 0.08,
@@ -263,6 +265,8 @@ const ArcSystem = () => {
             <motion.circle
               cx={centerX}
               cy={centerY}
+              r={4}
+              initial={false}
               animate={{
                 r: isCenterHovered ? 7 : 4,
                 fill: isCenterHovered ? '#fff' : 'rgba(255, 255, 255,0.7)',
@@ -300,6 +304,23 @@ const ArcSystem = () => {
             const isInactive = hoveredSegment !== null && !isHovered;
             const r = isHovered ? s.radius + 12 : s.radius;
             const t = isHovered ? s.thickness * 1.6 : s.thickness;
+            const baseArcPath = getPointyArcPath(
+              centerX,
+              centerY,
+              s.radius,
+              10,
+              80,
+              s.thickness
+            );
+
+            const animatedArcPath = getPointyArcPath(
+              centerX,
+              centerY,
+              r,
+              10,
+              80,
+              t
+            );
 
             return (
               <g
@@ -321,8 +342,10 @@ const ArcSystem = () => {
                   className={styles.interactiveHitArea}
                 />
                 <motion.path
+                  d={baseArcPath}
+                  initial={false}
                   animate={{
-                    d: getPointyArcPath(centerX, centerY, r, 10, 80, t),
+                    d: animatedArcPath,
                     fillOpacity: isInactive ? 0.05 : 1,
                   }}
                   fill={`url(#grad-arc-${s.id})`}
@@ -351,6 +374,7 @@ const ArcSystem = () => {
             <motion.circle
               cx={polarStarPoint.x}
               cy={polarStarPoint.y}
+              r={4}
               initial={{ r: 4, opacity: 0.4 }}
               animate={polarStarControls}
               fill="#FFF"

@@ -162,6 +162,41 @@ describe('MethodologySystem viewport animations', () => {
     presenceMocks.reset();
   });
 
+  test('renders valid SVG geometry before animations start', () => {
+    createMatchMediaController(1280);
+
+    const { container } = render(<MethodologySystem />);
+
+    const circles = Array.from(container.querySelectorAll('svg circle'));
+
+    expect(circles.length).toBeGreaterThan(0);
+
+    circles.forEach((circle) => {
+      const radius = circle.getAttribute('r');
+
+      expect(radius).not.toBeNull();
+      expect(radius).not.toBe('undefined');
+
+      expect(Number(radius)).toBeGreaterThan(0);
+    });
+
+    const paths = Array.from(container.querySelectorAll('svg path'));
+
+    expect(paths.length).toBeGreaterThan(0);
+
+    paths.forEach((path) => {
+      const pathData = path.getAttribute('d');
+
+      expect(pathData).not.toBeNull();
+
+      expect(pathData).toMatch(/^M\s/);
+
+      expect(pathData).not.toContain('undefined');
+
+      expect(pathData).not.toContain('NaN');
+    });
+  });
+
   test('starts both continuous animations while the component is active', () => {
     createMatchMediaController(1280);
 
