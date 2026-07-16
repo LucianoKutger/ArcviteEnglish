@@ -136,10 +136,15 @@ const ArcSystem = () => {
   };
 
   return (
-    <div ref={targetRef} className={styles.container}>
+    <div
+      ref={targetRef}
+      className={styles.container}
+      data-testid="methodology-system"
+    >
       {/* LINKSEITE: DAS SVG MODELL */}
       <div
-        className={styles.visualWrapper}
+        className={styles.textWrapper}
+        data-testid="methodology-text-wrapper"
         onMouseLeave={isDesktop ? handleInteractionLeave : undefined}
       >
         <svg
