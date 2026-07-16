@@ -24,3 +24,9 @@ yarn-error.log*
 
 src.rar
 /problem_images
+
+
+# Playwright
+/playwright-report
+/test-results
+/blob-report
