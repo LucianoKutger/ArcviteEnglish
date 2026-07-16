@@ -49,7 +49,13 @@ const ArcSystem = () => {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 1024px)');
-    const handleMediaChange = (e) => setIsDesktop(e.matches);
+    const handleMediaChange = (event) => {
+      setIsDesktop(event.matches);
+
+      dispatchInteraction({
+        type: 'reset',
+      });
+    };
 
     setIsDesktop(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleMediaChange);
@@ -107,6 +113,28 @@ const ArcSystem = () => {
     });
   };
 
+  const handleSegmentActivate = (segment) => {
+    if (isDesktop) {
+      handleMouseEnter(segment);
+      return;
+    }
+
+    handleSegmentClick(segment);
+  };
+
+  const handleSegmentKeyDown = (event, segment) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleSegmentActivate(segment);
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      handleInteractionLeave();
+    }
+  };
+
   return (
     <div ref={targetRef} className={styles.container}>
       {/* LINKSEITE: DAS SVG MODELL */}
@@ -114,7 +142,12 @@ const ArcSystem = () => {
         className={styles.visualWrapper}
         onMouseLeave={isDesktop ? handleInteractionLeave : undefined}
       >
-        <svg viewBox="0 0 700 700" className={styles.svgGraph}>
+        <svg
+          viewBox="0 0 700 700"
+          className={styles.svgGraph}
+          aria-hidden="true"
+          focusable="false"
+        >
           <defs>
             {methodologySegments.map((s) => (
               <linearGradient
@@ -355,6 +388,8 @@ const ArcSystem = () => {
             const isHovered = hoveredSegment?.id === segment.id;
             const isInactive = hoveredSegment !== null && !isHovered;
             const isContentActive = activeContentId === segment.id;
+            const contentId = `methodology-content-${segment.id}`;
+            const titleId = `methodology-title-${segment.id}`;
 
             return (
               <motion.div
@@ -362,47 +397,62 @@ const ArcSystem = () => {
                 className={`${styles.textListItem} ${
                   isInactive ? styles.dimmedItem : ''
                 }`}
-                onMouseEnter={
-                  isDesktop ? () => handleMouseEnter(segment) : undefined
-                }
-                onClick={
-                  !isDesktop ? () => handleSegmentClick(segment) : undefined
-                }
               >
-                <div className={styles.headerRow}>
-                  <div
-                    className={styles.indicatorDot}
-                    style={{
-                      backgroundColor: isInactive ? 'transparent' : segment.hex,
-                      borderColor: isInactive
-                        ? 'rgba(255,255,255,0.2)'
-                        : 'transparent',
-                      boxShadow: isInactive
-                        ? 'none'
-                        : `0 0 15px ${segment.hex}`,
-                    }}
-                  />
-                  <span
-                    className={styles.subtitle}
-                    style={{
-                      color: isInactive ? 'rgba(255,255,255,0.4)' : segment.hex,
-                    }}
-                  >
-                    {segment.subtitle}
-                  </span>
-                </div>
-
-                <motion.h2
-                  className={styles.infoTitle}
-                  animate={{
-                    scale: isHovered ? 1.05 : 1,
-                    color: '#F0F4F8',
-                  }}
-                  style={{ originX: 0 }}
-                  transition={{ duration: 0.3 }}
+                <button
+                  type="button"
+                  className={styles.segmentButton}
+                  aria-expanded={isContentActive}
+                  aria-controls={contentId}
+                  onMouseEnter={
+                    isDesktop ? () => handleMouseEnter(segment) : undefined
+                  }
+                  onClick={() => handleSegmentActivate(segment)}
+                  onKeyDown={(event) => handleSegmentKeyDown(event, segment)}
                 >
-                  {segment.title}
-                </motion.h2>
+                  <span className={styles.headerRow}>
+                    <span
+                      className={styles.indicatorDot}
+                      aria-hidden="true"
+                      style={{
+                        backgroundColor: isInactive
+                          ? 'transparent'
+                          : segment.hex,
+                        borderColor: isInactive
+                          ? 'rgba(255,255,255,0.2)'
+                          : 'transparent',
+                        boxShadow: isInactive
+                          ? 'none'
+                          : `0 0 15px ${segment.hex}`,
+                      }}
+                    />
+
+                    <span
+                      className={styles.subtitle}
+                      style={{
+                        color: isInactive
+                          ? 'rgba(255,255,255,0.4)'
+                          : segment.hex,
+                      }}
+                    >
+                      {segment.subtitle}
+                    </span>
+                  </span>
+
+                  <motion.span
+                    id={titleId}
+                    role="heading"
+                    aria-level="2"
+                    className={styles.infoTitle}
+                    animate={{
+                      scale: isHovered ? 1.05 : 1,
+                      color: '#F0F4F8',
+                    }}
+                    style={{ originX: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {segment.title}
+                  </motion.span>
+                </button>
 
                 {/* Hier übergeben wir handleExitComplete an AnimatePresence.
                   Das garantiert, dass Framer Motion erst den Einzug beendet, bevor der neue State gesetzt wird.
@@ -415,6 +465,9 @@ const ArcSystem = () => {
                   {isContentActive && (
                     <motion.div
                       key={`content-${segment.id}`}
+                      id={contentId}
+                      role="region"
+                      aria-labelledby={titleId}
                       className={styles.expandedContent}
                       initial={{
                         height: 0,

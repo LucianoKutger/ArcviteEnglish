@@ -119,6 +119,7 @@ vi.mock('framer-motion', async () => {
       path: createMotionComponent('path'),
       line: createMotionComponent('line'),
       circle: createMotionComponent('circle'),
+      span: createMotionComponent('span'),
     },
 
     AnimatePresence: ({ children, onExitComplete }) => {
@@ -134,13 +135,12 @@ vi.mock('framer-motion', async () => {
 const [coreSegment, neuroSegment, operationalSegment] = methodologySegments;
 
 const getSegmentItem = (title) =>
-  screen.getByRole('heading', {
-    level: 2,
-    name: title,
-  }).parentElement;
+  screen.getByRole('button', {
+    name: new RegExp(title, 'i'),
+  });
 
 const getTextWrapper = () =>
-  getSegmentItem('Dream').parentElement.parentElement;
+  getSegmentItem('Dream').parentElement.parentElement.parentElement;
 
 const completeExit = () => {
   act(() => {
@@ -444,31 +444,137 @@ describe('MethodologySystem segment interactions', () => {
     ).not.toBeInTheDocument();
   });
 
-  test('switches from mobile click behavior to desktop hover behavior', () => {
+  test('resets the active segment when switching between viewport modes', () => {
     const mediaController = createMatchMediaController(390);
 
     render(<MethodologySystem />);
 
-    fireEvent.click(getSegmentItem(coreSegment.title));
+    const coreButton = getSegmentItem(coreSegment.title);
+
+    fireEvent.click(coreButton);
 
     expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
 
-    fireEvent.click(getSegmentItem(coreSegment.title));
-
-    completeExit();
+    expect(coreButton).toHaveAttribute('aria-expanded', 'true');
 
     act(() => {
       mediaController.setWidth(1280);
     });
 
-    fireEvent.click(getSegmentItem(neuroSegment.title));
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
 
-    expect(
-      screen.queryByText(neuroSegment.description)
-    ).not.toBeInTheDocument();
+    expect(coreButton).toHaveAttribute('aria-expanded', 'false');
 
     fireEvent.mouseEnter(getSegmentItem(neuroSegment.title));
 
     expect(screen.getByText(neuroSegment.description)).toBeInTheDocument();
+  });
+});
+
+describe('MethodologySystem accessibility', () => {
+  beforeEach(() => {
+    animationMocks.reset();
+    presenceMocks.reset();
+  });
+
+  test('exposes every text segment as a native button with ARIA state', () => {
+    createMatchMediaController(1280);
+
+    const { container } = render(<MethodologySystem />);
+
+    methodologySegments.forEach((segment) => {
+      const button = getSegmentItem(segment.title);
+
+      expect(button.tagName).toBe('BUTTON');
+
+      expect(button).toHaveAttribute('type', 'button');
+
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+
+      expect(button).toHaveAttribute(
+        'aria-controls',
+        `methodology-content-${segment.id}`
+      );
+    });
+
+    const visualGraph = container.querySelector('svg');
+
+    expect(visualGraph).toHaveAttribute('aria-hidden', 'true');
+
+    expect(visualGraph).toHaveAttribute('focusable', 'false');
+  });
+
+  test('opens a desktop segment with Enter and exposes a labelled region', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    const coreButton = getSegmentItem(coreSegment.title);
+
+    coreButton.focus();
+
+    fireEvent.keyDown(coreButton, {
+      key: 'Enter',
+      code: 'Enter',
+    });
+
+    expect(coreButton).toHaveFocus();
+
+    expect(coreButton).toHaveAttribute('aria-expanded', 'true');
+
+    const region = screen.getByRole('region', {
+      name: coreSegment.title,
+    });
+
+    expect(region).toHaveAttribute(
+      'id',
+      `methodology-content-${coreSegment.id}`
+    );
+
+    expect(region).toHaveAttribute(
+      'aria-labelledby',
+      `methodology-title-${coreSegment.id}`
+    );
+
+    fireEvent.keyDown(coreButton, {
+      key: 'Escape',
+      code: 'Escape',
+    });
+
+    expect(coreButton).toHaveAttribute('aria-expanded', 'false');
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    completeExit();
+  });
+
+  test('opens and closes a mobile segment with the Space key', () => {
+    createMatchMediaController(390);
+
+    render(<MethodologySystem />);
+
+    const coreButton = getSegmentItem(coreSegment.title);
+
+    coreButton.focus();
+
+    fireEvent.keyDown(coreButton, {
+      key: ' ',
+      code: 'Space',
+    });
+
+    expect(coreButton).toHaveAttribute('aria-expanded', 'true');
+
+    expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
+
+    fireEvent.keyDown(coreButton, {
+      key: ' ',
+      code: 'Space',
+    });
+
+    expect(coreButton).toHaveAttribute('aria-expanded', 'false');
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    completeExit();
   });
 });

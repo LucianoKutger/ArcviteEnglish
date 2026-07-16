@@ -108,6 +108,29 @@
   transition: opacity 0.4s ease;
   cursor: pointer;
 }
+.segmentButton {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  padding: 0;
+  border: 0;
+  background: transparent;
+
+  color: inherit;
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 0.5rem;
+    border-radius: 0.25rem;
+  }
+}
 
 /* NEU: Abdunkeln der inaktiven Elemente */
 .dimmedItem {
@@ -149,6 +172,7 @@
   transform-origin: left center;
 
   white-space: nowrap;
+  display: block;
 }
 
 .expandedContent {
