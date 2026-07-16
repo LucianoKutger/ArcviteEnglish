@@ -1,18 +1,26 @@
+import { useId } from 'react';
 
-import inputStyles from './FormInput.module.scss'; // Pfad anpassen
+import inputStyles from './FormInput.module.scss';
 
-const FormInput = ({ label, placeholder, type = "text", ...props }) => (
+const FormInput = ({ id, label, placeholder, type = 'text', ...props }) => {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+
+  return (
     <div className={inputStyles.group}>
-        <input 
-            type={type} 
-            placeholder={placeholder}
-            className={inputStyles.input}
-            {...props}
-        />
-        <label className={inputStyles.label}>
-            {label}
-        </label>
+      <input
+        id={inputId}
+        type={type}
+        placeholder={placeholder}
+        className={inputStyles.input}
+        {...props}
+      />
+
+      <label htmlFor={inputId} className={inputStyles.label}>
+        {label}
+      </label>
     </div>
-);
+  );
+};
 
 export default FormInput;

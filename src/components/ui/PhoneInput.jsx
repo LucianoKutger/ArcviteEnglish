@@ -1,48 +1,62 @@
-import React from 'react';
+import React, { useId } from 'react';
 import inputStyles from './FormInput.module.scss';
 import styles from './PhoneInput.module.scss';
 
 // Eine Auswahl gängiger Länder. Du kannst die Liste beliebig mit allen ISO-Codes erweitern.
 export const COUNTRIES = [
-    { code: '+49', flag: '🇩🇪', name: 'Germany', trunkPrefix: '0' },
-    { code: '+43', flag: '🇦🇹', name: 'Austria', trunkPrefix: '0' },
-    { code: '+41', flag: '🇨🇭', name: 'Switzerland', trunkPrefix: '0' },
+  { code: '+49', flag: '🇩🇪', name: 'Germany', trunkPrefix: '0' },
+  { code: '+43', flag: '🇦🇹', name: 'Austria', trunkPrefix: '0' },
+  { code: '+41', flag: '🇨🇭', name: 'Switzerland', trunkPrefix: '0' },
 ];
 
-const PhoneInput = ({ label, countryValue, onCountryChange, phoneValue, onPhoneChange, ...props }) => {
-  
-  const handleInputChange = (e) => {
-    // Entfernt alles, was KEINE Zahl ist (erlaubt nur 0-9)
-    const onlyNumbers = e.target.value.replace(/\D/g, '');
+const PhoneInput = ({
+  id,
+  label,
+  countryValue,
+  onCountryChange,
+  phoneValue,
+  onPhoneChange,
+  ...props
+}) => {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+  const countrySelectId = `${inputId}-country`;
+
+  const handleInputChange = (event) => {
+    const onlyNumbers = event.target.value.replace(/\D/g, '');
+
     onPhoneChange(onlyNumbers);
   };
 
   return (
     <div className={styles.phoneFieldGroup}>
-      {/* Länder-Auswahl links */}
-      <select 
-        value={countryValue} 
-        onChange={(e) => onCountryChange(e.target.value)}
+      <select
+        id={countrySelectId}
+        aria-label="Phone country code"
+        value={countryValue}
+        onChange={(event) => onCountryChange(event.target.value)}
         className={styles.countrySelect}
       >
-        {COUNTRIES.map((c) => (
-          <option key={c.code} value={c.code}>
-            {c.flag} {c.code}
+        {COUNTRIES.map((country) => (
+          <option key={country.code} value={country.code}>
+            {country.flag} {country.code}
           </option>
         ))}
       </select>
 
-      {/* Eigentliches Input-Feld rechts daneben */}
       <div className={inputStyles.group} style={{ flex: 1 }}>
-        <input 
-          type="text" 
+        <input
+          id={inputId}
+          type="text"
+          inputMode="numeric"
           value={phoneValue}
           onChange={handleInputChange}
-          placeholder=" " // Wichtig für die CSS-Validierung :not(:placeholder-shown)
+          placeholder=" "
           className={`${inputStyles.input} ${styles.customInputOverride}`}
           {...props}
         />
-        <label className={inputStyles.label}>
+
+        <label htmlFor={inputId} className={inputStyles.label}>
           {label}
         </label>
       </div>
@@ -50,4 +64,4 @@ const PhoneInput = ({ label, countryValue, onCountryChange, phoneValue, onPhoneC
   );
 };
 
-export default PhoneInput
+export default PhoneInput;
