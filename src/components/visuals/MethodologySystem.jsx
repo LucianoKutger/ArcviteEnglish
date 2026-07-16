@@ -3,6 +3,10 @@ import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
 import styles from './MethodologySystem.module.scss';
 import { methodologySegments } from '../../data/content';
 import useViewportActivity from '../../hooks/useViewportActivity';
+import {
+  getPointyArcPath,
+  polarToCartesian,
+} from '../../utils/methodologyGeometry';
 
 const IMPACT_FLOW_ANIMATION = {
   pathOffset: [-0.15, 1],
@@ -73,43 +77,6 @@ const ArcSystem = () => {
   // --- GEOMETRIE LOGIK ---
   const centerX = 120;
   const centerY = 580;
-
-  const polarToCartesian = (cx, cy, r, angleInDegrees) => {
-    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-    return {
-      x: cx + r * Math.cos(angleInRadians),
-      y: cy + r * Math.sin(angleInRadians),
-    };
-  };
-
-  const getPointyArcPath = (r, startAngle, endAngle, thickness) => {
-    const pStart = polarToCartesian(centerX, centerY, r, startAngle);
-    const pEnd = polarToCartesian(centerX, centerY, r, endAngle);
-    const rOut = r + thickness / 2;
-    const rIn = r - thickness / 2;
-    return [
-      'M',
-      pStart.x,
-      pStart.y,
-      'A',
-      rOut,
-      rOut,
-      0,
-      0,
-      1,
-      pEnd.x,
-      pEnd.y,
-      'A',
-      rIn,
-      rIn,
-      0,
-      0,
-      0,
-      pStart.x,
-      pStart.y,
-      'Z',
-    ].join(' ');
-  };
 
   const arrowStart = polarToCartesian(centerX, centerY, 580, 45);
   const arrowEnd = polarToCartesian(centerX, centerY, 15, 45);
@@ -361,13 +328,20 @@ const ArcSystem = () => {
                 onClick={!isDesktop ? () => handleSegmentClick(s) : undefined}
               >
                 <path
-                  d={getPointyArcPath(s.radius, -5, 100, s.thickness + 20)}
+                  d={getPointyArcPath(
+                    centerX,
+                    centerY,
+                    s.radius,
+                    -5,
+                    100,
+                    s.thickness + 20
+                  )}
                   fill="transparent"
                   className={styles.interactiveHitArea}
                 />
                 <motion.path
                   animate={{
-                    d: getPointyArcPath(r, 10, 80, t),
+                    d: getPointyArcPath(centerX, centerY, r, 10, 80, t),
                     fillOpacity: isInactive ? 0.05 : 1,
                   }}
                   fill={`url(#grad-arc-${s.id})`}
