@@ -13,15 +13,34 @@ export default defineConfig({
 
   workers: process.env.CI ? 1 : 2,
 
-  reporter: [
-    ['list'],
-    [
-      'html',
-      {
-        outputFolder: 'playwright-report',
-        open: 'never',
+  projects: [
+    {
+      name: 'chromium',
+
+      use: {
+        ...devices['Desktop Chrome'],
       },
-    ],
+    },
+
+    {
+      name: 'firefox',
+
+      testMatch: /cross-browser\.spec\.js/,
+
+      use: {
+        ...devices['Desktop Firefox'],
+      },
+    },
+
+    {
+      name: 'webkit',
+
+      testMatch: /cross-browser\.spec\.js/,
+
+      use: {
+        ...devices['Desktop Safari'],
+      },
+    },
   ],
 
   use: {
