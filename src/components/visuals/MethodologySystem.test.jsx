@@ -132,7 +132,8 @@ vi.mock('framer-motion', async () => {
   };
 });
 
-const [coreSegment, neuroSegment, operationalSegment] = methodologySegments;
+const [coreSegment, neuroSegment, operationalSegment, dreamSegment] =
+  methodologySegments;
 
 const getSegmentItem = (title) =>
   screen.getByRole('button', {
@@ -147,6 +148,13 @@ const completeExit = () => {
     presenceMocks.completeExit();
   });
 };
+
+const getCenterGroup = () => screen.getByText('YOU').closest('g');
+
+const getArcGroups = (container) =>
+  Array.from(container.querySelectorAll('svg path[fill="transparent"]')).map(
+    (path) => path.closest('g')
+  );
 
 describe('MethodologySystem viewport animations', () => {
   beforeEach(() => {
@@ -469,12 +477,101 @@ describe('MethodologySystem segment interactions', () => {
 
     expect(screen.getByText(neuroSegment.description)).toBeInTheDocument();
   });
+
+  test('handles entering and leaving the YOU center without activating content', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    const centerGroup = getCenterGroup();
+
+    expect(centerGroup).not.toBeNull();
+
+    fireEvent.mouseEnter(centerGroup);
+
+    expect(screen.queryByRole('region')).not.toBeInTheDocument();
+
+    fireEvent.mouseLeave(centerGroup);
+
+    expect(screen.queryByRole('region')).not.toBeInTheDocument();
+  });
+
+  test('opens a segment through its SVG arc on desktop', () => {
+    createMatchMediaController(1280);
+
+    const { container } = render(<MethodologySystem />);
+
+    const [coreArc] = getArcGroups(container);
+
+    expect(coreArc).not.toBeNull();
+
+    fireEvent.mouseEnter(coreArc);
+
+    expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
+  });
+
+  test('opens and closes a segment through its SVG arc on mobile', () => {
+    createMatchMediaController(390);
+
+    const { container } = render(<MethodologySystem />);
+
+    const [coreArc] = getArcGroups(container);
+
+    expect(coreArc).not.toBeNull();
+
+    fireEvent.click(coreArc);
+
+    expect(screen.getByText(coreSegment.description)).toBeInTheDocument();
+
+    fireEvent.click(coreArc);
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
+
+    completeExit();
+  });
+
+  test('renders the Dream segment without a details list', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    fireEvent.mouseEnter(getSegmentItem(dreamSegment.title));
+
+    expect(screen.getByText(dreamSegment.description)).toBeInTheDocument();
+
+    const region = screen.getByRole('region', {
+      name: dreamSegment.title,
+    });
+
+    expect(region.querySelectorAll('p')).toHaveLength(1);
+  });
 });
 
 describe('MethodologySystem accessibility', () => {
   beforeEach(() => {
     animationMocks.reset();
     presenceMocks.reset();
+  });
+
+  test('ignores unrelated keyboard input', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    const coreButton = getSegmentItem(coreSegment.title);
+
+    coreButton.focus();
+
+    fireEvent.keyDown(coreButton, {
+      key: 'ArrowDown',
+      code: 'ArrowDown',
+    });
+
+    expect(coreButton).toHaveFocus();
+
+    expect(coreButton).toHaveAttribute('aria-expanded', 'false');
+
+    expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
   });
 
   test('exposes every text segment as a native button with ARIA state', () => {

@@ -196,4 +196,53 @@ describe('methodologyInteractionReducer', () => {
     expect(state.pendingSegment).toBeNull();
     expect(state.isExiting).toBe(true);
   });
+
+  test('queues a mobile selection while content is still closing', () => {
+    const closingState = {
+      hoveredSegment: null,
+      activeContentId: null,
+      pendingSegment: null,
+      isExiting: true,
+    };
+
+    const state = reduce(closingState, 'segment-toggle', segments.neuro);
+
+    expect(state.hoveredSegment).toBe(segments.neuro);
+
+    expect(state.activeContentId).toBeNull();
+
+    expect(state.pendingSegment).toBe(segments.neuro);
+
+    expect(state.isExiting).toBe(true);
+  });
+
+  test('resets the complete interaction state', () => {
+    const dirtyState = {
+      hoveredSegment: segments.neuro,
+      activeContentId: segments.core.id,
+      pendingSegment: segments.operational,
+      isExiting: true,
+    };
+
+    const state = methodologyInteractionReducer(dirtyState, {
+      type: 'reset',
+    });
+
+    expect(state).toEqual(initialMethodologyInteractionState);
+  });
+
+  test('returns the existing state for an unknown action', () => {
+    const state = {
+      hoveredSegment: segments.core,
+      activeContentId: segments.core.id,
+      pendingSegment: null,
+      isExiting: false,
+    };
+
+    const result = methodologyInteractionReducer(state, {
+      type: 'unknown-action',
+    });
+
+    expect(result).toBe(state);
+  });
 });
