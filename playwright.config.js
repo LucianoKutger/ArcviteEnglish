@@ -53,16 +53,6 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
 
-  projects: [
-    {
-      name: 'chromium',
-
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
-  ],
-
   webServer: {
     command: 'npm run start -- --host 127.0.0.1 --strictPort',
 

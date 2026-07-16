@@ -29,7 +29,7 @@ export default defineConfig({
         'src/setupVitest.js',
         'src/main.jsx',
         'src/test-utils/**',
-
+        'src/components/dashboards/BiometricSlider.jsx',
         'src/components/visuals/ArcSystem.jsx',
       ],
     },

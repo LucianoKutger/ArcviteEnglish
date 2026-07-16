@@ -1,4 +1,6 @@
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+
+import userEvent from '@testing-library/user-event';
 
 import { MemoryRouter } from 'react-router-dom';
 
@@ -15,7 +17,17 @@ vi.mock('framer-motion', () => ({
 }));
 
 vi.mock('./components/sections/HomeSection', () => ({
-  default: () => <section id="home">Home</section>,
+  default: ({ scrollToSection }) => (
+    <section id="home">
+      Home
+      <button type="button" onClick={() => scrollToSection('audit')}>
+        Scroll to audit
+      </button>
+      <button type="button" onClick={() => scrollToSection('home')}>
+        Scroll to home
+      </button>
+    </section>
+  ),
 }));
 
 vi.mock('./components/sections/VisionSection', () => ({
@@ -155,5 +167,45 @@ describe('Home route scrolling', () => {
         behavior: 'auto',
       });
     });
+  });
+
+  test('handles direct section and home navigation requests', async () => {
+    const originalScrollTo = window.scrollTo;
+    const scrollIntoView = vi.fn();
+
+    window.scrollTo = vi.fn();
+
+    renderHome();
+
+    const auditSection = document.getElementById('audit');
+
+    auditSection.scrollIntoView = scrollIntoView;
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Scroll to audit',
+      })
+    );
+
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+    });
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Scroll to home',
+      })
+    );
+
+    expect(window.scrollTo).toHaveBeenCalledTimes(1);
+
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 0,
+      behavior: 'smooth',
+    });
+
+    window.scrollTo = originalScrollTo;
   });
 });
