@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
 
+import { gotoApp } from './test-utils';
+
 test.describe('application smoke test', () => {
   test('loads the home route and renders the application shell', async ({
     page,
   }) => {
-    await page.goto('/');
+    await gotoApp(page);
 
     await expect(page).toHaveURL(/\/$/);
 

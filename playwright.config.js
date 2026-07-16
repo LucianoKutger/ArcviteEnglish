@@ -5,13 +5,13 @@ const baseURL = 'http://127.0.0.1:3000';
 export default defineConfig({
   testDir: './e2e',
 
-  fullyParallel: true,
+  fullyParallel: false,
 
   forbidOnly: Boolean(process.env.CI),
 
   retries: process.env.CI ? 2 : 0,
 
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 2,
 
   reporter: [
     ['list'],
