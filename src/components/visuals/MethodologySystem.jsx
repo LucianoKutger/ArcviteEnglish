@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
 import styles from './MethodologySystem.module.scss';
 import { methodologySegments } from '../../data/content';
@@ -7,6 +7,10 @@ import {
   getPointyArcPath,
   polarToCartesian,
 } from '../../utils/methodologyGeometry';
+import {
+  initialMethodologyInteractionState,
+  methodologyInteractionReducer,
+} from '../../utils/methodologyInteraction';
 
 const IMPACT_FLOW_ANIMATION = {
   pathOffset: [-0.15, 1],
@@ -30,15 +34,10 @@ const POLAR_STAR_ANIMATION = {
 };
 
 const ArcSystem = () => {
-  // 1. Ersetzt activeSegment -> Steuert das INSTANTE Aufleuchten der Bögen/Titel
-  const [hoveredSegment, setHoveredSegment] = useState(null);
-
-  // 2. Neu -> Steuert exklusiv das nacheinander geschaltete Ausfahren der Infotexte
-  const [activeContentId, setActiveContentId] = useState(null);
-
-  // 3. Neu -> Speichert die aktuelle Hover-ID für die Exit-Synchronisation
-  const latestHoveredIdRef = useRef(null);
-  const pendingSegmentRef = useRef(null);
+  const [{ hoveredSegment, activeContentId }, dispatchInteraction] = useReducer(
+    methodologyInteractionReducer,
+    initialMethodologyInteractionState
+  );
 
   // 4. Fix -> Wieder hinzugefügt für das Hover-Verhalten des "YOU"-Zentrums!
   const [isCenterHovered, setIsCenterHovered] = useState(false);
@@ -82,80 +81,29 @@ const ArcSystem = () => {
   const arrowEnd = polarToCartesian(centerX, centerY, 15, 45);
   const polarStarPoint = polarToCartesian(centerX, centerY, 540, 45);
 
-  // --- ANIMATION CHAINING LOGIK ---
   const handleMouseEnter = (segment) => {
-    latestHoveredIdRef.current = segment.id;
-    pendingSegmentRef.current = segment;
-
-    setHoveredSegment(segment);
-
-    setActiveContentId((currentActiveId) => {
-      // Noch kein Text geöffnet:
-      // Das ausgewählte Element darf sofort geöffnet werden.
-      if (currentActiveId === null) {
-        pendingSegmentRef.current = null;
-        return segment.id;
-      }
-
-      // Das Element ist bereits geöffnet.
-      // Es muss nichts verändert werden.
-      if (currentActiveId === segment.id) {
-        pendingSegmentRef.current = null;
-        return currentActiveId;
-      }
-
-      // Ein anderes Element ist aktuell geöffnet.
-      // Zuerst nur das aktuelle Element schließen.
-      // Das neue Element wird erst in handleExitComplete geöffnet.
-      return null;
+    dispatchInteraction({
+      type: 'segment-enter',
+      segment,
     });
   };
 
   const handleInteractionLeave = () => {
-    latestHoveredIdRef.current = null;
-    pendingSegmentRef.current = null;
-
-    setHoveredSegment(null);
-    setActiveContentId(null);
+    dispatchInteraction({
+      type: 'interaction-leave',
+    });
   };
 
   const handleExitComplete = () => {
-    const pendingSegment = pendingSegmentRef.current;
-
-    if (!pendingSegment) {
-      return;
-    }
-
-    if (latestHoveredIdRef.current !== pendingSegment.id) {
-      return;
-    }
-
-    pendingSegmentRef.current = null;
-    setActiveContentId(pendingSegment.id);
+    dispatchInteraction({
+      type: 'exit-complete',
+    });
   };
 
   const handleSegmentClick = (segment) => {
-    if (activeContentId === segment.id) {
-      latestHoveredIdRef.current = null;
-      pendingSegmentRef.current = null;
-
-      setHoveredSegment(null);
-      setActiveContentId(null);
-      return;
-    }
-
-    latestHoveredIdRef.current = segment.id;
-    pendingSegmentRef.current = segment;
-
-    setHoveredSegment(segment);
-
-    setActiveContentId((currentActiveId) => {
-      if (currentActiveId === null) {
-        pendingSegmentRef.current = null;
-        return segment.id;
-      }
-
-      return null;
+    dispatchInteraction({
+      type: 'segment-toggle',
+      segment,
     });
   };
 
