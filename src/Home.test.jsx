@@ -156,6 +156,18 @@ describe('Home route scrolling', () => {
     expect(getElementSpy).not.toHaveBeenCalled();
   });
 
+  test('ignores navigation requests for a section that is not mounted', async () => {
+    renderHome();
+    vi.spyOn(document, 'getElementById').mockReturnValue(null);
+    const scrollToSpy = vi.spyOn(window, 'scrollTo');
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Scroll to audit' })
+    );
+
+    expect(scrollToSpy).not.toHaveBeenCalled();
+  });
+
   test('uses instant section scrolling with reduced motion', async () => {
     motionPreference.reduced = true;
 

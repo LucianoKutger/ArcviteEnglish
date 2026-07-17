@@ -13,12 +13,19 @@ import {
 import styles from './HeroFlowLines.module.scss';
 import HeroFlowLines from './HeroFlowLines';
 
+const motionPreference = vi.hoisted(() => ({ reduced: false }));
+
+vi.mock('framer-motion', () => ({
+  useReducedMotion: () => motionPreference.reduced,
+}));
+
 describe('HeroFlowLines', () => {
   let canvasController;
   let animationFrameController;
   let intersectionController;
 
   beforeEach(() => {
+    motionPreference.reduced = false;
     canvasController = createCanvasMock();
     animationFrameController = createAnimationFrameController();
     intersectionController = createIntersectionObserverController();
@@ -190,6 +197,15 @@ describe('HeroFlowLines', () => {
       0.5,
       'rgba(229, 217, 182, 0.3)'
     );
+  });
+
+  test('draws one static frame when reduced motion is requested', () => {
+    motionPreference.reduced = true;
+
+    render(<HeroFlowLines />);
+
+    expect(canvasController.latestContext.clearRect).toHaveBeenCalled();
+    expect(animationFrameController.pendingFrameCount).toBe(0);
   });
 
   test('pauses outside the viewport and resumes when the element becomes active again', () => {

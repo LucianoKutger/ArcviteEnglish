@@ -12,8 +12,16 @@ const motionPreference = vi.hoisted(() => ({
   reduced: false,
 }));
 
+const lenisState = vi.hoisted(() => ({
+  instance: null,
+}));
+
 vi.mock('framer-motion', () => ({
   useReducedMotion: () => motionPreference.reduced,
+}));
+
+vi.mock('lenis/react', () => ({
+  useLenis: () => lenisState.instance,
 }));
 
 vi.mock('./ArcviteLogo', () => ({
@@ -45,6 +53,7 @@ const renderNavbar = (initialEntry = '/') =>
 describe('Navbar', () => {
   beforeEach(() => {
     motionPreference.reduced = false;
+    lenisState.instance = null;
   });
 
   test('provides accessible controls for the logo and mobile navigation', async () => {
@@ -338,6 +347,59 @@ describe('Navbar', () => {
     expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     expect(mobileNavigation).toHaveAttribute('hidden');
     expect(menuButton).toHaveFocus();
+  });
+
+  test('keeps the mobile menu open for unrelated keyboard input', async () => {
+    renderNavbar();
+    const menuButton = screen.getByRole('button', {
+      name: /open navigation menu/i,
+    });
+
+    await userEvent.click(menuButton);
+    fireEvent.keyDown(document, { key: 'ArrowDown' });
+
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  test('ignores a home-page target that is not present', () => {
+    renderNavbar();
+    const navigation = screen.getByRole('navigation');
+    const desktopNavigation = navigation.querySelector(
+      `.${navBarStyles.lpNavLinks}`
+    );
+    const targetButton = within(desktopNavigation).getByRole('button', {
+      name: navItems[0].label,
+      hidden: true,
+    });
+    vi.spyOn(document, 'getElementById').mockReturnValue(null);
+
+    fireEvent.click(targetButton);
+
+    expect(screen.getByTestId('current-location')).toHaveTextContent('/');
+  });
+
+  test('uses Lenis for home-page scrolling while motion is enabled', () => {
+    const targetSection = document.createElement('section');
+    targetSection.id = navItems[0].targetId;
+    targetSection.scrollIntoView = vi.fn();
+    document.body.appendChild(targetSection);
+    lenisState.instance = { scrollTo: vi.fn() };
+
+    renderNavbar();
+    const navigation = screen.getByRole('navigation');
+    const desktopNavigation = navigation.querySelector(
+      `.${navBarStyles.lpNavLinks}`
+    );
+    fireEvent.click(
+      within(desktopNavigation).getByRole('button', {
+        name: navItems[0].label,
+        hidden: true,
+      })
+    );
+
+    expect(lenisState.instance.scrollTo).toHaveBeenCalledWith(targetSection);
+    expect(targetSection.scrollIntoView).not.toHaveBeenCalled();
+    targetSection.remove();
   });
 
   test('passes the requested section while returning from a subpage', () => {

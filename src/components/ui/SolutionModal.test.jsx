@@ -6,9 +6,12 @@ import { beforeEach, vi } from 'vitest';
 import { imageSizes } from '../../data/responsiveImages';
 import SolutionModal from './SolutionModal';
 
-const { lenisState, responsiveImageSpy } = vi.hoisted(() => ({
+const { lenisState, motionState, responsiveImageSpy } = vi.hoisted(() => ({
   lenisState: {
     instance: undefined,
+  },
+  motionState: {
+    forwardRefs: true,
   },
   responsiveImageSpy: vi.fn(),
 }));
@@ -39,7 +42,7 @@ vi.mock('framer-motion', () => ({
       ref
     ) {
       return (
-        <div ref={ref} {...domProps}>
+        <div ref={motionState.forwardRefs ? ref : undefined} {...domProps}>
           {children}
         </div>
       );
@@ -66,6 +69,7 @@ const testItem = {
 describe('SolutionModal', () => {
   beforeEach(() => {
     lenisState.instance = undefined;
+    motionState.forwardRefs = true;
   });
 
   test('renders nothing when no item is selected', () => {
@@ -74,6 +78,15 @@ describe('SolutionModal', () => {
     );
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  test('ignores Tab safely while the dialog ref is unavailable', () => {
+    motionState.forwardRefs = false;
+    const onClose = vi.fn();
+    render(<SolutionModal item={testItem} onClose={onClose} />);
+
+    expect(() => fireEvent.keyDown(document, { key: 'Tab' })).not.toThrow();
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   test('uses the modal image variant with the protocol modal size rule', () => {
