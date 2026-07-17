@@ -354,7 +354,7 @@ describe('MethodologySystem segment interactions', () => {
   test('waits for the current desktop content to exit before opening the next segment', () => {
     createMatchMediaController(1280);
 
-    render(<MethodologySystem />);
+    render(<MethodologySystem waitForCloseBeforeOpen />);
 
     fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
 
@@ -417,7 +417,7 @@ describe('MethodologySystem segment interactions', () => {
   test('opens only the latest segment during a rapid desktop A to B to C switch', () => {
     createMatchMediaController(1280);
 
-    render(<MethodologySystem />);
+    render(<MethodologySystem waitForCloseBeforeOpen />);
 
     fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
 
@@ -449,7 +449,7 @@ describe('MethodologySystem segment interactions', () => {
   test('does not reopen pending content after leaving the desktop interaction area', () => {
     createMatchMediaController(1280);
 
-    render(<MethodologySystem />);
+    render(<MethodologySystem waitForCloseBeforeOpen />);
 
     fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
 
@@ -499,7 +499,7 @@ describe('MethodologySystem segment interactions', () => {
   test('uses only the latest pending selection during rapid mobile clicks', () => {
     createMatchMediaController(390);
 
-    render(<MethodologySystem />);
+    render(<MethodologySystem waitForCloseBeforeOpen />);
 
     fireEvent.click(getSegmentItem(coreSegment.title));
 
