@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import { useLocation } from 'react-router-dom';
 import { useReducedMotion } from 'framer-motion';
+import { useLenis } from 'lenis/react';
 import HomeSection from './components/sections/HomeSection';
 import VisionSection from './components/sections/VisionSection';
 import MethodologySection from './components/sections/MethodologySection';
@@ -16,6 +17,7 @@ const Home = () => {
   const location = useLocation();
 
   const shouldReduceMotion = useReducedMotion();
+  const lenis = useLenis();
 
   const scrollBehavior = shouldReduceMotion ? 'auto' : 'smooth';
 
@@ -23,15 +25,20 @@ const Home = () => {
 
   const scrollTarget = location.state?.scrollTarget;
 
-  useEffect(() => {
-    if (!scrollTarget || handledNavigationKeyRef.current === location.key) {
-      return undefined;
-    }
+  const scrollToSection = useCallback(
+    (id) => {
+      const target = id === 'home' ? 0 : document.getElementById(id);
 
-    const frameId = window.requestAnimationFrame(() => {
-      handledNavigationKeyRef.current = location.key;
+      if (target === null) {
+        return;
+      }
 
-      if (scrollTarget === 'home') {
+      if (lenis && !shouldReduceMotion) {
+        lenis.scrollTo(target);
+        return;
+      }
+
+      if (id === 'home') {
         window.scrollTo({
           top: 0,
           behavior: scrollBehavior,
@@ -40,34 +47,27 @@ const Home = () => {
         return;
       }
 
-      const element = document.getElementById(scrollTarget);
-
-      element?.scrollIntoView({
+      target.scrollIntoView({
         behavior: scrollBehavior,
       });
+    },
+    [lenis, scrollBehavior, shouldReduceMotion]
+  );
+
+  useEffect(() => {
+    if (!scrollTarget || handledNavigationKeyRef.current === location.key) {
+      return undefined;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      handledNavigationKeyRef.current = location.key;
+      scrollToSection(scrollTarget);
     });
 
     return () => {
       window.cancelAnimationFrame(frameId);
     };
-  }, [location.key, scrollTarget, scrollBehavior]);
-
-  const scrollToSection = (id) => {
-    if (id === 'home') {
-      window.scrollTo({
-        top: 0,
-        behavior: scrollBehavior,
-      });
-
-      return;
-    }
-
-    const element = document.getElementById(id);
-
-    element?.scrollIntoView({
-      behavior: scrollBehavior,
-    });
-  };
+  }, [location.key, scrollTarget, scrollToSection]);
 
   return (
     <main>

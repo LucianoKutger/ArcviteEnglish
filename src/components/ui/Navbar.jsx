@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronRight } from 'lucide-react';
 import { useReducedMotion } from 'framer-motion';
+import { useLenis } from 'lenis/react';
 import ArcviteLogo from './ArcviteLogo';
 import { navItems } from '../../data/content';
 
@@ -20,6 +21,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const shouldReduceMotion = useReducedMotion();
+  const lenis = useLenis();
   const scrollBehavior = shouldReduceMotion ? 'auto' : 'smooth';
 
   useEffect(() => {
@@ -67,6 +69,17 @@ const Navbar = () => {
       return;
     }
 
+    const target = id === 'home' ? 0 : document.getElementById(id);
+
+    if (target === null) {
+      return;
+    }
+
+    if (lenis && !shouldReduceMotion) {
+      lenis.scrollTo(target);
+      return;
+    }
+
     if (id === 'home') {
       window.scrollTo({
         top: 0,
@@ -76,9 +89,7 @@ const Navbar = () => {
       return;
     }
 
-    const element = document.getElementById(id);
-
-    element?.scrollIntoView({
+    target.scrollIntoView({
       behavior: scrollBehavior,
     });
   };
