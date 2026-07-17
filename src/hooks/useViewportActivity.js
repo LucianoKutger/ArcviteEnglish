@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
+import {
+  isModalOpen,
+  MODAL_VISIBILITY_EVENT,
+} from '../utils/pageActivity';
+
 const DEFAULT_ROOT_MARGIN = '250px 0px';
 
 const getDocumentVisibility = () => {
@@ -16,6 +21,7 @@ export default function useViewportActivity({
   const [isDocumentVisible, setIsDocumentVisible] = useState(
     getDocumentVisibility,
   );
+  const [modalOpen, setModalVisibility] = useState(isModalOpen);
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -33,6 +39,22 @@ export default function useViewportActivity({
 
     updateDocumentVisibility();
     document.addEventListener('visibilitychange', updateDocumentVisibility);
+
+    const updateModalVisibility = (event) => {
+      const nextModalVisibility = event.detail?.open ?? isModalOpen();
+
+      setModalVisibility((currentVisibility) =>
+        currentVisibility === nextModalVisibility
+          ? currentVisibility
+          : nextModalVisibility,
+      );
+    };
+
+    setModalVisibility(isModalOpen());
+    document.addEventListener(
+      MODAL_VISIBILITY_EVENT,
+      updateModalVisibility,
+    );
 
     const target = targetRef.current;
     let observer;
@@ -62,11 +84,15 @@ export default function useViewportActivity({
         'visibilitychange',
         updateDocumentVisibility,
       );
+      document.removeEventListener(
+        MODAL_VISIBILITY_EVENT,
+        updateModalVisibility,
+      );
     };
   }, [rootMargin]);
 
   return {
     targetRef,
-    isActive: isNearViewport && isDocumentVisible,
+    isActive: isNearViewport && isDocumentVisible && !modalOpen,
   };
 }

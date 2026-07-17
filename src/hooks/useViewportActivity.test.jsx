@@ -8,6 +8,7 @@ import {
 } from '../test-utils/browserMocks';
 
 import useViewportActivity from './useViewportActivity';
+import { setModalOpen } from '../utils/pageActivity';
 
 function ActivityProbe({ rootMargin } = {}) {
   const options = rootMargin ? { rootMargin } : undefined;
@@ -25,6 +26,7 @@ describe('useViewportActivity', () => {
   let visibilityController;
 
   beforeEach(() => {
+    setModalOpen(false);
     intersectionController = createIntersectionObserverController();
     visibilityController = createDocumentVisibilityController('visible');
   });
@@ -117,6 +119,24 @@ describe('useViewportActivity', () => {
 
     act(() => {
       observer.callback([], observer);
+    });
+
+    expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');
+  });
+
+  test('pauses while a modal is open and resumes when it closes', () => {
+    render(<ActivityProbe />);
+
+    expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');
+
+    act(() => {
+      setModalOpen(true);
+    });
+
+    expect(screen.getByTestId('activity-probe')).toHaveTextContent('paused');
+
+    act(() => {
+      setModalOpen(false);
     });
 
     expect(screen.getByTestId('activity-probe')).toHaveTextContent('active');

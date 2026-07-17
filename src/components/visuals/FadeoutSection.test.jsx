@@ -2,61 +2,39 @@ import { act, render, screen } from '@testing-library/react';
 
 import { afterEach, beforeEach, vi } from 'vitest';
 
+import { createIntersectionObserverController } from '../../test-utils/browserMocks';
 import FadeOutSection from './FadeoutSection';
 
 const motionState = vi.hoisted(() => ({
   reduced: false,
   mediaMatches: true,
   mediaChangeHandler: null,
-  transformSpy: vi.fn(),
+  scrollValue: 20,
+  scrollListeners: new Set(),
+  useScrollSpy: vi.fn(),
+  unsubscribeSpy: vi.fn(),
   addMediaListenerSpy: vi.fn(),
   removeMediaListenerSpy: vi.fn(),
 }));
 
 vi.mock('framer-motion', () => {
-  const MotionDiv = ({ children, style = {}, ...props }) => {
-    const { opacity, y, transform, ...safeStyle } = style;
-
-    return (
-      <div
-        {...props}
-        style={{
-          ...safeStyle,
-          ...(typeof opacity === 'number'
-            ? {
-                opacity,
-              }
-            : {}),
-          ...(typeof transform === 'string'
-            ? {
-                transform,
-              }
-            : {}),
-        }}
-        data-has-motion-opacity={opacity === undefined ? 'false' : 'true'}
-        data-has-motion-y={y === undefined ? 'false' : 'true'}
-      >
-        {children}
-      </div>
-    );
-  };
-
   return {
-    motion: {
-      div: MotionDiv,
-    },
-
     useReducedMotion: () => motionState.reduced,
-
-    useScroll: () => ({
-      scrollY: 'scroll-y-value',
-    }),
-
-    useTransform: (...args) => {
-      motionState.transformSpy(...args);
+    useScroll: () => {
+      motionState.useScrollSpy();
 
       return {
-        transformation: args,
+        scrollY: {
+          get: () => motionState.scrollValue,
+          on: (eventName, listener) => {
+            motionState.scrollListeners.add(listener);
+
+            return () => {
+              motionState.scrollListeners.delete(listener);
+              motionState.unsubscribeSpy(eventName);
+            };
+          },
+        },
       };
     },
   };
@@ -66,13 +44,17 @@ const TestGlow = () => <div>Component glow</div>;
 
 describe('FadeOutSection', () => {
   let originalScrollYDescriptor;
+  let intersectionController;
 
   beforeEach(() => {
     motionState.reduced = false;
     motionState.mediaMatches = true;
     motionState.mediaChangeHandler = null;
+    motionState.scrollValue = 20;
+    motionState.scrollListeners.clear();
 
     vi.clearAllMocks();
+    intersectionController = createIntersectionObserverController();
 
     originalScrollYDescriptor = Object.getOwnPropertyDescriptor(
       window,
@@ -131,7 +113,7 @@ describe('FadeOutSection', () => {
     }
   });
 
-  test('separates background and content children into motion layers', () => {
+  test('separates background and content children into viewport-gated layers', () => {
     render(
       <FadeOutSection id="test-section" className="test-section">
         <TestGlow />
@@ -159,15 +141,18 @@ describe('FadeOutSection', () => {
 
     expect(contentLayer).toHaveTextContent('Plain text');
 
-    expect(backgroundLayer).toHaveAttribute('data-has-motion-opacity', 'true');
-
-    expect(contentLayer).toHaveAttribute('data-has-motion-y', 'true');
+    expect(section).toHaveAttribute('data-scroll-tracking', 'active');
+    expect(backgroundLayer).toHaveStyle({ opacity: '1' });
+    expect(contentLayer).toHaveStyle({
+      opacity: '1',
+      transform: 'translate3d(0, 0.00px, 0)',
+    });
 
     expect(
       section.querySelector('[data-motion-layer="overlay"]')
     ).toBeInTheDocument();
 
-    expect(motionState.transformSpy).toHaveBeenCalled();
+    expect(motionState.useScrollSpy).toHaveBeenCalled();
   });
 
   test('keeps all layers static when reduced motion is active', () => {
@@ -196,13 +181,38 @@ describe('FadeOutSection', () => {
       transform: 'none',
     });
 
-    expect(backgroundLayer).toHaveAttribute('data-has-motion-opacity', 'false');
-
-    expect(contentLayer).toHaveAttribute('data-has-motion-y', 'false');
+    expect(section).toHaveAttribute('data-scroll-tracking', 'paused');
 
     expect(
       section.querySelector('[data-motion-layer="overlay"]')
     ).not.toBeInTheDocument();
+
+    expect(motionState.useScrollSpy).not.toHaveBeenCalled();
+  });
+
+  test('unsubscribes from scroll updates outside the viewport margin', () => {
+    render(
+      <FadeOutSection id="gated-section">
+        <div>Gated content</div>
+      </FadeOutSection>
+    );
+
+    const section = document.getElementById('gated-section');
+    const observer = intersectionController.latestObserver;
+
+    expect(section).toHaveAttribute('data-scroll-tracking', 'active');
+    expect(observer.options).toEqual({
+      rootMargin: '50% 0px',
+      threshold: 0,
+    });
+
+    act(() => {
+      observer.setIsIntersecting(false);
+    });
+
+    expect(section).toHaveAttribute('data-scroll-tracking', 'paused');
+    expect(motionState.unsubscribeSpy).toHaveBeenCalledWith('change');
+    expect(motionState.scrollListeners.size).toBe(0);
   });
 
   test('reacts to the desktop media query and removes listeners', () => {

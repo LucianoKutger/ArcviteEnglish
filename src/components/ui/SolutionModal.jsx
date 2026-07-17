@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef } from 'react';
+import React, { useLayoutEffect, useId, useRef } from 'react';
 
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
@@ -6,6 +6,7 @@ import { X, ArrowUpRight } from 'lucide-react';
 import { useLenis } from 'lenis/react';
 import { imageSizes } from '../../data/responsiveImages';
 import ResponsiveImage from './ResponsiveImage';
+import { setModalOpen } from '../../utils/pageActivity';
 import styles from './SolutionModal.module.scss';
 
 const SolutionModal = ({ item, onClose, onViewStudies }) => {
@@ -15,7 +16,7 @@ const SolutionModal = ({ item, onClose, onViewStudies }) => {
   const closeButtonRef = useRef(null);
   const modalRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!item) {
       return undefined;
     }
@@ -26,6 +27,7 @@ const SolutionModal = ({ item, onClose, onViewStudies }) => {
         : null;
     const lenisWasStopped = lenis?.isStopped ?? false;
 
+    setModalOpen(true);
     lenis?.stop();
 
     const handleKeyDown = (event) => {
@@ -95,6 +97,7 @@ const SolutionModal = ({ item, onClose, onViewStudies }) => {
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      setModalOpen(false);
 
       if (!lenisWasStopped) {
         lenis?.start();
@@ -118,20 +121,21 @@ const SolutionModal = ({ item, onClose, onViewStudies }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.16, ease: 'easeOut' }}
         onClick={onClose}
         className={styles.backdrop}
       />
 
       <motion.div
-        layoutId={`card-${item.id}`}
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.18, ease: 'easeOut' }}
         className={styles.modalCard}
       >
         <div className={styles.closeButtonContainer}>

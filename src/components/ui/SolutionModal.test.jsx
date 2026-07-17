@@ -222,11 +222,13 @@ describe('SolutionModal', () => {
 
     expect(stop).toHaveBeenCalledTimes(1);
     expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
+    expect(document.body).toHaveAttribute('data-arcvite-modal-open', 'true');
 
     unmount();
 
     expect(start).toHaveBeenCalledTimes(1);
     expect(focusSpy).toHaveBeenLastCalledWith({ preventScroll: true });
+    expect(document.body).not.toHaveAttribute('data-arcvite-modal-open');
   });
 
   test('keeps keyboard focus inside the open dialog', async () => {

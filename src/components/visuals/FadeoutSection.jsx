@@ -1,30 +1,104 @@
-import React, { useRef, useState, useEffect } from 'react';
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from 'framer-motion';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { useReducedMotion, useScroll } from 'framer-motion';
+
+import useViewportActivity from '../../hooks/useViewportActivity';
+
+const FADE_TRACKING_ROOT_MARGIN = '50% 0px';
+
+const interpolate = (value, start, end, from, to) => {
+  if (value <= start) return from;
+  if (value >= end) return to;
+
+  const progress = (value - start) / (end - start);
+
+  return from + (to - from) * progress;
+};
+
+const setOpacity = (element, value) => {
+  if (element) element.style.opacity = value.toFixed(3);
+};
+
+const FadeOutMotionController = ({
+  backgroundLayerRef,
+  contentLayerRef,
+  delayPercentage,
+  offsetTop,
+  overlayLayerRef,
+  sectionHeight,
+}) => {
+  const { scrollY } = useScroll();
+  const startPoint = offsetTop + sectionHeight * delayPercentage;
+
+  useLayoutEffect(() => {
+    const updateLayers = (latestScrollY) => {
+      const contentOpacity = interpolate(
+        latestScrollY,
+        startPoint,
+        startPoint + 400,
+        1,
+        0
+      );
+      const contentY = interpolate(
+        latestScrollY,
+        startPoint,
+        startPoint + 500,
+        0,
+        150
+      );
+      const overlayOpacity = interpolate(
+        latestScrollY,
+        startPoint + 100,
+        startPoint + 500,
+        0,
+        1
+      );
+
+      setOpacity(backgroundLayerRef.current, contentOpacity);
+      setOpacity(contentLayerRef.current, contentOpacity);
+      setOpacity(overlayLayerRef.current, overlayOpacity);
+
+      if (contentLayerRef.current) {
+        contentLayerRef.current.style.transform = `translate3d(0, ${contentY.toFixed(2)}px, 0)`;
+      }
+    };
+
+    updateLayers(scrollY.get());
+
+    return scrollY.on('change', updateLayers);
+  }, [
+    backgroundLayerRef,
+    contentLayerRef,
+    overlayLayerRef,
+    scrollY,
+    startPoint,
+  ]);
+
+  return null;
+};
 
 const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
-  const ref = useRef(null);
   const [offsetTop, setOffsetTop] = useState(0);
   const [sectionHeight, setSectionHeight] = useState(0);
   const [isDesktop, setIsDesktop] = useState(true);
-
+  const { targetRef, isActive } = useViewportActivity({
+    rootMargin: FADE_TRACKING_ROOT_MARGIN,
+  });
+  const backgroundLayerRef = React.useRef(null);
+  const contentLayerRef = React.useRef(null);
+  const overlayLayerRef = React.useRef(null);
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const updatePosition = () => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
+      if (targetRef.current) {
+        const rect = targetRef.current.getBoundingClientRect();
         setOffsetTop(rect.top + window.scrollY);
         setSectionHeight(rect.height);
       }
     };
 
     const mediaQuery = window.matchMedia('(min-width: 1024px)');
-    const handleMediaChange = (e) => setIsDesktop(e.matches);
+    const handleMediaChange = (event) => setIsDesktop(event.matches);
 
     setIsDesktop(mediaQuery.matches);
     updatePosition();
@@ -36,36 +110,27 @@ const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
       mediaQuery.removeEventListener('change', handleMediaChange);
       window.removeEventListener('resize', updatePosition);
     };
-  }, []);
-
-  const { scrollY } = useScroll();
-
-  const startPoint = offsetTop + sectionHeight * delayPercentage;
-
-  // Der Inhalt fadet aus
-  const contentOpacity = useTransform(
-    scrollY,
-    [startPoint, startPoint + 400],
-    [1, 0]
-  );
-
-  // Der Text rutscht nach unten
-  const y = useTransform(scrollY, [startPoint, startPoint + 500], [0, 150]);
-
-  // Das "Blackout"-Overlay fadet weich ein
-  const overlayOpacity = useTransform(
-    scrollY,
-    [startPoint + 100, startPoint + 500],
-    [0, 1]
-  );
+  }, [targetRef]);
 
   const motionEnabled = isDesktop && !shouldReduceMotion;
+  const shouldTrackScroll = motionEnabled && isActive;
 
-  const activeOpacity = motionEnabled ? contentOpacity : undefined;
-  const activeY = motionEnabled ? y : undefined;
-  const activeTransform = motionEnabled ? undefined : 'none';
+  useEffect(() => {
+    if (motionEnabled) return;
 
-  // Automatisches Trennen von Hintergrund-Elementen und Text-Inhalt
+    setOpacity(backgroundLayerRef.current, 1);
+    setOpacity(contentLayerRef.current, 1);
+    setOpacity(overlayLayerRef.current, 0);
+
+    if (backgroundLayerRef.current) {
+      backgroundLayerRef.current.style.transform = 'none';
+    }
+
+    if (contentLayerRef.current) {
+      contentLayerRef.current.style.transform = 'none';
+    }
+  }, [motionEnabled]);
+
   const childrenArray = React.Children.toArray(children);
   const backgroundChildren = [];
   const contentChildren = [];
@@ -75,8 +140,6 @@ const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
       const componentName =
         child.type?.name || (typeof child.type === 'string' ? child.type : '');
       const classNameProp = child.props?.className || '';
-
-      // Erkennt Hintergründe, Glow-Effekte oder Linien an ihren Bezeichnern
       const isBackground =
         componentName.toLowerCase().includes('glow') ||
         componentName.toLowerCase().includes('flow') ||
@@ -99,16 +162,28 @@ const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
     <section
       id={id}
       className={className}
-      ref={ref}
+      ref={targetRef}
+      data-scroll-tracking={shouldTrackScroll ? 'active' : 'paused'}
       style={{ position: 'relative' }}
     >
-      {/* 1. HINTERGRUND-EBENE: Fadet aus, wird aber NIEMALS mit 'y' verschoben. Verhindert das Abschneiden der Blurs. */}
+      {shouldTrackScroll && (
+        <FadeOutMotionController
+          backgroundLayerRef={backgroundLayerRef}
+          contentLayerRef={contentLayerRef}
+          delayPercentage={delayPercentage}
+          offsetTop={offsetTop}
+          overlayLayerRef={overlayLayerRef}
+          sectionHeight={sectionHeight}
+        />
+      )}
+
       {backgroundChildren.length > 0 && (
-        <motion.div
+        <div
+          ref={backgroundLayerRef}
           data-motion-layer="background"
           style={{
-            opacity: activeOpacity,
-            transform: activeTransform,
+            opacity: 1,
+            transform: motionEnabled ? undefined : 'none',
             position: 'absolute',
             inset: 0,
             pointerEvents: 'none',
@@ -116,28 +191,27 @@ const FadeOutSection = ({ id, className, children, delayPercentage = 0.5 }) => {
           }}
         >
           {backgroundChildren}
-        </motion.div>
+        </div>
       )}
 
-      {/* 2. INHALTS-EBENE: Text und Karten bewegen sich flüssig nach unten */}
-      <motion.div
+      <div
+        ref={contentLayerRef}
         data-motion-layer="content"
         style={{
-          opacity: activeOpacity,
-          y: activeY,
-          transform: activeTransform,
+          opacity: 1,
+          transform: 'none',
           width: '100%',
         }}
       >
         {contentChildren}
-      </motion.div>
+      </div>
 
-      {/* 3. OVERLAY-EBENE: Wechselt nahtlos zu absolutem Schwarz */}
       {motionEnabled && (
-        <motion.div
+        <div
+          ref={overlayLayerRef}
           data-motion-layer="overlay"
           style={{
-            opacity: overlayOpacity,
+            opacity: 0,
             position: 'absolute',
             inset: 0,
             backgroundColor: '#000000',

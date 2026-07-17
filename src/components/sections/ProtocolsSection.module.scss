@@ -123,7 +123,6 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  will-change: transform;
 
   @media (min-width: $breakpoint-lg) {
     display: contents;
@@ -139,9 +138,7 @@
   transform-origin: center;
   transition:
     transform $transition-slow,
-    filter $transition-slow,
     opacity $transition-base;
-  will-change: transform, filter, opacity;
 
   @media (min-width: $breakpoint-lg) {
     position: static;
@@ -156,7 +153,6 @@
     visibility: visible;
     pointer-events: auto;
     z-index: auto;
-    will-change: auto;
   }
 }
 
@@ -173,7 +169,6 @@
 .active {
   z-index: 4;
   transform: translate(-50%, -50%) scale(1);
-  filter: brightness(1);
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -182,8 +177,7 @@
 .previous,
 .next {
   z-index: 3;
-  filter: brightness(0.38);
-  opacity: 0.68;
+  opacity: 0.42;
   visibility: visible;
   pointer-events: auto;
 }
@@ -199,7 +193,6 @@
 .previousFar,
 .nextFar {
   z-index: 2;
-  filter: brightness(0.3);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -216,7 +209,6 @@
 .hidden {
   z-index: 1;
   transform: translate(-50%, -50%) scale(0.68);
-  filter: brightness(0.3);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -243,8 +235,13 @@
 
 .grid[data-swipe-direction='next'],
 .grid[data-swipe-direction='previous'] {
+  .carouselTrack {
+    will-change: transform;
+  }
+
   .carouselCardSlot {
     transition: none;
+    will-change: transform, filter, opacity;
   }
 
   .active {
