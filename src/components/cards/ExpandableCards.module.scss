@@ -67,6 +67,18 @@
   overflow: hidden;
 }
 
+/* Gestapelte Karten: ein Drittel Bild, zwei Drittel Inhalt. */
+@media (max-width: ($breakpoint-lg - 1px)) {
+  .imageContainer {
+    height: 140px;
+  }
+
+  .contentWrapper {
+    box-sizing: border-box;
+    min-height: 280px;
+  }
+}
+
 .cardImage {
   width: 100%;
   height: 100%;
