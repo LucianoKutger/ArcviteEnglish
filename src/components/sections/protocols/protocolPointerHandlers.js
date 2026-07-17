@@ -23,6 +23,7 @@ const getSwipeRelease = (dragX, dragDistance) => {
 };
 
 export const createProtocolPointerHandlers = ({
+  activateCard,
   dragDirectionRef,
   dragDistanceRef,
   dragX,
@@ -48,11 +49,15 @@ export const createProtocolPointerHandlers = ({
 
     suppressClickRef.current = false;
 
+    const cardSlot = event.target.closest?.('[data-protocol-card-index]');
+    const cardIndex = Number(cardSlot?.dataset.protocolCardIndex);
+
     pointerStartRef.current = {
       pointerId: event.pointerId,
       x: event.clientX,
       y: event.clientY,
       axis: null,
+      cardIndex: Number.isInteger(cardIndex) ? cardIndex : null,
     };
   };
 
@@ -127,6 +132,12 @@ export const createProtocolPointerHandlers = ({
     pointerStartRef.current = null;
 
     if (pointerStart.axis !== 'horizontal') {
+      if (pointerStart.cardIndex !== null) {
+        suppressClickRef.current = true;
+        activateCard(pointerStart.cardIndex);
+        releaseSuppressedClick();
+      }
+
       return;
     }
 

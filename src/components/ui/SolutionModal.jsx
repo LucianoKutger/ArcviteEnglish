@@ -3,12 +3,14 @@ import React, { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, ArrowUpRight } from 'lucide-react';
+import { useLenis } from 'lenis/react';
 import { imageSizes } from '../../data/responsiveImages';
 import ResponsiveImage from './ResponsiveImage';
 import styles from './SolutionModal.module.scss';
 
 const SolutionModal = ({ item, onClose, onViewStudies }) => {
   const titleId = useId();
+  const lenis = useLenis();
 
   const closeButtonRef = useRef(null);
   const modalRef = useRef(null);
@@ -22,6 +24,9 @@ const SolutionModal = ({ item, onClose, onViewStudies }) => {
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
+    const lenisWasStopped = lenis?.isStopped ?? false;
+
+    lenis?.stop();
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
@@ -85,14 +90,19 @@ const SolutionModal = ({ item, onClose, onViewStudies }) => {
       }
     };
 
-    closeButtonRef.current?.focus();
+    closeButtonRef.current?.focus({ preventScroll: true });
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      previouslyFocusedElement?.focus();
+
+      if (!lenisWasStopped) {
+        lenis?.start();
+      }
+
+      previouslyFocusedElement?.focus({ preventScroll: true });
     };
-  }, [item, onClose]);
+  }, [item, lenis, onClose]);
 
   const handleViewStudies = () => {
     onClose();

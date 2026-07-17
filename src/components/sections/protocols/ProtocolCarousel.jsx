@@ -47,6 +47,7 @@ const ProtocolCarousel = ({ carousel }) => (
               ref={(node) => {
                 carousel.cardRefs.current[index] = node;
               }}
+              data-protocol-card-index={index}
               className={`${styles.carouselCardSlot} ${styles[cardState]}`}
             >
               <SolutionCard
