@@ -93,6 +93,20 @@ describe('responsiveImages data', () => {
     });
   });
 
+  test('uses generated WebP files instead of original images as fallbacks', () => {
+    const allImages = [
+      ...Object.values(bioSyncImages),
+      ...protocolImages,
+      founderImage,
+      logoImage,
+    ];
+
+    allImages.forEach((image) => {
+      expect(image.fallback).toContain('/assets/optimized/');
+      expect(image.fallback).toMatch(/\.webp$/);
+    });
+  });
+
   test('provides the expected BioSync candidates in AVIF and WebP', () => {
     Object.values(bioSyncImages).forEach((image) => {
       expect(Object.keys(image.sources)).toEqual(['card']);
