@@ -3,7 +3,7 @@ import MethodologyContentList from './methodology/MethodologyContentList';
 import MethodologyDiagram from './methodology/MethodologyDiagram';
 import useMethodologySystem from './methodology/useMethodologySystem';
 
-const MethodologySystem = ({ waitForCloseBeforeOpen = true }) => {
+const MethodologySystem = ({ waitForCloseBeforeOpen = false }) => {
   const methodology = useMethodologySystem(waitForCloseBeforeOpen);
 
   return (
