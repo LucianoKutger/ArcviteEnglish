@@ -1,5 +1,48 @@
 import { z } from 'zod';
 
+export const COMMON_EMAIL_PROVIDER_DOMAINS = Object.freeze([
+  'gmail.com',
+  'gmail.de',
+  'googlemail.com',
+  'web.de',
+  'gmx.de',
+  'gmx.net',
+  'gmx.com',
+  'outlook.com',
+  'outlook.de',
+  'hotmail.com',
+  'hotmail.de',
+  'live.com',
+  'live.de',
+  'msn.com',
+  't-online.de',
+  'yahoo.com',
+  'yahoo.de',
+  'icloud.com',
+  'me.com',
+  'mac.com',
+  'aol.com',
+  'freenet.de',
+  'mail.de',
+  'mail.com',
+  'proton.me',
+  'protonmail.com',
+  'posteo.de',
+  'mailbox.org',
+  'tuta.com',
+  'tutanota.com',
+  'tutanota.de',
+  'zoho.com',
+]);
+
+const commonEmailProviderDomains = new Set(COMMON_EMAIL_PROVIDER_DOMAINS);
+
+export const hasCommonEmailProvider = (email) => {
+  const domain = String(email).split('@').pop()?.toLowerCase();
+
+  return commonEmailProviderDomains.has(domain);
+};
+
 export const auditSchema = z.object({
   firstName: z
     .string()
@@ -14,7 +57,8 @@ export const auditSchema = z.object({
   email: z
     .string()
     .email('a valid E-Mail address')
-    .max(40, 'a Valid Email (max. 40 characters)'),
+    .max(40, 'a Valid Email (max. 40 characters)')
+    .refine(hasCommonEmailProvider, 'a valid E-Mail address'),
 
   phone: z
     .string()

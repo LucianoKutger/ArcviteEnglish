@@ -29,6 +29,7 @@ const AuditSection = () => {
     handleSubmit,
     control,
     reset,
+    resetField,
     formState: { errors, submitCount },
   } = useForm({
     resolver: zodResolver(auditSchema),
@@ -73,8 +74,12 @@ const AuditSection = () => {
 
   const hasErrors = Object.keys(errors).length > 0;
 
-  const onInvalid = () => {
+  const onInvalid = (validationErrors) => {
     setClearedErrorStyles({});
+
+    Object.keys(validationErrors).forEach((fieldName) => {
+      resetField(fieldName, { keepError: true });
+    });
   };
 
   return (
@@ -130,9 +135,7 @@ const AuditSection = () => {
                   })}
                 />
               </div>
-            </div>
 
-            <div className={styles.inputGrid}>
               <div
                 className={`${styles.inputWrapper} ${
                   errors.email && !clearedErrorStyles.email

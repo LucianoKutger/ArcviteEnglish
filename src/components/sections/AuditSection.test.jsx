@@ -62,7 +62,7 @@ const fillValidAuditApplication = async ({
   countryCode = '+43',
   phoneNumber = '0664 123-45-67',
   goalName = 'Performance & Energy',
-  email = 'john@example.com',
+  email = 'john@gmail.com',
 } = {}) => {
   await userEvent.type(screen.getByPlaceholderText('John'), 'John');
 
@@ -159,6 +159,37 @@ describe('AuditSection', () => {
     ).not.toBeInTheDocument();
   });
 
+  test('clears only invalid field values after a failed submit', async () => {
+    renderAuditSection();
+
+    await userEvent.type(screen.getByPlaceholderText('John'), 'J');
+    await userEvent.type(screen.getByPlaceholderText('Doe'), 'D');
+    await userEvent.type(
+      screen.getByPlaceholderText('john@company.com'),
+      'john@unknown-provider.de'
+    );
+    await userEvent.type(getPhoneInput(), '12345');
+    await userEvent.click(getGoalButton('Performance & Energy'));
+    await userEvent.click(screen.getByRole('checkbox'));
+
+    await userEvent.click(getSubmitButton());
+
+    expect(
+      await screen.findByText(/please provide the following/i)
+    ).toBeInTheDocument();
+
+    expect(screen.getByPlaceholderText('John')).toHaveValue('');
+    expect(screen.getByPlaceholderText('Doe')).toHaveValue('');
+    expect(screen.getByPlaceholderText('john@company.com')).toHaveValue('');
+    expect(getPhoneInput()).toHaveValue('');
+
+    expect(getGoalButton('Performance & Energy')).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(screen.getByRole('checkbox')).toBeChecked();
+  });
+
   test('links the consent text to the privacy route', () => {
     renderAuditSection();
 
@@ -200,7 +231,7 @@ describe('AuditSection', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith('Form submitted perfectly:', {
       firstName: 'John',
       lastName: 'Doe',
-      email: 'john@example.com',
+      email: 'john@gmail.com',
       phone: '+436641234567',
       goals: ['performance'],
       tos: true,
@@ -473,9 +504,9 @@ describe('AuditSection', () => {
     const emailInput = screen.getByPlaceholderText('john@company.com');
 
     await userEvent.clear(emailInput);
-    await userEvent.type(emailInput, 'john@example.com');
+    await userEvent.type(emailInput, 'john@gmail.com');
 
-    expect(emailInput).toHaveValue('john@example.com');
+    expect(emailInput).toHaveValue('john@gmail.com');
 
     // Die alte Fehlermeldung bleibt bis zum nächsten Submit bestehen.
     expect(screen.getByText(/please provide the following/i)).toHaveTextContent(

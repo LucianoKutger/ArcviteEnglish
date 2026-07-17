@@ -3,7 +3,7 @@ import { auditSchema, normalizePhoneNumber } from './auditForm';
 const validAuditData = {
   firstName: 'John',
   lastName: 'Doe',
-  email: 'john@example.com',
+  email: 'john@gmail.com',
   phone: '123456',
   goals: ['performance'],
   tos: true,
@@ -45,11 +45,21 @@ describe('auditSchema', () => {
   });
 
   test.each([
-    ['accepts a valid email address', 'john@example.com', true],
+    ['accepts a Gmail address', 'john@gmail.com', true],
+    ['accepts a German GMX address', 'john@gmx.de', true],
+    ['accepts a WEB.DE address case-insensitively', 'john@WEB.DE', true],
+    ['accepts a Microsoft address', 'john@outlook.com', true],
+    ['accepts an Apple address', 'john@icloud.com', true],
     ['rejects an invalid email address', 'not-an-email', false],
     [
+      'rejects a syntactically valid address with an unknown provider',
+      'ashdgasuzd@asjdhaisud.de',
+      false,
+    ],
+    ['rejects a reserved example domain', 'john@example.com', false],
+    [
       'rejects an email address longer than forty characters',
-      `${'a'.repeat(30)}@example.com`,
+      `${'a'.repeat(31)}@gmail.com`,
       false,
     ],
   ])('%s', (_description, value, expectedResult) => {

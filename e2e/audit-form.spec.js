@@ -7,7 +7,7 @@ const fillValidApplication = async (page) => {
 
   await page.getByLabel('Last Name *').fill('Kutger');
 
-  await page.getByLabel('E-Mail *').fill('luciano@example.com');
+  await page.getByLabel('E-Mail *').fill('luciano@gmail.com');
 
   await page.getByLabel('Phone country code').selectOption('+49');
 

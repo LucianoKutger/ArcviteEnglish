@@ -73,12 +73,20 @@
     outline: none;
     box-shadow: none;
   }
+
+  @media (max-width: $breakpoint-lg) {
+    gap: $spacing-xl;
+  }
 }
 
 .inputGrid {
   display: grid;
   grid-template-columns: 1fr;
   gap: $spacing-2xl;
+
+  @media (max-width: $breakpoint-lg) {
+    row-gap: $spacing-md;
+  }
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(2, 1fr);
@@ -118,19 +126,21 @@
     background-color: $cyan;
     border-color: $cyan;
     color: $black;
-    font-weight: 500;
     box-shadow: $shadow-glow;
   }
 
   &.inactive {
     background-color: transparent;
-    border-color: $white-10;
-    color: $white-60;
+    border-color: $cyan-40;
+    box-shadow: $shadow-glow-cyan;
+    color: $text;
 
     &:hover {
-      border-color: $cyan-40;
-      box-shadow: $shadow-glow-cyan;
-      color: $text;
+      border-color: $cyan-70;
+      box-shadow:
+        0 0 18px $cyan-30,
+        0 0 42px $cyan-40;
+      color: $headlines;
     }
   }
 }
@@ -150,6 +160,10 @@
   border: 1px solid $cyan-50;
   cursor: pointer;
   transition: border-color $transition-base;
+
+  @media (max-width: $breakpoint-lg) {
+    margin-top: 0;
+  }
 
   @media (max-width: 430px) {
     font-size: clamp(0.65rem, 3.25vw, $font-size-sm);
@@ -232,6 +246,10 @@
   margin: $spacing-lg auto 0;
   line-height: 1.625;
 
+  @media (max-width: $breakpoint-lg) {
+    margin-top: 0;
+  }
+
   @media (min-width: $breakpoint-md) {
     font-size: $font-size-xs;
   }
@@ -268,6 +286,10 @@
   margin-top: $spacing-sm;
   padding: 0 $spacing-xs;
   transition: color $transition-base;
+
+  @media (max-width: $breakpoint-lg) {
+    margin-top: 0;
+  }
 
   &.hasError {
     .tosLabel {
