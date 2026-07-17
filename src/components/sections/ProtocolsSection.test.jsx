@@ -5,11 +5,18 @@ import { beforeEach, vi } from 'vitest';
 import { solutions } from '../../data/content';
 import ProtocolsSection from './ProtocolsSection';
 
-const { navigateSpy, solutionCardSpy, solutionModalSpy } = vi.hoisted(() => ({
-  navigateSpy: vi.fn(),
-  solutionCardSpy: vi.fn(),
-  solutionModalSpy: vi.fn(),
-}));
+const { animationState, navigateSpy, solutionCardSpy, solutionModalSpy } =
+  vi.hoisted(() => ({
+    animationState: {
+      defer: false,
+      completions: [],
+      targets: [],
+      motionValue: null,
+    },
+    navigateSpy: vi.fn(),
+    solutionCardSpy: vi.fn(),
+    solutionModalSpy: vi.fn(),
+  }));
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => navigateSpy,
@@ -23,10 +30,14 @@ vi.mock('framer-motion', () => ({
     ),
   },
   useMotionValue: (initialValue) => {
+    if (animationState.motionValue !== null) {
+      return animationState.motionValue;
+    }
+
     let value = initialValue;
     const listeners = new Set();
 
-    return {
+    animationState.motionValue = {
       get: () => value,
       getVelocity: () => 0,
       set: (nextValue) => {
@@ -38,14 +49,22 @@ vi.mock('framer-motion', () => ({
         return () => listeners.delete(listener);
       },
     };
+
+    return animationState.motionValue;
   },
   animate: (motionValue, target) => {
+    animationState.targets.push(target);
     motionValue.set(target);
 
     return {
       stop: vi.fn(),
       then: (onComplete) => {
-        onComplete();
+        if (animationState.defer) {
+          animationState.completions.push(onComplete);
+        } else {
+          onComplete();
+        }
+
         return Promise.resolve();
       },
     };
@@ -65,7 +84,13 @@ vi.mock('../cards/SolutionCard', () => ({
     solutionCardSpy(props);
 
     return (
-      <button type="button" onClick={() => props.onOpen(props.item)}>
+      <button
+        type="button"
+        aria-label={props.ariaLabel}
+        aria-hidden={props.ariaHidden || undefined}
+        tabIndex={props.tabIndex}
+        onClick={() => props.onOpen(props.item)}
+      >
         Open {props.item.title}
       </button>
     );
@@ -112,6 +137,10 @@ vi.mock('../../data/content', () => ({
 describe('ProtocolsSection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    animationState.defer = false;
+    animationState.completions.length = 0;
+    animationState.targets.length = 0;
+    animationState.motionValue = null;
   });
 
   test('renders every solution and forwards the audit action', async () => {
@@ -249,6 +278,181 @@ describe('ProtocolsSection', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
     fireEvent.pointerCancel(grid, { pointerId: 1 });
+    vi.unstubAllGlobals();
+  });
+
+  test('opens the newly swiped card on the first immediate tap', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => ({
+        matches: false,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }))
+    );
+    animationState.defer = true;
+
+    render(<ProtocolsSection scrollToSection={vi.fn()} />);
+
+    const carousel = screen.getByRole('region', {
+      name: 'Arcvite protocols',
+    });
+    const grid = carousel.firstElementChild;
+    const setPointerCapture = vi.fn();
+    grid.setPointerCapture = setPointerCapture;
+
+    fireEvent.pointerDown(grid, {
+      button: 0,
+      pointerId: 1,
+      clientX: 100,
+      clientY: 100,
+    });
+    fireEvent.pointerMove(grid, {
+      pointerId: 1,
+      clientX: -1000,
+      clientY: 100,
+    });
+    fireEvent.pointerUp(grid, {
+      pointerId: 1,
+      clientX: -1000,
+      clientY: 100,
+    });
+
+    expect(animationState.completions).toHaveLength(1);
+    expect(animationState.targets[0]).toBeLessThan(0);
+    expect(setPointerCapture).toHaveBeenCalledWith(1);
+
+    setPointerCapture.mockClear();
+    const incomingCard = screen.getByRole('button', {
+      name: `Show ${solutions[1].title}`,
+    });
+
+    fireEvent.pointerDown(incomingCard, {
+      button: 0,
+      pointerId: 2,
+      clientX: 100,
+      clientY: 100,
+    });
+    fireEvent.pointerUp(incomingCard, {
+      button: 0,
+      pointerId: 2,
+      clientX: 100,
+      clientY: 100,
+    });
+    fireEvent.click(incomingCard);
+
+    expect(setPointerCapture).not.toHaveBeenCalled();
+
+    expect(
+      screen.getByRole('dialog', {
+        name: solutions[1].title,
+      })
+    ).toBeInTheDocument();
+
+    vi.unstubAllGlobals();
+  });
+
+  test('keeps a slightly moving tap clickable without capturing it', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => ({
+        matches: false,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }))
+    );
+
+    render(<ProtocolsSection scrollToSection={vi.fn()} />);
+
+    const carousel = screen.getByRole('region', {
+      name: 'Arcvite protocols',
+    });
+    const grid = carousel.firstElementChild;
+    const activeCard = screen.getByRole('button', {
+      name: `Open ${solutions[0].title}`,
+    });
+    const setPointerCapture = vi.fn();
+    grid.setPointerCapture = setPointerCapture;
+
+    fireEvent.pointerDown(activeCard, {
+      button: 0,
+      pointerId: 1,
+      clientX: 100,
+      clientY: 100,
+    });
+    fireEvent.pointerMove(activeCard, {
+      pointerId: 1,
+      clientX: 94,
+      clientY: 100,
+    });
+    fireEvent.pointerUp(activeCard, {
+      button: 0,
+      pointerId: 1,
+      clientX: 94,
+      clientY: 100,
+    });
+    fireEvent.click(activeCard);
+
+    expect(setPointerCapture).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('dialog', {
+        name: solutions[0].title,
+      })
+    ).toBeInTheDocument();
+
+    vi.unstubAllGlobals();
+  });
+
+  test('accepts another swipe while the previous swipe is settling', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => ({
+        matches: false,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }))
+    );
+    animationState.defer = true;
+
+    render(<ProtocolsSection scrollToSection={vi.fn()} />);
+
+    const carousel = screen.getByRole('region', {
+      name: 'Arcvite protocols',
+    });
+    const grid = carousel.firstElementChild;
+
+    const swipeLeft = (pointerId) => {
+      fireEvent.pointerDown(grid, {
+        button: 0,
+        pointerId,
+        clientX: 100,
+        clientY: 100,
+      });
+      fireEvent.pointerMove(grid, {
+        pointerId,
+        clientX: -1000,
+        clientY: 100,
+      });
+      fireEvent.pointerUp(grid, {
+        pointerId,
+        clientX: -1000,
+        clientY: 100,
+      });
+    };
+
+    swipeLeft(1);
+    swipeLeft(2);
+
+    expect(animationState.completions).toHaveLength(2);
+
+    animationState.completions.at(-1)();
+
+    expect(
+      screen.getByRole('button', {
+        name: `Show ${solutions[0].title} protocol`,
+      })
+    ).toHaveAttribute('aria-current', 'true');
+
     vi.unstubAllGlobals();
   });
 });

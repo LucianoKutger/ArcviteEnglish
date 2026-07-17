@@ -15,7 +15,7 @@ const DESKTOP_BREAKPOINT = 1024;
 const SWIPE_DISTANCE_RATIO = 0.72;
 const SWIPE_FRONT_PROGRESS = 0.5;
 const SWIPE_COMMIT_PROGRESS = 0.3;
-const SWIPE_DIRECTION_LOCK_PX = 5;
+const SWIPE_DIRECTION_LOCK_PX = 10;
 const SWIPE_VERTICAL_BIAS = 1.35;
 const SWIPE_FLICK_PROGRESS = 0.08;
 const SWIPE_FLICK_VELOCITY = 420;
@@ -62,6 +62,7 @@ const ProtocolsSection = ({ scrollToSection }) => {
   const commitFrameRef = useRef(null);
   const swipeSequenceRef = useRef(0);
   const isSettlingRef = useRef(false);
+  const settlingSwipeRef = useRef(null);
   const suppressClickRef = useRef(false);
   const suppressClickTimeoutRef = useRef(null);
   const dragX = useMotionValue(0);
@@ -101,6 +102,7 @@ const ProtocolsSection = ({ scrollToSection }) => {
   useEffect(
     () => () => {
       swipeAnimationRef.current?.stop();
+      settlingSwipeRef.current = null;
 
       if (commitFrameRef.current !== null) {
         window.cancelAnimationFrame(commitFrameRef.current);
@@ -237,6 +239,7 @@ const ProtocolsSection = ({ scrollToSection }) => {
     swipeAnimationRef.current?.stop();
     swipeAnimationRef.current = null;
     isSettlingRef.current = false;
+    settlingSwipeRef.current = null;
     pointerStartRef.current = null;
     dragX.set(0);
     resetSwipeStyles();
@@ -244,6 +247,70 @@ const ProtocolsSection = ({ scrollToSection }) => {
     visualIndicatorIndexRef.current = wrappedIndex;
     setActiveIndex(wrappedIndex);
     setVisualIndicatorIndex(wrappedIndex);
+  };
+
+  const applySettledSwipe = (direction, shouldCommit, selectedItem = null) => {
+    if (!shouldCommit) {
+      dragX.set(0);
+      resetSwipeStyles();
+      return;
+    }
+
+    const nextIndex = getWrappedIndex(
+      activeIndexRef.current + (direction === 'next' ? 1 : -1)
+    );
+    const grid = gridRef.current;
+
+    if (commitFrameRef.current !== null) {
+      window.cancelAnimationFrame(commitFrameRef.current);
+      commitFrameRef.current = null;
+    }
+
+    grid?.setAttribute('data-swipe-committing', 'true');
+    dragX.set(0);
+
+    if (trackRef.current) {
+      trackRef.current.style.transform = 'none';
+    }
+
+    resetSwipeStyles();
+
+    flushSync(() => {
+      activeIndexRef.current = nextIndex;
+      visualIndicatorIndexRef.current = nextIndex;
+      setActiveIndex(nextIndex);
+      setVisualIndicatorIndex(nextIndex);
+
+      if (selectedItem !== null) {
+        setSelectedSolution(selectedItem);
+      }
+    });
+
+    commitFrameRef.current = window.requestAnimationFrame(() => {
+      commitFrameRef.current = window.requestAnimationFrame(() => {
+        grid?.removeAttribute('data-swipe-committing');
+        commitFrameRef.current = null;
+      });
+    });
+  };
+
+  const finishSettlingSwipe = (selectedItem = null) => {
+    const settlingSwipe = settlingSwipeRef.current;
+
+    if (!isSettlingRef.current || settlingSwipe === null) {
+      return;
+    }
+
+    swipeSequenceRef.current += 1;
+    swipeAnimationRef.current?.stop();
+    swipeAnimationRef.current = null;
+    settlingSwipeRef.current = null;
+    isSettlingRef.current = false;
+    applySettledSwipe(
+      settlingSwipe.direction,
+      settlingSwipe.shouldCommit,
+      selectedItem
+    );
   };
 
   const settleSwipe = (direction, shouldCommit, velocity = 0) => {
@@ -257,6 +324,7 @@ const ProtocolsSection = ({ scrollToSection }) => {
     swipeSequenceRef.current = swipeSequence;
     dragDirectionRef.current = direction;
     isSettlingRef.current = true;
+    settlingSwipeRef.current = { direction, shouldCommit };
     swipeAnimationRef.current?.stop();
     const releaseVelocity = shouldCommit
       ? Math.max(
@@ -275,41 +343,10 @@ const ProtocolsSection = ({ scrollToSection }) => {
         return;
       }
 
-      if (shouldCommit) {
-        const nextIndex = getWrappedIndex(
-          activeIndexRef.current + (direction === 'next' ? 1 : -1)
-        );
-        const grid = gridRef.current;
-
-        grid?.setAttribute('data-swipe-committing', 'true');
-        dragX.set(0);
-
-        if (trackRef.current) {
-          trackRef.current.style.transform = 'none';
-        }
-
-        resetSwipeStyles();
-
-        flushSync(() => {
-          activeIndexRef.current = nextIndex;
-          visualIndicatorIndexRef.current = nextIndex;
-          setActiveIndex(nextIndex);
-          setVisualIndicatorIndex(nextIndex);
-        });
-
-        commitFrameRef.current = window.requestAnimationFrame(() => {
-          commitFrameRef.current = window.requestAnimationFrame(() => {
-            grid?.removeAttribute('data-swipe-committing');
-            commitFrameRef.current = null;
-          });
-        });
-      } else {
-        dragX.set(0);
-        resetSwipeStyles();
-      }
-
+      settlingSwipeRef.current = null;
       isSettlingRef.current = false;
       swipeAnimationRef.current = null;
+      applySettledSwipe(direction, shouldCommit);
     });
   };
 
@@ -322,7 +359,21 @@ const ProtocolsSection = ({ scrollToSection }) => {
   };
 
   const handleCardActivation = (item, index) => {
-    if (isDesktop || index === activeIndex) {
+    const settlingSwipe = settlingSwipeRef.current;
+
+    if (isSettlingRef.current && settlingSwipe?.shouldCommit) {
+      const settlingIndex = getWrappedIndex(
+        activeIndexRef.current +
+          (settlingSwipe.direction === 'next' ? 1 : -1)
+      );
+
+      if (index === settlingIndex) {
+        finishSettlingSwipe(item);
+        return;
+      }
+    }
+
+    if (isDesktop || index === activeIndexRef.current) {
       setSelectedSolution(item);
       return;
     }
@@ -355,9 +406,18 @@ const ProtocolsSection = ({ scrollToSection }) => {
   };
 
   const handlePointerDown = (event) => {
-    if (isDesktop || event.button !== 0 || isSettlingRef.current) {
+    if (isDesktop || event.button > 0) {
       return;
     }
+
+    finishSettlingSwipe();
+
+    if (suppressClickTimeoutRef.current !== null) {
+      window.clearTimeout(suppressClickTimeoutRef.current);
+      suppressClickTimeoutRef.current = null;
+    }
+
+    suppressClickRef.current = false;
 
     pointerStartRef.current = {
       pointerId: event.pointerId,
@@ -366,7 +426,6 @@ const ProtocolsSection = ({ scrollToSection }) => {
       axis: null,
     };
 
-    event.currentTarget.setPointerCapture?.(event.pointerId);
   };
 
   const handlePointerMove = (event) => {
@@ -401,6 +460,7 @@ const ProtocolsSection = ({ scrollToSection }) => {
 
       pointerStart.axis = 'horizontal';
       suppressClickRef.current = true;
+      event.currentTarget.setPointerCapture?.(event.pointerId);
     }
 
     event.preventDefault();
