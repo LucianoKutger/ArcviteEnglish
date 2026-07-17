@@ -3,8 +3,8 @@ const path = require('path');
 const sharp = require('sharp');
 
 const projectRoot = path.resolve(__dirname, '..');
-const assetsRoot = path.join(projectRoot, 'src', 'assets');
-const outputRoot = path.join(assetsRoot, 'optimized');
+const sourceRoot = path.join(projectRoot, 'orginalAssets');
+const outputRoot = path.join(projectRoot, 'src', 'assets', 'optimized');
 
 const imageGroups = [
   {
@@ -74,7 +74,7 @@ async function generateGroup(group) {
   await fs.mkdir(directory, { recursive: true });
 
   for (const [sourceName, outputName] of group.images) {
-    const inputPath = path.join(assetsRoot, sourceName);
+    const inputPath = path.join(sourceRoot, sourceName);
     await assertInputExists(inputPath);
     const metadata = await sharp(inputPath).metadata();
 
@@ -102,7 +102,7 @@ async function generateLogo() {
   await fs.mkdir(directory, { recursive: true });
 
   for (const [sourceName, outputName] of logoGroup.images) {
-    const inputPath = path.join(assetsRoot, sourceName);
+    const inputPath = path.join(sourceRoot, sourceName);
     await assertInputExists(inputPath);
     const metadata = await sharp(inputPath).metadata();
 

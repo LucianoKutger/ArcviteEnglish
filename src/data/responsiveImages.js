@@ -1,16 +1,3 @@
-import biometricHubFallback from '../assets/BiometricHub.png';
-import clinicalLabFallback from '../assets/ClinicalLab.png';
-import dataFusionFallback from '../assets/DataFusion.jpg';
-import geneAnalysisFallback from '../assets/GeneAnalysis.png';
-import founderFallback from '../assets/founderPic.png';
-import logoFallback from '../assets/ArcviteLogoPic.png';
-import fullSpec1Fallback from '../assets/FullSpec1.png';
-import fullSpec2Fallback from '../assets/FullSpec2.png';
-import fullSpec3Fallback from '../assets/FullSpec3.png';
-import fullSpec4Fallback from '../assets/FullSpec4.png';
-import fullSpec5Fallback from '../assets/FullSpec5.png';
-import fullSpec6Fallback from '../assets/FullSpec6.png';
-
 import biometricHub320Avif from '../assets/optimized/biosync/biometric-hub-320.avif';
 import biometricHub320Webp from '../assets/optimized/biosync/biometric-hub-320.webp';
 import biometricHub640Avif from '../assets/optimized/biosync/biometric-hub-640.avif';
@@ -136,7 +123,7 @@ const bioSyncVariant = (avif, webp) => ({ card: { avif, webp } });
 
 export const bioSyncImages = {
   biometricHub: createImage({
-    fallback: biometricHubFallback,
+    fallback: biometricHub960Webp,
     width: 1408,
     height: 768,
     variants: bioSyncVariant(
@@ -145,7 +132,7 @@ export const bioSyncImages = {
     ),
   }),
   clinicalLab: createImage({
-    fallback: clinicalLabFallback,
+    fallback: clinicalLab960Webp,
     width: 1408,
     height: 768,
     variants: bioSyncVariant(
@@ -154,7 +141,7 @@ export const bioSyncImages = {
     ),
   }),
   geneAnalysis: createImage({
-    fallback: geneAnalysisFallback,
+    fallback: geneAnalysis960Webp,
     width: 1408,
     height: 768,
     variants: bioSyncVariant(
@@ -163,7 +150,7 @@ export const bioSyncImages = {
     ),
   }),
   dataFusion: createImage({
-    fallback: dataFusionFallback,
+    fallback: dataFusion960Webp,
     width: 4176,
     height: 2584,
     variants: bioSyncVariant(
@@ -184,28 +171,28 @@ const protocolImage = (fallback, width, height, avif, webp) => createImage({
 });
 
 export const protocolImages = [
-  protocolImage(fullSpec1Fallback, 1792, 1088,
+  protocolImage(fullSpec11600Webp, 1792, 1088,
     [[fullSpec1320Avif, 320], [fullSpec1640Avif, 640], [fullSpec1960Avif, 960], [fullSpec11280Avif, 1280], [fullSpec11600Avif, 1600]],
     [[fullSpec1320Webp, 320], [fullSpec1640Webp, 640], [fullSpec1960Webp, 960], [fullSpec11280Webp, 1280], [fullSpec11600Webp, 1600]]),
-  protocolImage(fullSpec2Fallback, 1664, 1088,
+  protocolImage(fullSpec21600Webp, 1664, 1088,
     [[fullSpec2320Avif, 320], [fullSpec2640Avif, 640], [fullSpec2960Avif, 960], [fullSpec21280Avif, 1280], [fullSpec21600Avif, 1600]],
     [[fullSpec2320Webp, 320], [fullSpec2640Webp, 640], [fullSpec2960Webp, 960], [fullSpec21280Webp, 1280], [fullSpec21600Webp, 1600]]),
-  protocolImage(fullSpec3Fallback, 1792, 1088,
+  protocolImage(fullSpec31600Webp, 1792, 1088,
     [[fullSpec3320Avif, 320], [fullSpec3640Avif, 640], [fullSpec3960Avif, 960], [fullSpec31280Avif, 1280], [fullSpec31600Avif, 1600]],
     [[fullSpec3320Webp, 320], [fullSpec3640Webp, 640], [fullSpec3960Webp, 960], [fullSpec31280Webp, 1280], [fullSpec31600Webp, 1600]]),
-  protocolImage(fullSpec4Fallback, 1792, 1088,
+  protocolImage(fullSpec41600Webp, 1792, 1088,
     [[fullSpec4320Avif, 320], [fullSpec4640Avif, 640], [fullSpec4960Avif, 960], [fullSpec41280Avif, 1280], [fullSpec41600Avif, 1600]],
     [[fullSpec4320Webp, 320], [fullSpec4640Webp, 640], [fullSpec4960Webp, 960], [fullSpec41280Webp, 1280], [fullSpec41600Webp, 1600]]),
-  protocolImage(fullSpec5Fallback, 1792, 1088,
+  protocolImage(fullSpec51600Webp, 1792, 1088,
     [[fullSpec5320Avif, 320], [fullSpec5640Avif, 640], [fullSpec5960Avif, 960], [fullSpec51280Avif, 1280], [fullSpec51600Avif, 1600]],
     [[fullSpec5320Webp, 320], [fullSpec5640Webp, 640], [fullSpec5960Webp, 960], [fullSpec51280Webp, 1280], [fullSpec51600Webp, 1600]]),
-  protocolImage(fullSpec6Fallback, 1792, 1088,
+  protocolImage(fullSpec61600Webp, 1792, 1088,
     [[fullSpec6320Avif, 320], [fullSpec6640Avif, 640], [fullSpec6960Avif, 960], [fullSpec61280Avif, 1280], [fullSpec61600Avif, 1600]],
     [[fullSpec6320Webp, 320], [fullSpec6640Webp, 640], [fullSpec6960Webp, 960], [fullSpec61280Webp, 1280], [fullSpec61600Webp, 1600]]),
 ];
 
 export const founderImage = createImage({
-  fallback: founderFallback,
+  fallback: founder960Webp,
   width: 1798,
   height: 2004,
   variants: {
@@ -217,7 +204,7 @@ export const founderImage = createImage({
 });
 
 export const logoImage = createImage({
-  fallback: logoFallback,
+  fallback: logo510Webp,
   width: 1753,
   height: 286,
   variants: {

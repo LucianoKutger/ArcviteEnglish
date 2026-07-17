@@ -29,6 +29,12 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+### `npm run images:generate`
+
+Regenerates the responsive AVIF and WebP files in `src/assets/optimized` from the
+local source images in `orginalAssets`. The source directory is ignored by Git
+and is not required to run or build the website.
+
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
