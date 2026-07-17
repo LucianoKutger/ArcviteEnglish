@@ -27,6 +27,10 @@ export default defineConfig({
 
       testMatch: /cross-browser\.spec\.js/,
 
+      // Firefox can sporadically fail while Playwright removes an otherwise
+      // successful test context. A retry uses a fresh worker/browser process.
+      retries: process.env.CI ? 2 : 1,
+
       use: {
         ...devices['Desktop Firefox'],
       },
