@@ -280,6 +280,7 @@ const useProtocolCarousel = ({ onSelectSolution }) => {
     handlePointerMove,
     handlePointerUp,
   } = createProtocolPointerHandlers({
+    activateCard: (index) => handleCardActivation(solutions[index], index),
     dragDirectionRef,
     dragDistanceRef,
     dragX,

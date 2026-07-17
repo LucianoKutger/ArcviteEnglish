@@ -281,7 +281,7 @@ describe('ProtocolsSection', () => {
     vi.unstubAllGlobals();
   });
 
-  test('opens the newly swiped card on the first immediate tap', () => {
+  test('opens the newly swiped card on pointer release without a Chrome click', () => {
     vi.stubGlobal(
       'matchMedia',
       vi.fn(() => ({
@@ -339,7 +339,6 @@ describe('ProtocolsSection', () => {
       clientX: 100,
       clientY: 100,
     });
-    fireEvent.click(incomingCard);
 
     expect(setPointerCapture).not.toHaveBeenCalled();
 
@@ -349,10 +348,16 @@ describe('ProtocolsSection', () => {
       })
     ).toBeInTheDocument();
 
+    expect(solutionModalSpy).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(incomingCard);
+
+    expect(solutionModalSpy).toHaveBeenCalledTimes(1);
+
     vi.unstubAllGlobals();
   });
 
-  test('keeps a slightly moving tap clickable without capturing it', () => {
+  test('keeps touch jitter below the swipe threshold clickable', () => {
     vi.stubGlobal(
       'matchMedia',
       vi.fn(() => ({
@@ -382,16 +387,15 @@ describe('ProtocolsSection', () => {
     });
     fireEvent.pointerMove(activeCard, {
       pointerId: 1,
-      clientX: 94,
+      clientX: 86,
       clientY: 100,
     });
     fireEvent.pointerUp(activeCard, {
       button: 0,
       pointerId: 1,
-      clientX: 94,
+      clientX: 86,
       clientY: 100,
     });
-    fireEvent.click(activeCard);
 
     expect(setPointerCapture).not.toHaveBeenCalled();
     expect(
@@ -399,6 +403,12 @@ describe('ProtocolsSection', () => {
         name: solutions[0].title,
       })
     ).toBeInTheDocument();
+
+    expect(solutionModalSpy).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(activeCard);
+
+    expect(solutionModalSpy).toHaveBeenCalledTimes(1);
 
     vi.unstubAllGlobals();
   });

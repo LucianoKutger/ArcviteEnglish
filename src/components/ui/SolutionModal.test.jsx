@@ -1,13 +1,20 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 
 import { imageSizes } from '../../data/responsiveImages';
 import SolutionModal from './SolutionModal';
 
-const { responsiveImageSpy } = vi.hoisted(() => ({
+const { lenisState, responsiveImageSpy } = vi.hoisted(() => ({
+  lenisState: {
+    instance: undefined,
+  },
   responsiveImageSpy: vi.fn(),
+}));
+
+vi.mock('lenis/react', () => ({
+  useLenis: () => lenisState.instance,
 }));
 
 vi.mock('./ResponsiveImage', () => ({
@@ -57,6 +64,10 @@ const testItem = {
 };
 
 describe('SolutionModal', () => {
+  beforeEach(() => {
+    lenisState.instance = undefined;
+  });
+
   test('renders nothing when no item is selected', () => {
     const { container } = render(
       <SolutionModal item={null} onClose={vi.fn()} />
@@ -193,6 +204,29 @@ describe('SolutionModal', () => {
     });
 
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('stops background scrolling and focuses without moving the page', () => {
+    const focusSpy = vi.spyOn(HTMLElement.prototype, 'focus');
+    const stop = vi.fn();
+    const start = vi.fn();
+    lenisState.instance = {
+      isStopped: false,
+      start,
+      stop,
+    };
+
+    const { unmount } = render(
+      <SolutionModal item={testItem} onClose={vi.fn()} />
+    );
+
+    expect(stop).toHaveBeenCalledTimes(1);
+    expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
+
+    unmount();
+
+    expect(start).toHaveBeenCalledTimes(1);
+    expect(focusSpy).toHaveBeenLastCalledWith({ preventScroll: true });
   });
 
   test('keeps keyboard focus inside the open dialog', async () => {
