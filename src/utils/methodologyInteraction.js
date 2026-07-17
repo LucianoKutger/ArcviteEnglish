@@ -17,6 +17,7 @@ export const methodologyInteractionReducer = (state, action) => {
   switch (action.type) {
     case 'segment-enter': {
       const { segment } = action;
+      const waitForCloseBeforeOpen = action.waitForCloseBeforeOpen ?? true;
 
       if (state.activeContentId === segment.id && !state.isExiting) {
         return {
@@ -24,6 +25,10 @@ export const methodologyInteractionReducer = (state, action) => {
           hoveredSegment: segment,
           pendingSegment: null,
         };
+      }
+
+      if (!waitForCloseBeforeOpen) {
+        return activateSegment(state, segment);
       }
 
       if (state.activeContentId === null) {
@@ -49,6 +54,21 @@ export const methodologyInteractionReducer = (state, action) => {
 
     case 'segment-toggle': {
       const { segment } = action;
+      const waitForCloseBeforeOpen = action.waitForCloseBeforeOpen ?? true;
+
+      if (!waitForCloseBeforeOpen) {
+        if (state.activeContentId === segment.id) {
+          return {
+            ...state,
+            hoveredSegment: null,
+            activeContentId: null,
+            pendingSegment: null,
+            isExiting: true,
+          };
+        }
+
+        return activateSegment(state, segment);
+      }
 
       if (state.isExiting) {
         if (state.pendingSegment?.id === segment.id) {
@@ -99,6 +119,13 @@ export const methodologyInteractionReducer = (state, action) => {
       };
 
     case 'exit-complete': {
+      if (
+        action.waitForCloseBeforeOpen === false &&
+        state.activeContentId !== null
+      ) {
+        return state;
+      }
+
       const pendingSegment = state.pendingSegment;
 
       if (pendingSegment && state.hoveredSegment?.id === pendingSegment.id) {

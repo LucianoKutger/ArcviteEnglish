@@ -31,7 +31,7 @@ const MethodologySection = () => {
             </div>
             <div className={styles.componentWrapper}>
 
-              <MethodologySystem />
+              <MethodologySystem waitForCloseBeforeOpen={false} />
 
             </div>
           </div>

@@ -365,12 +365,53 @@ describe('MethodologySystem segment interactions', () => {
     expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
 
     expect(
-      screen.queryByText(neuroSegment.description)
+      screen.queryByRole('region', { name: neuroSegment.title })
     ).not.toBeInTheDocument();
 
     completeExit();
 
-    expect(screen.getByText(neuroSegment.description)).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: neuroSegment.title })
+    ).toBeInTheDocument();
+  });
+
+  test('opens the next desktop content immediately when waiting is disabled', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem waitForCloseBeforeOpen={false} />);
+
+    fireEvent.mouseEnter(getSegmentItem(coreSegment.title));
+    fireEvent.mouseEnter(getSegmentItem(neuroSegment.title));
+
+    expect(
+      screen.getByRole('region', { name: neuroSegment.title })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('region', { name: coreSegment.title })
+    ).not.toBeInTheDocument();
+
+    completeExit();
+
+    expect(
+      screen.getByRole('region', { name: neuroSegment.title })
+    ).toBeInTheDocument();
+  });
+
+  test('renders an inaccessible height reference for the longest content', () => {
+    createMatchMediaController(1280);
+
+    render(<MethodologySystem />);
+
+    const heightReference = screen.getByTestId(
+      'methodology-height-reference'
+    );
+
+    expect(heightReference).toHaveAttribute('aria-hidden', 'true');
+    expect(heightReference).toHaveTextContent(neuroSegment.description);
+    neuroSegment.listItems.forEach((item) => {
+      expect(heightReference).toHaveTextContent(item.text);
+    });
+    expect(heightReference.querySelectorAll('button')).toHaveLength(0);
   });
 
   test('opens only the latest segment during a rapid desktop A to B to C switch', () => {
@@ -387,7 +428,7 @@ describe('MethodologySystem segment interactions', () => {
     expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
 
     expect(
-      screen.queryByText(neuroSegment.description)
+      screen.queryByRole('region', { name: neuroSegment.title })
     ).not.toBeInTheDocument();
 
     expect(
@@ -401,7 +442,7 @@ describe('MethodologySystem segment interactions', () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.queryByText(neuroSegment.description)
+      screen.queryByRole('region', { name: neuroSegment.title })
     ).not.toBeInTheDocument();
   });
 
@@ -421,7 +462,7 @@ describe('MethodologySystem segment interactions', () => {
     expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
 
     expect(
-      screen.queryByText(neuroSegment.description)
+      screen.queryByRole('region', { name: neuroSegment.title })
     ).not.toBeInTheDocument();
 
     expect(
@@ -450,7 +491,9 @@ describe('MethodologySystem segment interactions', () => {
 
     fireEvent.click(getSegmentItem(neuroSegment.title));
 
-    expect(screen.getByText(neuroSegment.description)).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: neuroSegment.title })
+    ).toBeInTheDocument();
   });
 
   test('uses only the latest pending selection during rapid mobile clicks', () => {
@@ -469,7 +512,7 @@ describe('MethodologySystem segment interactions', () => {
     expect(screen.queryByText(coreSegment.description)).not.toBeInTheDocument();
 
     expect(
-      screen.queryByText(neuroSegment.description)
+      screen.queryByRole('region', { name: neuroSegment.title })
     ).not.toBeInTheDocument();
 
     expect(
@@ -483,7 +526,27 @@ describe('MethodologySystem segment interactions', () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.queryByText(neuroSegment.description)
+      screen.queryByRole('region', { name: neuroSegment.title })
+    ).not.toBeInTheDocument();
+  });
+
+  test('uses the latest mobile click immediately when waiting is disabled', () => {
+    createMatchMediaController(390);
+
+    render(<MethodologySystem waitForCloseBeforeOpen={false} />);
+
+    fireEvent.click(getSegmentItem(coreSegment.title));
+    fireEvent.click(getSegmentItem(neuroSegment.title));
+    fireEvent.click(getSegmentItem(operationalSegment.title));
+
+    expect(
+      screen.getByRole('region', { name: operationalSegment.title })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('region', { name: coreSegment.title })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('region', { name: neuroSegment.title })
     ).not.toBeInTheDocument();
   });
 
@@ -510,7 +573,9 @@ describe('MethodologySystem segment interactions', () => {
 
     fireEvent.mouseEnter(getSegmentItem(neuroSegment.title));
 
-    expect(screen.getByText(neuroSegment.description)).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: neuroSegment.title })
+    ).toBeInTheDocument();
   });
 
   test('handles entering and leaving the YOU center without activating content', () => {

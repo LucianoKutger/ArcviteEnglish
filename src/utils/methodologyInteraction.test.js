@@ -20,10 +20,11 @@ const segments = {
   },
 };
 
-const reduce = (state, type, segment) =>
+const reduce = (state, type, segment, options = {}) =>
   methodologyInteractionReducer(state, {
     type,
     segment,
+    ...options,
   });
 
 describe('methodologyInteractionReducer', () => {
@@ -113,6 +114,72 @@ describe('methodologyInteractionReducer', () => {
     expect(state.activeContentId).toBe(segments.operational.id);
 
     expect(state.pendingSegment).toBeNull();
+    expect(state.isExiting).toBe(false);
+  });
+
+  test('opens the next hovered segment immediately when waiting is disabled', () => {
+    const coreState = {
+      hoveredSegment: segments.core,
+      activeContentId: segments.core.id,
+      pendingSegment: null,
+      isExiting: false,
+    };
+
+    const state = reduce(coreState, 'segment-enter', segments.neuro, {
+      waitForCloseBeforeOpen: false,
+    });
+
+    expect(state).toEqual({
+      hoveredSegment: segments.neuro,
+      activeContentId: segments.neuro.id,
+      pendingSegment: null,
+      isExiting: false,
+    });
+  });
+
+  test('keeps only the latest immediate selection during rapid changes', () => {
+    const coreState = {
+      hoveredSegment: segments.core,
+      activeContentId: segments.core.id,
+      pendingSegment: null,
+      isExiting: false,
+    };
+
+    const neuroState = reduce(coreState, 'segment-enter', segments.neuro, {
+      waitForCloseBeforeOpen: false,
+    });
+    const operationalState = reduce(
+      neuroState,
+      'segment-enter',
+      segments.operational,
+      { waitForCloseBeforeOpen: false }
+    );
+
+    const afterStaleExit = methodologyInteractionReducer(operationalState, {
+      type: 'exit-complete',
+      waitForCloseBeforeOpen: false,
+    });
+
+    expect(afterStaleExit.activeContentId).toBe(segments.operational.id);
+    expect(afterStaleExit.hoveredSegment).toBe(segments.operational);
+    expect(afterStaleExit.pendingSegment).toBeNull();
+    expect(afterStaleExit.isExiting).toBe(false);
+  });
+
+  test('switches clicked segments immediately when waiting is disabled', () => {
+    const coreState = {
+      hoveredSegment: segments.core,
+      activeContentId: segments.core.id,
+      pendingSegment: null,
+      isExiting: false,
+    };
+
+    const state = reduce(coreState, 'segment-toggle', segments.neuro, {
+      waitForCloseBeforeOpen: false,
+    });
+
+    expect(state.activeContentId).toBe(segments.neuro.id);
+    expect(state.hoveredSegment).toBe(segments.neuro);
     expect(state.isExiting).toBe(false);
   });
 

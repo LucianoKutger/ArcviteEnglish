@@ -11,7 +11,7 @@ import {
   POLAR_STAR_ANIMATION,
 } from './animations';
 
-const useMethodologySystem = () => {
+const useMethodologySystem = (waitForCloseBeforeOpen = true) => {
   const [{ hoveredSegment, activeContentId }, dispatchInteraction] = useReducer(
     methodologyInteractionReducer,
     initialMethodologyInteractionState
@@ -57,6 +57,7 @@ const useMethodologySystem = () => {
     dispatchInteraction({
       type: 'segment-enter',
       segment,
+      waitForCloseBeforeOpen,
     });
   };
 
@@ -69,6 +70,7 @@ const useMethodologySystem = () => {
   const handleExitComplete = () => {
     dispatchInteraction({
       type: 'exit-complete',
+      waitForCloseBeforeOpen,
     });
   };
 
@@ -76,6 +78,7 @@ const useMethodologySystem = () => {
     dispatchInteraction({
       type: 'segment-toggle',
       segment,
+      waitForCloseBeforeOpen,
     });
   };
 
