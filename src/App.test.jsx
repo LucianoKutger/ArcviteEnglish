@@ -10,6 +10,7 @@ const motionPreference = vi.hoisted(() => ({
 
 vi.mock('lenis/react', () => ({
   ReactLenis: ({ children }) => <div data-testid="lenis-root">{children}</div>,
+  useLenis: () => null,
 }));
 
 vi.mock('./Home', () => ({

@@ -59,16 +59,17 @@ const FaqSection = ({ scrollToSection }) => {
             />
           </button>
         </div>
-        <div className={styles.linksContainer}>
-          <Link to="/impressum" className={styles.footerLink}>
-            Legal Notice
-          </Link>
-          <Link to="/datenschutz" className={styles.footerLink}>
-            Privacy Policy
-          </Link>
+        <div className={styles.footerMeta}>
+          <div className={styles.linksContainer}>
+            <Link to="/impressum" className={styles.footerLink}>
+              Legal Notice
+            </Link>
+            <Link to="/datenschutz" className={styles.footerLink}>
+              Privacy Policy
+            </Link>
+          </div>
+          <p className={styles.copyright}>© 2026 Arcvite</p>
         </div>
-        {/* Unnecessary copyrightContainer div removed for a flatter DOM */}
-        <p className={styles.copyright}>© 2026 Arcvite</p>
       </div>
     </footer>
   );

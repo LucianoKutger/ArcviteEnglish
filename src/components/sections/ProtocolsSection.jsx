@@ -689,8 +689,10 @@ const ProtocolsSection = ({ scrollToSection }) => {
                 </span>
               </button>
               <p className={styles.disclaimer}>
-                * 15-minute professional consultation on equal terms - not a
-                sales pitch.
+                <span>*15-minute professional consultation on equal terms</span>{' '}
+                <span className={styles.mobileDisclaimerLine}>
+                  - not a sales pitch
+                </span>
               </p>
             </div>
           </div>

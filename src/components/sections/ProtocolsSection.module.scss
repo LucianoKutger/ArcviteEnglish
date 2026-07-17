@@ -517,6 +517,16 @@
   font-weight: $font-weight-light;
   font-style: italic;
   margin-top: $spacing-xs;
+
+  @media (max-width: ($breakpoint-md - 1px)) {
+    text-align: center;
+  }
+}
+
+.mobileDisclaimerLine {
+  @media (max-width: ($breakpoint-md - 1px)) {
+    display: block;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -34,6 +34,10 @@ const Home = () => {
       }
 
       if (lenis && !shouldReduceMotion) {
+        // Route changes can alter the document height before Lenis' resize
+        // observer has run. Refresh its limits so the target is not clamped
+        // to the top of the previous, shorter page.
+        lenis.resize();
         lenis.scrollTo(target);
         return;
       }

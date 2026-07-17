@@ -12,8 +12,16 @@ const motionPreference = vi.hoisted(() => ({
   reduced: false,
 }));
 
+const lenisState = vi.hoisted(() => ({
+  instance: null,
+}));
+
 vi.mock('framer-motion', () => ({
   useReducedMotion: () => motionPreference.reduced,
+}));
+
+vi.mock('lenis/react', () => ({
+  useLenis: () => lenisState.instance,
 }));
 
 vi.mock('./components/sections/HomeSection', () => ({
@@ -83,6 +91,7 @@ const renderHome = (scrollTarget) =>
 describe('Home route scrolling', () => {
   beforeEach(() => {
     motionPreference.reduced = false;
+    lenisState.instance = null;
     vi.stubGlobal('requestAnimationFrame', (callback) => {
       callback(0);
       return 1;
@@ -167,6 +176,30 @@ describe('Home route scrolling', () => {
         behavior: 'auto',
       });
     });
+  });
+
+  test('refreshes Lenis dimensions before route-target scrolling', async () => {
+    const target = {
+      scrollIntoView: vi.fn(),
+    };
+
+    lenisState.instance = {
+      resize: vi.fn(),
+      scrollTo: vi.fn(),
+    };
+
+    vi.spyOn(document, 'getElementById').mockImplementation((id) =>
+      id === 'vision' ? target : null
+    );
+
+    renderHome('vision');
+
+    await waitFor(() => {
+      expect(lenisState.instance.resize).toHaveBeenCalledTimes(1);
+      expect(lenisState.instance.scrollTo).toHaveBeenCalledWith(target);
+    });
+
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
   });
 
   test('handles direct section and home navigation requests', async () => {
