@@ -9,9 +9,8 @@ const motionState = vi.hoisted(() => ({
   reduced: false,
   mediaMatches: true,
   mediaChangeHandler: null,
-  scrollValue: 20,
-  scrollListeners: new Set(),
-  useScrollSpy: vi.fn(),
+  lenisCallbacks: new Set(),
+  useLenisSpy: vi.fn(),
   unsubscribeSpy: vi.fn(),
   addMediaListenerSpy: vi.fn(),
   removeMediaListenerSpy: vi.fn(),
@@ -20,22 +19,24 @@ const motionState = vi.hoisted(() => ({
 vi.mock('framer-motion', () => {
   return {
     useReducedMotion: () => motionState.reduced,
-    useScroll: () => {
-      motionState.useScrollSpy();
+  };
+});
 
-      return {
-        scrollY: {
-          get: () => motionState.scrollValue,
-          on: (eventName, listener) => {
-            motionState.scrollListeners.add(listener);
+vi.mock('lenis/react', async () => {
+  const React = await vi.importActual('react');
 
-            return () => {
-              motionState.scrollListeners.delete(listener);
-              motionState.unsubscribeSpy(eventName);
-            };
-          },
-        },
-      };
+  return {
+    useLenis: (callback) => {
+      motionState.useLenisSpy(callback);
+
+      React.useEffect(() => {
+        motionState.lenisCallbacks.add(callback);
+
+        return () => {
+          motionState.lenisCallbacks.delete(callback);
+          motionState.unsubscribeSpy();
+        };
+      }, [callback]);
     },
   };
 });
@@ -50,8 +51,7 @@ describe('FadeOutSection', () => {
     motionState.reduced = false;
     motionState.mediaMatches = true;
     motionState.mediaChangeHandler = null;
-    motionState.scrollValue = 20;
-    motionState.scrollListeners.clear();
+    motionState.lenisCallbacks.clear();
 
     vi.clearAllMocks();
     intersectionController = createIntersectionObserverController();
@@ -152,7 +152,7 @@ describe('FadeOutSection', () => {
       section.querySelector('[data-motion-layer="overlay"]')
     ).toBeInTheDocument();
 
-    expect(motionState.useScrollSpy).toHaveBeenCalled();
+    expect(motionState.useLenisSpy).toHaveBeenCalled();
   });
 
   test('keeps all layers static when reduced motion is active', () => {
@@ -187,7 +187,7 @@ describe('FadeOutSection', () => {
       section.querySelector('[data-motion-layer="overlay"]')
     ).not.toBeInTheDocument();
 
-    expect(motionState.useScrollSpy).not.toHaveBeenCalled();
+    expect(motionState.useLenisSpy).not.toHaveBeenCalled();
   });
 
   test('unsubscribes from scroll updates outside the viewport margin', () => {
@@ -211,8 +211,8 @@ describe('FadeOutSection', () => {
     });
 
     expect(section).toHaveAttribute('data-scroll-tracking', 'paused');
-    expect(motionState.unsubscribeSpy).toHaveBeenCalledWith('change');
-    expect(motionState.scrollListeners.size).toBe(0);
+    expect(motionState.unsubscribeSpy).toHaveBeenCalled();
+    expect(motionState.lenisCallbacks.size).toBe(0);
   });
 
   test('reacts to the desktop media query and removes listeners', () => {

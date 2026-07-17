@@ -7,9 +7,14 @@ import userEvent from '@testing-library/user-event';
 const motionPreference = vi.hoisted(() => ({
   reduced: false,
 }));
+const lenisPropsSpy = vi.hoisted(() => vi.fn());
 
 vi.mock('lenis/react', () => ({
-  ReactLenis: ({ children }) => <div data-testid="lenis-root">{children}</div>,
+  ReactLenis: ({ children, ...props }) => {
+    lenisPropsSpy(props);
+
+    return <div data-testid="lenis-root">{children}</div>;
+  },
   useLenis: () => null,
 }));
 
@@ -26,6 +31,7 @@ vi.mock('framer-motion', () => ({
 describe('App routing', () => {
   beforeEach(() => {
     motionPreference.reduced = false;
+    lenisPropsSpy.mockClear();
   });
 
   test('renders navigation and the home route at "/"', () => {
@@ -124,5 +130,24 @@ describe('App routing', () => {
     ).toBeInTheDocument();
 
     expect(screen.queryByTestId('lenis-root')).not.toBeInTheDocument();
+  });
+
+  test('uses one lerp-based smooth scrolling model', () => {
+    renderWithRouter(<App />, {
+      route: '/',
+    });
+
+    expect(lenisPropsSpy).toHaveBeenCalledWith({
+      root: true,
+      options: {
+        lerp: 0.07,
+        smoothWheel: true,
+        wheelMultiplier: 1,
+      },
+    });
+
+    expect(lenisPropsSpy.mock.calls[0][0].options).not.toHaveProperty(
+      'duration'
+    );
   });
 });

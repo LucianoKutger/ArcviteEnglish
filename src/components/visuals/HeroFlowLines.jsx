@@ -4,6 +4,11 @@ import useViewportActivity from '../../hooks/useViewportActivity';
 import { useReducedMotion } from 'framer-motion';
 
 const DEFAULT_COLORS = ['#2DD4BF', '#38BDF8', '#5EEAD4'];
+const MAX_CANVAS_DPR = 1.5;
+const TARGET_FRAME_INTERVAL = 1000 / 60;
+const MIN_FRAME_INTERVAL = TARGET_FRAME_INTERVAL - 1;
+const MAX_FRAME_DELTA = 50;
+const TIME_ADVANCE_PER_MILLISECOND = 0.008 / TARGET_FRAME_INTERVAL;
 
 const hexToRgb = (hex) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -35,6 +40,7 @@ const HeroFlowLines = ({
     let isDisposed = false;
     let width = 0;
     let height = 0;
+    let lastFrameTime = null;
 
     const dirMultiplier = direction === 'right' ? 1 : -1;
 
@@ -48,7 +54,7 @@ const HeroFlowLines = ({
       if (!canvas.parentElement) return;
       width = canvas.parentElement.offsetWidth;
       height = canvas.parentElement.offsetHeight;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_CANVAS_DPR);
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       canvas.style.width = `${width}px`;
@@ -112,15 +118,30 @@ const HeroFlowLines = ({
       drawWave(0.55, 0.0008, 140, 0.5, 0.15, 4, getColorRGB(2));
     };
 
-    const animate = () => {
+    const animate = (timestamp = 0) => {
       animationFrameRef.current = null;
 
       if (isDisposed || !isActiveRef.current) {
         return;
       }
 
+      if (
+        !shouldReduceMotion &&
+        lastFrameTime !== null &&
+        timestamp - lastFrameTime < MIN_FRAME_INTERVAL
+      ) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
       if (!shouldReduceMotion) {
-        time += 0.008;
+        const frameDelta =
+          lastFrameTime === null
+            ? TARGET_FRAME_INTERVAL
+            : Math.min(timestamp - lastFrameTime, MAX_FRAME_DELTA);
+
+        time += frameDelta * TIME_ADVANCE_PER_MILLISECOND;
+        lastFrameTime = timestamp;
       }
 
       drawFrame();
@@ -131,7 +152,7 @@ const HeroFlowLines = ({
     };
 
     animateRef.current = animate;
-    if (isActiveRef.current) animate();
+    if (isActiveRef.current) animate(0);
 
     return () => {
       isDisposed = true;
@@ -170,11 +191,7 @@ const HeroFlowLines = ({
 
   return (
     <div ref={targetRef} className={styles.lpHeroBg}>
-      <canvas
-        ref={canvasRef}
-        className={styles.canvas}
-        style={{ mixBlendMode: 'screen' }}
-      />
+      <canvas ref={canvasRef} className={styles.canvas} />
       <div className={gradientClass} />
       <div className={styles.lpGradientY} />
     </div>

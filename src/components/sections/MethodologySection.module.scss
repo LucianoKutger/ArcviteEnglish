@@ -30,10 +30,13 @@
   left: -10%;
   width: $layout-blob-size;
   height: $layout-blob-size;
-  background-color: $cyan-05;
-  filter: blur($blur-xxl);
+  background: radial-gradient(
+    circle at center,
+    $cyan-05 0%,
+    rgba(45, 212, 191, 0.02) 45%,
+    transparent 72%
+  );
   border-radius: $radius-full;
-  mix-blend-mode: screen;
 }
 
 .contentWrapper {

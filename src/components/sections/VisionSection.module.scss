@@ -25,11 +25,14 @@
       transform: translate(-50%, -50%);
       width: 80%;
       height: $layout-glow-size;
-      background-color: $cyan-05;
-      filter: blur($blur-3xl);
+      background: radial-gradient(
+        ellipse at center,
+        $cyan-05 0%,
+        rgba(45, 212, 191, 0.02) 45%,
+        transparent 72%
+      );
       border-radius: $radius-full;
-      mix-blend-mode: screen;
-      opacity: 0.4;
+      opacity: 1;
     }
   }
 

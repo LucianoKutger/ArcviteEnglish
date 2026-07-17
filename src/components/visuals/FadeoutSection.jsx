@@ -1,5 +1,11 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useReducedMotion, useScroll } from 'framer-motion';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
+import { useReducedMotion } from 'framer-motion';
+import { useLenis } from 'lenis/react';
 
 import useViewportActivity from '../../hooks/useViewportActivity';
 
@@ -26,11 +32,14 @@ const FadeOutMotionController = ({
   overlayLayerRef,
   sectionHeight,
 }) => {
-  const { scrollY } = useScroll();
   const startPoint = offsetTop + sectionHeight * delayPercentage;
 
-  useLayoutEffect(() => {
-    const updateLayers = (latestScrollY) => {
+  const updateLayers = useCallback(
+    (scrollSource) => {
+      const latestScrollY =
+        typeof scrollSource === 'number'
+          ? scrollSource
+          : (scrollSource?.scroll ?? window.scrollY);
       const contentOpacity = interpolate(
         latestScrollY,
         startPoint,
@@ -60,18 +69,20 @@ const FadeOutMotionController = ({
       if (contentLayerRef.current) {
         contentLayerRef.current.style.transform = `translate3d(0, ${contentY.toFixed(2)}px, 0)`;
       }
-    };
+    },
+    [
+      backgroundLayerRef,
+      contentLayerRef,
+      overlayLayerRef,
+      startPoint,
+    ]
+  );
 
-    updateLayers(scrollY.get());
+  useLenis(updateLayers);
 
-    return scrollY.on('change', updateLayers);
-  }, [
-    backgroundLayerRef,
-    contentLayerRef,
-    overlayLayerRef,
-    scrollY,
-    startPoint,
-  ]);
+  useLayoutEffect(() => {
+    updateLayers(window.scrollY);
+  }, [updateLayers]);
 
   return null;
 };

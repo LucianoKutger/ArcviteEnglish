@@ -47,7 +47,7 @@ describe('HeroFlowLines', () => {
       container.querySelector(`.${styles.lpGradientY}`)
     ).toBeInTheDocument();
 
-    expect(canvas).toHaveStyle({
+    expect(canvas).not.toHaveStyle({
       mixBlendMode: 'screen',
     });
 
@@ -67,14 +67,14 @@ describe('HeroFlowLines', () => {
       window.dispatchEvent(new Event('resize'));
     });
 
-    expect(canvas.width).toBe(1600);
-    expect(canvas.height).toBe(800);
+    expect(canvas.width).toBe(1200);
+    expect(canvas.height).toBe(600);
     expect(canvas.style.width).toBe('800px');
     expect(canvas.style.height).toBe('400px');
 
     const context = canvasController.latestContext;
 
-    expect(context.scale).toHaveBeenCalledWith(2, 2);
+    expect(context.scale).toHaveBeenCalledWith(1.5, 1.5);
 
     context.clearRect.mockClear();
     context.beginPath.mockClear();
@@ -96,6 +96,22 @@ describe('HeroFlowLines', () => {
     expect(context.lineTo).toHaveBeenCalled();
     expect(context.stroke).toHaveBeenCalledTimes(3);
 
+    expect(animationFrameController.pendingFrameCount).toBe(1);
+  });
+
+  test('caps drawing at roughly 60 frames per second on high-refresh displays', () => {
+    render(<HeroFlowLines />);
+
+    const context = canvasController.latestContext;
+
+    context.clearRect.mockClear();
+
+    expect(animationFrameController.runNextFrame(8)).toBe(true);
+    expect(context.clearRect).not.toHaveBeenCalled();
+    expect(animationFrameController.pendingFrameCount).toBe(1);
+
+    expect(animationFrameController.runNextFrame(17)).toBe(true);
+    expect(context.clearRect).toHaveBeenCalledTimes(1);
     expect(animationFrameController.pendingFrameCount).toBe(1);
   });
 

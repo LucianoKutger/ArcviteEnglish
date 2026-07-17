@@ -46,7 +46,6 @@ const App = () => {
       root
       options={{
         lerp: 0.07,
-        duration: 1.2,
         smoothWheel: true,
         wheelMultiplier: 1.0,
       }}
