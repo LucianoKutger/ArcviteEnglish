@@ -54,6 +54,13 @@
   @media (min-width: $breakpoint-md) {
     padding: $spacing-xxl;
   }
+
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
 }
 
 .gradientBackground {
@@ -67,21 +74,349 @@
   );
   opacity: 0.2;
   pointer-events: none;
+
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    display: none;
+  }
+}
+
+.carousel {
+  --carousel-card-width: clamp(14rem, 58vw, 24rem);
+  --carousel-arrow-size: 2.75rem;
+  --carousel-arrow-gap: 5px;
+
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
+
+  @media (min-width: $breakpoint-md) and (max-width: ($breakpoint-lg - 1px)) {
+    --carousel-card-width: clamp(24rem, 46vw, 28rem);
+  }
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-xl;
-  position: relative;
-  z-index: 10;
+  --active-scale: 1;
+  --incoming-scale: 0.76;
+  --outgoing-scale: 0.76;
+  --far-scale: 0.68;
+  --active-opacity: 1;
+  --incoming-opacity: 0.68;
+  --outgoing-opacity: 0.68;
+  --far-opacity: 0;
+  --active-brightness: 1;
+  --incoming-brightness: 0.38;
+  --far-brightness: 0.3;
 
-  @media (min-width: $breakpoint-md) {
-    grid-template-columns: repeat(2, 1fr);
+  display: block;
+  position: relative;
+  touch-action: pan-y;
+
+  @media (min-width: $breakpoint-lg) {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-xl;
+    touch-action: auto;
+  }
+}
+
+.carouselTrack {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  will-change: transform;
+
+  @media (min-width: $breakpoint-lg) {
+    display: contents;
+  }
+}
+
+.carouselCardSlot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--carousel-card-width);
+  height: auto;
+  transform-origin: center;
+  transition:
+    transform $transition-slow,
+    filter $transition-slow,
+    opacity $transition-base;
+  will-change: transform, filter, opacity;
+
+  @media (min-width: $breakpoint-lg) {
+    position: static;
+    top: auto;
+    left: auto;
+    width: auto;
+    height: auto;
+    justify-self: stretch;
+    transform: none;
+    filter: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: auto;
+    will-change: auto;
+  }
+}
+
+.carouselCard {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+
+  @media (min-width: $breakpoint-lg) {
+    height: 100%;
+  }
+}
+
+.active {
+  z-index: 4;
+  transform: translate(-50%, -50%) scale(1);
+  filter: brightness(1);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.previous,
+.next {
+  z-index: 3;
+  filter: brightness(0.38);
+  opacity: 0.68;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.previous {
+  transform: translate(-122%, -50%) scale(0.76);
+}
+
+.next {
+  transform: translate(22%, -50%) scale(0.76);
+}
+
+.previousFar,
+.nextFar {
+  z-index: 2;
+  filter: brightness(0.3);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.previousFar {
+  transform: translate(-194%, -50%) scale(0.68);
+}
+
+.nextFar {
+  transform: translate(94%, -50%) scale(0.68);
+}
+
+.hidden {
+  z-index: 1;
+  transform: translate(-50%, -50%) scale(0.68);
+  filter: brightness(0.3);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (min-width: $breakpoint-lg) {
+  .active,
+  .previous,
+  .next,
+  .previousFar,
+  .nextFar,
+  .hidden {
+    position: static;
+    top: auto;
+    left: auto;
+    z-index: auto;
+    transform: none;
+    filter: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+.grid[data-swipe-direction='next'],
+.grid[data-swipe-direction='previous'] {
+  .carouselCardSlot {
+    transition: none;
+  }
+
+  .active {
+    transform: translate(-50%, -50%) scale(var(--active-scale));
+    filter: brightness(var(--active-brightness));
+    opacity: var(--active-opacity);
+  }
+}
+
+@media (max-width: ($breakpoint-lg - 1px)) {
+  .grid[data-swipe-committing='true'] {
+    .carouselCardSlot {
+      transition: none;
+    }
+  }
+}
+
+.grid[data-swipe-direction='next'] {
+  .next {
+    transform: translate(22%, -50%) scale(var(--incoming-scale));
+    filter: brightness(var(--incoming-brightness));
+    opacity: var(--incoming-opacity);
+  }
+
+  .previous {
+    transform: translate(-122%, -50%) scale(var(--outgoing-scale));
+    opacity: var(--outgoing-opacity);
+  }
+
+  .nextFar {
+    transform: translate(94%, -50%) scale(var(--far-scale));
+    filter: brightness(var(--far-brightness));
+    opacity: var(--far-opacity);
+    visibility: visible;
+  }
+
+  &[data-swipe-front='incoming'] {
+    .active {
+      z-index: 3;
+    }
+
+    .next {
+      z-index: 4;
+    }
+  }
+}
+
+.grid[data-swipe-direction='previous'] {
+  .previous {
+    transform: translate(-122%, -50%) scale(var(--incoming-scale));
+    filter: brightness(var(--incoming-brightness));
+    opacity: var(--incoming-opacity);
+  }
+
+  .next {
+    transform: translate(22%, -50%) scale(var(--outgoing-scale));
+    opacity: var(--outgoing-opacity);
+  }
+
+  .previousFar {
+    transform: translate(-194%, -50%) scale(var(--far-scale));
+    filter: brightness(var(--far-brightness));
+    opacity: var(--far-opacity);
+    visibility: visible;
+  }
+
+  &[data-swipe-front='incoming'] {
+    .active {
+      z-index: 3;
+    }
+
+    .previous {
+      z-index: 4;
+    }
+  }
+}
+
+.arrowRail {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  pointer-events: none;
+
+  @media (min-width: $breakpoint-lg) {
+    display: none;
+  }
+}
+
+.carouselArrow {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  display: flex;
+  width: var(--carousel-arrow-size);
+  height: var(--carousel-arrow-size);
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: $border-width-base solid $cyan-30;
+  border-radius: $radius-full;
+  background-color: rgba($black, 0.78);
+  color: $cyan;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateY(-50%);
+  transition:
+    color $transition-base,
+    border-color $transition-base,
+    background-color $transition-base;
+
+  svg {
+    width: $spacing-lg;
+    height: $spacing-lg;
+  }
+
+  &:hover {
+    border-color: $cyan-70;
+    background-color: $cyan-10;
+    color: $headlines;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $cyan;
+    outline-offset: 3px;
   }
 
   @media (min-width: $breakpoint-lg) {
-    grid-template-columns: repeat(3, 1fr);
+    display: none;
+  }
+}
+
+.previousArrow {
+  left: clamp($spacing-xxs, 1vw, $spacing-sm);
+}
+
+.nextArrow {
+  right: clamp($spacing-xxs, 1vw, $spacing-sm);
+}
+
+.indicators {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+
+  @media (min-width: $breakpoint-lg) {
+    display: none;
+  }
+}
+
+.indicator {
+  width: $spacing-sm;
+  height: $spacing-sm;
+  padding: 0;
+  border: $border-width-base solid $cyan-50;
+  border-radius: $radius-full;
+  background-color: transparent;
+  cursor: pointer;
+
+  &[aria-current='true'] {
+    background-color: $cyan;
+    box-shadow: 0 0 12px $cyan-50;
+    transform: scale(1.25);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $cyan;
+    outline-offset: 4px;
   }
 }
 
@@ -182,4 +517,11 @@
   font-weight: $font-weight-light;
   font-style: italic;
   margin-top: $spacing-xs;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carouselCardSlot,
+  .indicator {
+    transition: none;
+  }
 }

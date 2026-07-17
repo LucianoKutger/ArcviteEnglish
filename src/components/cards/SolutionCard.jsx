@@ -4,7 +4,15 @@ import { imageSizes } from '../../data/responsiveImages';
 import ResponsiveImage from '../ui/ResponsiveImage';
 import { motion } from 'framer-motion';
 
-const SolutionCard = ({ item, onOpen, image }) => {
+const SolutionCard = ({
+  item,
+  onOpen,
+  image,
+  className = '',
+  tabIndex = 0,
+  ariaHidden = false,
+  ariaLabel = `Open ${item.title}`,
+}) => {
   const handleOpen = () => {
     onOpen(item);
   };
@@ -19,11 +27,12 @@ const SolutionCard = ({ item, onOpen, image }) => {
   return (
     <motion.div
       role="button"
-      tabIndex={0}
-      aria-label={`Open ${item.title}`}
+      tabIndex={tabIndex}
+      aria-hidden={ariaHidden || undefined}
+      aria-label={ariaLabel}
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
-      className={styles.card}
+      className={`${styles.card} ${className}`.trim()}
     >
       <div className={styles.imageContainer}>
         <div className={styles.gridPattern} />
