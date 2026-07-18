@@ -111,6 +111,10 @@
   position: relative;
   touch-action: pan-y;
 
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    --protocol-body-font-size: 0.81rem;
+  }
+
   @media (min-width: $breakpoint-lg) {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -181,10 +185,6 @@
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-
-  @media (max-width: ($breakpoint-lg - 1px)) {
-    --protocol-body-font-size: 0.81rem;
-  }
 }
 
 .previous,
