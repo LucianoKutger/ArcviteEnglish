@@ -1,7 +1,7 @@
 import { ReactLenis } from 'lenis/react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useReducedMotion } from 'framer-motion';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useLayoutEffect } from 'react';
 import Navbar from './components/ui/Navbar';
 import Home from './Home';
 
@@ -15,6 +15,11 @@ const NotFound = lazy(() => import('./components/NotFound'));
 
 const App = () => {
   const shouldReduceMotion = useReducedMotion();
+  const { pathname } = useLocation();
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   const appContent = (
     <div

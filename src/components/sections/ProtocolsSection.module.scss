@@ -264,8 +264,8 @@
     filter: brightness(var(--active-brightness));
     opacity: var(--active-opacity);
     transition:
-      filter 0.1s ease,
-      opacity 0.1s ease;
+      filter 0.2s ease,
+      opacity 0.2s ease;
   }
 }
 
@@ -283,8 +283,8 @@
     filter: brightness(var(--incoming-brightness));
     opacity: var(--incoming-opacity);
     transition:
-      filter 0.1s ease,
-      opacity 0.1s ease;
+      filter 0.2s ease,
+      opacity 0.2s ease;
   }
 
   .previous {
@@ -316,8 +316,8 @@
     filter: brightness(var(--incoming-brightness));
     opacity: var(--incoming-opacity);
     transition:
-      filter 0.1s ease,
-      opacity 0.1s ease;
+      filter 0.2s ease,
+      opacity 0.2s ease;
   }
 
   .next {
