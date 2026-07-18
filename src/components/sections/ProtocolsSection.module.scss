@@ -82,7 +82,7 @@
 
 .carousel {
   --carousel-card-width: clamp(14rem, 58vw, 24rem);
-  --carousel-arrow-size: 2.75rem;
+  --carousel-arrow-size: 2.375rem;
   --carousel-arrow-gap: 5px;
 
   position: relative;
@@ -95,7 +95,7 @@
 }
 
 .grid {
-  --active-scale: 1;
+  --active-scale: 1.08;
   --incoming-scale: 0.76;
   --outgoing-scale: 0.76;
   --far-scale: 0.68;
@@ -140,6 +140,10 @@
     transform $transition-slow,
     opacity $transition-base;
 
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    height: var(--carousel-card-height, auto);
+  }
+
   @media (min-width: $breakpoint-lg) {
     position: static;
     top: auto;
@@ -161,6 +165,10 @@
   height: auto;
   min-height: 0;
 
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    height: 100%;
+  }
+
   @media (min-width: $breakpoint-lg) {
     height: 100%;
   }
@@ -168,11 +176,15 @@
 
 .active {
   z-index: 4;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%) scale(1.08);
   filter: brightness(1);
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    --protocol-body-font-size: 0.81rem;
+  }
 }
 
 .previous,
@@ -366,8 +378,8 @@
     background-color $transition-base;
 
   svg {
-    width: $spacing-lg;
-    height: $spacing-lg;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   &:hover {

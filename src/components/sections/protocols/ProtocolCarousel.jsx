@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import SolutionCard from '../../cards/SolutionCard';
 import { solutions } from '../../../data/content';
 import styles from '../ProtocolsSection.module.scss';
+import { MOBILE_ACTIVE_CARD_SCALE } from './carouselConfig';
 
 const ProtocolCarousel = ({ carousel }) => (
   <div
@@ -19,7 +20,10 @@ const ProtocolCarousel = ({ carousel }) => (
       data-swipe-front="active"
       style={
         !carousel.isDesktop && carousel.carouselMaxHeight
-          ? { height: `${carousel.carouselMaxHeight}px` }
+          ? {
+              height: `${carousel.carouselMaxHeight * MOBILE_ACTIVE_CARD_SCALE}px`,
+              '--carousel-card-height': `${carousel.carouselMaxHeight}px`,
+            }
           : undefined
       }
       onClickCapture={carousel.handleCarouselClickCapture}

@@ -10,6 +10,7 @@ export const SWIPE_FLICK_PROGRESS = 0.08;
 export const SWIPE_FLICK_VELOCITY = 420;
 export const SWIPE_DRAG_LIMIT = 1;
 export const SWIPE_MAX_RELEASE_VELOCITY = 900;
+export const MOBILE_ACTIVE_CARD_SCALE = 1.08;
 
 export const SWIPE_SPRING = {
   type: 'spring',

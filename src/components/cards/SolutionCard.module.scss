@@ -119,7 +119,10 @@
   flex-grow: 1;
 
   @media (max-width: ($breakpoint-lg - 1px)) {
-    flex-grow: 0;
+    flex-grow: 1;
+    align-items: stretch;
+    justify-content: flex-start;
+    text-align: left;
   }
 }
 
@@ -128,6 +131,10 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    width: 100%;
+  }
 
   @media (max-width: ($breakpoint-md - 1px)) {
     position: absolute;
@@ -166,6 +173,10 @@
   margin-bottom: 0.5rem;
   transition: all 0.3s ease;
 
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    width: 100%;
+  }
+
   @media (max-width: ($breakpoint-md - 1px)) {
     padding-right: 2rem;
   }
@@ -178,6 +189,10 @@
 .bodyWrapper {
   margin-top: 1rem;
   margin-bottom: 1rem;
+
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    width: 100%;
+  }
 }
 
 .sectionHeader {
@@ -185,6 +200,10 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+
+  @media (max-width: ($breakpoint-lg - 1px)) {
+    justify-content: flex-start;
+  }
 }
 
 .problemDot {
@@ -203,7 +222,7 @@
 }
 
 .problemText {
-  font-size: 0.875rem;
+  font-size: var(--protocol-body-font-size, 0.875rem);
   color: $text;
   font-style: italic;
   margin-bottom: 1rem;
@@ -228,7 +247,7 @@
 }
 
 .solutionText {
-  font-size: 0.875rem;
+  font-size: var(--protocol-body-font-size, 0.875rem);
   color: $text;
   line-height: 1.625;
   margin: 0;

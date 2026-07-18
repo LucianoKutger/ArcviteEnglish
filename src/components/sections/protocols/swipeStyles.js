@@ -1,4 +1,5 @@
 import {
+  MOBILE_ACTIVE_CARD_SCALE,
   SWIPE_BRIGHTNESS_TRANSFER_PROGRESS,
   SWIPE_FRONT_PROGRESS,
 } from './carouselConfig';
@@ -31,10 +32,16 @@ export const updateSwipeStyles = ({
   grid.dataset.swipeFront =
     progress >= SWIPE_FRONT_PROGRESS ? 'incoming' : 'active';
   grid.style.setProperty('--swipe-progress', progress.toString());
-  grid.style.setProperty('--active-scale', (1 - progress * 0.24).toString());
+  grid.style.setProperty(
+    '--active-scale',
+    (
+      MOBILE_ACTIVE_CARD_SCALE -
+      progress * (MOBILE_ACTIVE_CARD_SCALE - 0.76)
+    ).toString()
+  );
   grid.style.setProperty(
     '--incoming-scale',
-    (0.76 + progress * 0.24).toString()
+    (0.76 + progress * (MOBILE_ACTIVE_CARD_SCALE - 0.76)).toString()
   );
   grid.style.setProperty(
     '--outgoing-scale',
