@@ -3,16 +3,43 @@ import { AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { solutions } from '../../data/content';
 import FadeOutSection from '../visuals/FadeoutSection';
 import SolutionModal from '../ui/SolutionModal';
 import ProtocolCarousel from './protocols/ProtocolCarousel';
+import {
+  DESKTOP_BREAKPOINT,
+  DESKTOP_MEDIA_QUERY,
+} from './protocols/carouselConfig';
 import useProtocolCarousel from './protocols/useProtocolCarousel';
 import styles from './ProtocolsSection.module.scss';
 
+const BIOLOGICAL_RISK_MANAGEMENT_INDEX = solutions.findIndex(
+  ({ title }) => title === 'Biological Risk Management'
+);
+
+const getInitialCarouselIndex = () => {
+  if (
+    BIOLOGICAL_RISK_MANAGEMENT_INDEX < 0 ||
+    typeof window === 'undefined'
+  ) {
+    return 0;
+  }
+
+  const isDesktop =
+    typeof window.matchMedia === 'function'
+      ? window.matchMedia(DESKTOP_MEDIA_QUERY).matches
+      : window.innerWidth >= DESKTOP_BREAKPOINT;
+
+  return isDesktop ? 0 : BIOLOGICAL_RISK_MANAGEMENT_INDEX;
+};
+
 const ProtocolsSection = ({ scrollToSection }) => {
   const [selectedSolution, setSelectedSolution] = useState(null);
+  const [initialCarouselIndex] = useState(getInitialCarouselIndex);
   const navigate = useNavigate();
   const carousel = useProtocolCarousel({
+    initialActiveIndex: initialCarouselIndex,
     onSelectSolution: setSelectedSolution,
   });
 

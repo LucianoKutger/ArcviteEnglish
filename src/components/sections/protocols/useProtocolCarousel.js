@@ -19,17 +19,19 @@ const SYNTHETIC_CLICK_FALLBACK_MS = 500;
 const getWrappedIndex = (index) =>
   (index + solutions.length) % solutions.length;
 
-const useProtocolCarousel = ({ onSelectSolution }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [visualIndicatorIndex, setVisualIndicatorIndex] = useState(0);
+const useProtocolCarousel = ({ initialActiveIndex = 0, onSelectSolution }) => {
+  const initialIndex = getWrappedIndex(initialActiveIndex);
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [visualIndicatorIndex, setVisualIndicatorIndex] =
+    useState(initialIndex);
   const gridRef = useRef(null);
   const trackRef = useRef(null);
   const cardRefs = useRef([]);
   const pointerStartRef = useRef(null);
   const dragDistanceRef = useRef(1);
   const dragDirectionRef = useRef('idle');
-  const activeIndexRef = useRef(0);
-  const visualIndicatorIndexRef = useRef(0);
+  const activeIndexRef = useRef(initialIndex);
+  const visualIndicatorIndexRef = useRef(initialIndex);
   const swipeAnimationRef = useRef(null);
   const commitFrameRef = useRef(null);
   const swipeSequenceRef = useRef(0);
