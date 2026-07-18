@@ -14,6 +14,8 @@ import {
 } from './swipeStyles';
 import useProtocolCarouselLayout from './useProtocolCarouselLayout';
 
+const SYNTHETIC_CLICK_FALLBACK_MS = 500;
+
 const getWrappedIndex = (index) =>
   (index + solutions.length) % solutions.length;
 
@@ -91,7 +93,7 @@ const useProtocolCarousel = ({ onSelectSolution }) => {
     suppressClickTimeoutRef.current = window.setTimeout(() => {
       suppressClickRef.current = false;
       suppressClickTimeoutRef.current = null;
-    }, 0);
+    }, SYNTHETIC_CLICK_FALLBACK_MS);
   };
 
   const selectActiveIndex = (nextIndex) => {
