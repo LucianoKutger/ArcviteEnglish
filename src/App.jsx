@@ -1,4 +1,4 @@
-import { ReactLenis } from 'lenis/react';
+import { ReactLenis, useLenis } from 'lenis/react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useReducedMotion } from 'framer-motion';
 import { lazy, Suspense, useLayoutEffect } from 'react';
@@ -13,19 +13,31 @@ const PrivacySettings = lazy(() => import('./components/PrivacySettings'));
 const StudyDetails = lazy(() => import('./components/StudyDetails'));
 const NotFound = lazy(() => import('./components/NotFound'));
 
-const App = () => {
-  const shouldReduceMotion = useReducedMotion();
+const RouteScrollReset = () => {
   const { pathname } = useLocation();
+  const lenis = useLenis();
 
   useLayoutEffect(() => {
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true, force: true });
+      return;
+    }
+
     window.scrollTo(0, 0);
-  }, [pathname]);
+  }, [lenis, pathname]);
+
+  return null;
+};
+
+const App = () => {
+  const shouldReduceMotion = useReducedMotion();
 
   const appContent = (
     <div
       className={styles.landingPageWrapper}
       data-smooth-scroll={shouldReduceMotion ? 'disabled' : 'enabled'}
     >
+      <RouteScrollReset />
       <Navbar />
 
       <div className={styles.contentArea}>
