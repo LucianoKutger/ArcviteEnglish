@@ -2,6 +2,7 @@ export const DESKTOP_MEDIA_QUERY = '(min-width: 1024px)';
 export const DESKTOP_BREAKPOINT = 1024;
 export const SWIPE_DISTANCE_RATIO = 0.72;
 export const SWIPE_FRONT_PROGRESS = 0.5;
+export const SWIPE_BRIGHTNESS_TRANSFER_PROGRESS = 0.75;
 export const SWIPE_COMMIT_PROGRESS = 0.3;
 export const SWIPE_DIRECTION_LOCK_PX = 16;
 export const SWIPE_VERTICAL_BIAS = 1.35;

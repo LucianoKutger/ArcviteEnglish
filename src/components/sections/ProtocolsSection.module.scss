@@ -100,8 +100,8 @@
   --outgoing-scale: 0.76;
   --far-scale: 0.68;
   --active-opacity: 1;
-  --incoming-opacity: 0.68;
-  --outgoing-opacity: 0.68;
+  --incoming-opacity: 0.42;
+  --outgoing-opacity: 0.42;
   --far-opacity: 0;
   --active-brightness: 1;
   --incoming-brightness: 0.38;
@@ -169,6 +169,7 @@
 .active {
   z-index: 4;
   transform: translate(-50%, -50%) scale(1);
+  filter: brightness(1);
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -177,6 +178,7 @@
 .previous,
 .next {
   z-index: 3;
+  filter: brightness(0.38);
   opacity: 0.42;
   visibility: visible;
   pointer-events: auto;
@@ -193,6 +195,7 @@
 .previousFar,
 .nextFar {
   z-index: 2;
+  filter: brightness(var(--far-brightness));
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -248,6 +251,9 @@
     transform: translate(-50%, -50%) scale(var(--active-scale));
     filter: brightness(var(--active-brightness));
     opacity: var(--active-opacity);
+    transition:
+      filter 0.1s ease,
+      opacity 0.1s ease;
   }
 }
 
@@ -264,6 +270,9 @@
     transform: translate(22%, -50%) scale(var(--incoming-scale));
     filter: brightness(var(--incoming-brightness));
     opacity: var(--incoming-opacity);
+    transition:
+      filter 0.1s ease,
+      opacity 0.1s ease;
   }
 
   .previous {
@@ -294,6 +303,9 @@
     transform: translate(-122%, -50%) scale(var(--incoming-scale));
     filter: brightness(var(--incoming-brightness));
     opacity: var(--incoming-opacity);
+    transition:
+      filter 0.1s ease,
+      opacity 0.1s ease;
   }
 
   .next {

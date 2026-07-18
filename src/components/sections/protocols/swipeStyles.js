@@ -1,4 +1,7 @@
-import { SWIPE_FRONT_PROGRESS } from './carouselConfig';
+import {
+  SWIPE_BRIGHTNESS_TRANSFER_PROGRESS,
+  SWIPE_FRONT_PROGRESS,
+} from './carouselConfig';
 
 export const updateSwipeStyles = ({
   activeIndex,
@@ -38,30 +41,25 @@ export const updateSwipeStyles = ({
     (0.76 - progress * 0.08).toString()
   );
   grid.style.setProperty('--far-scale', (0.68 + progress * 0.08).toString());
+  const hasTransferredBrightness =
+    progress >= SWIPE_BRIGHTNESS_TRANSFER_PROGRESS;
   grid.style.setProperty(
     '--active-opacity',
-    (1 - progress * 0.32).toString()
+    hasTransferredBrightness ? '0.42' : '1'
   );
   grid.style.setProperty(
     '--incoming-opacity',
-    (0.68 + progress * 0.32).toString()
+    hasTransferredBrightness ? '1' : '0.42'
   );
-  grid.style.setProperty(
-    '--outgoing-opacity',
-    (0.68 * (1 - progress)).toString()
-  );
-  grid.style.setProperty('--far-opacity', (0.68 * progress).toString());
+  grid.style.setProperty('--outgoing-opacity', '0.42');
+  grid.style.setProperty('--far-opacity', (0.42 * progress).toString());
   grid.style.setProperty(
     '--active-brightness',
-    (1 - progress * 0.62).toString()
+    hasTransferredBrightness ? '0.38' : '1'
   );
   grid.style.setProperty(
     '--incoming-brightness',
-    (0.38 + progress * 0.62).toString()
-  );
-  grid.style.setProperty(
-    '--far-brightness',
-    (0.3 + progress * 0.08).toString()
+    hasTransferredBrightness ? '1' : '0.38'
   );
 
   return nextVisualIndicatorIndex;
@@ -75,4 +73,10 @@ export const resetSwipeStyles = (grid) => {
   grid.dataset.swipeDirection = 'idle';
   grid.dataset.swipeFront = 'active';
   grid.style.setProperty('--swipe-progress', '0');
+  grid.style.setProperty('--active-opacity', '1');
+  grid.style.setProperty('--incoming-opacity', '0.42');
+  grid.style.setProperty('--outgoing-opacity', '0.42');
+  grid.style.setProperty('--far-opacity', '0');
+  grid.style.setProperty('--active-brightness', '1');
+  grid.style.setProperty('--incoming-brightness', '0.38');
 };

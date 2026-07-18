@@ -14,6 +14,8 @@ import {
 } from './swipeStyles';
 import useProtocolCarouselLayout from './useProtocolCarouselLayout';
 
+const SYNTHETIC_CLICK_FALLBACK_MS = 500;
+
 const getWrappedIndex = (index) =>
   (index + solutions.length) % solutions.length;
 
@@ -91,7 +93,7 @@ const useProtocolCarousel = ({ onSelectSolution }) => {
     suppressClickTimeoutRef.current = window.setTimeout(() => {
       suppressClickRef.current = false;
       suppressClickTimeoutRef.current = null;
-    }, 0);
+    }, SYNTHETIC_CLICK_FALLBACK_MS);
   };
 
   const selectActiveIndex = (nextIndex) => {
@@ -135,13 +137,6 @@ const useProtocolCarousel = ({ onSelectSolution }) => {
     }
 
     grid?.setAttribute('data-swipe-committing', 'true');
-    dragX.set(0);
-
-    if (trackRef.current) {
-      trackRef.current.style.transform = 'none';
-    }
-
-    resetSwipeStyles();
 
     flushSync(() => {
       activeIndexRef.current = nextIndex;
@@ -153,6 +148,14 @@ const useProtocolCarousel = ({ onSelectSolution }) => {
         onSelectSolution(selectedItem);
       }
     });
+
+    dragX.set(0);
+
+    if (trackRef.current) {
+      trackRef.current.style.transform = 'none';
+    }
+
+    resetSwipeStyles();
 
     commitFrameRef.current = window.requestAnimationFrame(() => {
       commitFrameRef.current = window.requestAnimationFrame(() => {
